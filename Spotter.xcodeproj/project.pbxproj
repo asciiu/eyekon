@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */; };
+		6E1CE2CE19B428210085FF19 /* ImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */; };
+		6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */; };
+		6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2DB19B516E80085FF19 /* RACollectionViewTripletLayout.m */; };
+		6E3A3B0F19AEE3B40023499C /* HowToListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* HowToListViewController.swift */; };
 		6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8319A66669006CB2E2 /* AppDelegate.swift */; };
 		6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */; };
 		6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */; };
@@ -27,6 +32,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageCollectionViewCell.xib; sourceTree = "<group>"; };
+		6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spotter-Bridging-Header.h"; sourceTree = "<group>"; };
+		6E1CE2D819B516E80085FF19 /* RACollectionViewReorderableTripletLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACollectionViewReorderableTripletLayout.h; sourceTree = "<group>"; };
+		6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACollectionViewReorderableTripletLayout.m; sourceTree = "<group>"; };
+		6E1CE2DA19B516E80085FF19 /* RACollectionViewTripletLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACollectionViewTripletLayout.h; sourceTree = "<group>"; };
+		6E1CE2DB19B516E80085FF19 /* RACollectionViewTripletLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACollectionViewTripletLayout.m; sourceTree = "<group>"; };
+		6E3A3B0E19AEE3B40023499C /* HowToListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HowToListViewController.swift; sourceTree = "<group>"; };
 		6EC03D7E19A66669006CB2E2 /* Spotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D8219A66669006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D8319A66669006CB2E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +71,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E1CE2CF19B511910085FF19 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				6E1CE2D819B516E80085FF19 /* RACollectionViewReorderableTripletLayout.h */,
+				6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */,
+				6E1CE2DA19B516E80085FF19 /* RACollectionViewTripletLayout.h */,
+				6E1CE2DB19B516E80085FF19 /* RACollectionViewTripletLayout.m */,
+				6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */,
+			);
+			name = CollectionView;
+			sourceTree = "<group>";
+		};
+		6E1CE2D019B511B10085FF19 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6E3A3B0E19AEE3B40023499C /* HowToListViewController.swift */,
+				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		6E1CE2D119B511E40085FF19 /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
+				6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */,
+				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
+				6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */,
+			);
+			name = "Custom Views";
+			sourceTree = "<group>";
+		};
 		6EC03D7519A66669006CB2E2 = {
 			isa = PBXGroup;
 			children = (
@@ -79,13 +123,14 @@
 		6EC03D8019A66669006CB2E2 /* Spotter */ = {
 			isa = PBXGroup;
 			children = (
+				6E1CE2CF19B511910085FF19 /* CollectionView */,
+				6E1CE2D119B511E40085FF19 /* Custom Views */,
+				6E1CE2D019B511B10085FF19 /* Controllers */,
 				6EC03D8319A66669006CB2E2 /* AppDelegate.swift */,
-				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
 				6EC03D8A19A66669006CB2E2 /* Main.storyboard */,
 				6EC03D8D19A66669006CB2E2 /* Images.xcassets */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
 				6EC03D8119A66669006CB2E2 /* Supporting Files */,
-				6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */,
 			);
 			path = Spotter;
 			sourceTree = "<group>";
@@ -197,6 +242,7 @@
 			files = (
 				6EC03DD419AC270B006CB2E2 /* CameraOverlayView.xib in Resources */,
 				6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */,
+				6E1CE2CE19B428210085FF19 /* ImageCollectionViewCell.xib in Resources */,
 				6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,8 +261,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E3A3B0F19AEE3B40023499C /* HowToListViewController.swift in Sources */,
+				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
+				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
+				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,9 +383,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotter/Spotter-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -344,9 +397,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotter/Spotter-Bridging-Header.h";
 			};
 			name = Release;
 		};

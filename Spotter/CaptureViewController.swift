@@ -8,19 +8,29 @@
 
 import UIKit
 
-class CaptureViewController: UIViewController , UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
+class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var descriptionField: UITextField!
     
-    // camera overlay view
+    // refer to CameraOverlayView.xib for these
     @IBOutlet var overlayView: UIView!
     @IBOutlet var previewView: UIImageView!
     @IBOutlet var textView: UITextView!
     
-    
     var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
+    
+    func setupPhotosArray()
+    {
+        self.capturedImages.removeAll(keepCapacity: false)
+        
+        for(var i = 1; i <= 20; ++i) {
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,17 +39,15 @@ class CaptureViewController: UIViewController , UIImagePickerControllerDelegate,
         if !UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
             let myAlertView: UIAlertView = UIAlertView(title: "Error", message: "Device has not camera", delegate: nil, cancelButtonTitle: "OK")
             myAlertView.show()
-            
         }
         
+        // register the custom collection view cell
         let cellNib: UINib = UINib(nibName: "ImageCollectionViewCell", bundle: nil)
         self.collectionView.registerNib(cellNib, forCellWithReuseIdentifier:"ImageCollectionViewCell")
-    }
-    
-    // TODO remove
-    @IBAction func resignOnTap(sender: AnyObject) {
-        println("hello")
-        self.textView.resignFirstResponder()
+        
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        self.setupPhotosArray()
     }
     
     override func didReceiveMemoryWarning() {
@@ -47,14 +55,17 @@ class CaptureViewController: UIViewController , UIImagePickerControllerDelegate,
         // Dispose of any resources that can be recreated.
     }
     
+    // camera overlay actions
     @IBAction func takePhoto(sender: AnyObject){
         self.imagePickerController?.takePicture()
     }
+    
     @IBAction func done(sender: AnyObject) {
         self.imagePickerController?.dismissViewControllerAnimated(true, completion: nil)
         self.collectionView.reloadData()
     }
     
+    // storyboard actions
     @IBAction func saveReel(sender: AnyObject) {
     }
     
@@ -92,35 +103,108 @@ class CaptureViewController: UIViewController , UIImagePickerControllerDelegate,
         let identifier: NSString = "ImageCollectionViewCell"
 
         var cell: ImageCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as ImageCollectionViewCell
-        
-//        if(cell == nil) {
-//            cell = NSBundle.mainBundle().loadNibNamed(identifier, owner:self, options:nil)[0] as? ImageCollectionViewCell
-//        }
 
+        //cell.imageView.removeFromSuperview()
+        cell.imageView.frame = cell.bounds
         cell.numberLabel.text = String(indexPath.row + 1)
         cell.imageView.image = self.capturedImages[indexPath.row]
-
         
-        //let thumbImage: UIImageView = cell.viewWithTag(100) as UIImageView
-        //thumbImage.image = self.capturedImages[indexPath.row]
-        
+        //cell.contentView .addSubview(cell.imageView)
         return cell;
+    }
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
+        return 1
     }
     
     func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
         return self.capturedImages.count
     }
     
+    func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+
+    func minimumInteritemSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+    
+    func minimumLineSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+    
+    func insetsForCollectionView(collectionView: UICollectionView!) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(5.0, 0, 5.0, 0)
+    }
+    
+    func collectionView(collectionView: UICollectionView!, sizeForLargeItemsInSection section: Int) -> CGSize {
+        //if (section == 0) {
+        //    return CGSizeMake(320, 200)
+        //}
+        return CGSizeZero
+    }
+    
+    func autoScrollTrigerEdgeInsets(collectionView: UICollectionView!) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(50.0, 0, 50.0, 0)
+    }
+    
+    func autoScrollTrigerPadding(collectionView: UICollectionView!) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(64.0, 0, 0, 0)
+    }
+    
+    func reorderingItemAlpha(collectionview: UICollectionView!) -> CGFloat {
+        return 0.3
+    }
+    
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
+        
+        self.collectionView.reloadData()
+    }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
+        
+        let image: UIImage = self.capturedImages[fromIndexPath.item]
+        
+        self.capturedImages.removeAtIndex(fromIndexPath.item)
+        self.capturedImages.insert(image, atIndex: toIndexPath.item)
+        
+    }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
+        
+        //if (toIndexPath.section == 0) {
+        //    return true
+        //}
+        
+        return true
+    }
+    
+    // this never gets invoked. why?
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
         // todo pop up larger view of image
+        
+        //if (indexPath.section == 0) {
+        //    return
+        //}
+        if (self.capturedImages.count == 1) {
+            return
+        }
+        
+        self.collectionView.performBatchUpdates({
+            self.capturedImages.removeAtIndex(indexPath.item)
+            self.collectionView.deleteItemsAtIndexPaths([indexPath])
+        
+        },completion: { Bool in
+                self.collectionView.reloadData()
+        })
     }
     
-    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
-        return true
-    }
-    
+//    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
+//        return true
+//    }
+//    
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!) {
         
         let newImage: UIImage = info[UIImagePickerControllerOriginalImage] as UIImage

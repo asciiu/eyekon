@@ -109,7 +109,6 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         cell.numberLabel.text = String(indexPath.row + 1)
         cell.imageView.image = self.capturedImages[indexPath.row]
         
-        //cell.contentView .addSubview(cell.imageView)
         return cell;
     }
     
@@ -118,6 +117,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
     }
     
     func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
+        //println(self.capturedImages.count)
         return self.capturedImages.count
     }
     
@@ -212,8 +212,6 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.capturedImages.append(newImage)
         self.previewView.image = newImage
         //self.imageView.image = newImage
-        
-        //println(self.capturedImages.count)
         
         //let chosenImage: UIImage = info[UIImagePickerControllerEditedImage] as UIImage
         //self.imageView.image = chosenImage

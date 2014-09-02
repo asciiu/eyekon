@@ -55,6 +55,7 @@
     }
 }
 
+
 - (CGFloat)contentHeight
 {
     CGFloat contentHeight = 0;
@@ -113,21 +114,34 @@
     return (id<RACollectionViewDelegateTripletLayout>)self.collectionView.delegate;
 }
 
+
 - (CGSize)collectionViewContentSize
 {
+    // multiply the number of images * height + spacing
+    
+    //CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 2.f;
     CGSize contentSize = CGSizeMake(_collectionViewSize.width, 0);
     for (NSInteger i = 0; i < self.collectionView.numberOfSections; i++) {
-        NSInteger numberOfLines = ceil((CGFloat)[self.collectionView numberOfItemsInSection:i] / 3.f);
-        CGFloat lineHeight = numberOfLines * ([_largeCellSizeArray[i] CGSizeValue].height + _lineSpacing) - _lineSpacing;
+        //NSInteger numberOfLines = ceil((CGFloat)[self.collectionView numberOfItemsInSection:i] / 3.f);
+        NSInteger numberOfLines = [self.collectionView numberOfItemsInSection:i];
+
+        //CGFloat lineHeight = numberOfLines * ([_largeCellSizeArray[i] CGSizeValue].height + _lineSpacing) - _lineSpacing;
+        
+        CGFloat totalSpacing = _lineSpacing * numberOfLines;
+        CGFloat lineHeight = _largeCellSize.height * numberOfLines + totalSpacing + _insets.top;
+        
         contentSize.height += lineHeight;
     }
+    /*
     contentSize.height += _insets.top + _insets.bottom + _sectionSpacing * (self.collectionView.numberOfSections - 1);
     NSInteger numberOfItemsInLastSection = [self.collectionView numberOfItemsInSection:self.collectionView.numberOfSections - 1];
+    
     if ((numberOfItemsInLastSection - 1) % 3 == 0 && (numberOfItemsInLastSection - 1) % 6 != 0) {
         contentSize.height -= [_smallCellSizeArray[self.collectionView.numberOfSections - 1] CGSizeValue].height + _itemSpacing;
-    }
+    }*/
     return contentSize;
 }
+
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
 {
@@ -157,12 +171,13 @@
     return NO;
 }
 
+
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
 
     //cellSize
-    CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 3.f;
+    CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 2.f;
     CGFloat smallCellSideLength = (largeCellSideLength - _itemSpacing) / 2.f;
     _largeCellSize = CGSizeMake(largeCellSideLength, largeCellSideLength);
     _smallCellSize = CGSizeMake(smallCellSideLength, smallCellSideLength);
@@ -197,12 +212,16 @@
         sectionHeight -= _lineSpacing;
     }
 
-    NSInteger line = indexPath.item / 3;
+    NSInteger line = indexPath.item;
     CGFloat lineSpaceForIndexPath = _lineSpacing * line;
-    CGFloat lineOriginY = _largeCellSize.height * line + sectionHeight + lineSpaceForIndexPath + _insets.top;
-    CGFloat rightSideLargeCellOriginX = _collectionViewSize.width - _largeCellSize.width - _insets.right;
-    CGFloat rightSideSmallCellOriginX = _collectionViewSize.width - _smallCellSize.width - _insets.right;
+    //CGFloat lineOriginY = _largeCellSize.height * line + sectionHeight + lineSpaceForIndexPath + _insets.top;
+    CGFloat lineOriginY = _largeCellSize.height * line + lineSpaceForIndexPath + _insets.top;
+    //CGFloat rightSideLargeCellOriginX = _collectionViewSize.width - _largeCellSize.width - _insets.right;
+    //CGFloat rightSideSmallCellOriginX = _collectionViewSize.width - _smallCellSize.width - _insets.right;
     
+    attribute.frame = CGRectMake(_insets.left, lineOriginY, _collectionViewSize.width, _largeCellSize.height);
+
+    /*
     if (indexPath.item % 6 == 0) {
         attribute.frame = CGRectMake(_insets.left, lineOriginY, _largeCellSize.width, _largeCellSize.height);
     }else if ((indexPath.item + 1) % 6 == 0) {
@@ -219,7 +238,8 @@
         }else {
             attribute.frame =CGRectMake(_insets.left, lineOriginY + _smallCellSize.height + _itemSpacing, _smallCellSize.width, _smallCellSize.height);
         }
-    }
+    }*/
+    
     return attribute;
 }
 

@@ -25,6 +25,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
     @IBOutlet var overlayView: UIView!
     @IBOutlet var previewView: UIImageView!
     @IBOutlet var textView: UITextView!
+    @IBOutlet var overlayCollectionView: UICollectionView!
     
     var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
@@ -32,17 +33,17 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
     var annotateViewController: AnnotateViewController?
     var context: NSManagedObjectContext?
     
+    var frameSet: FrameSet?
+    
     func setupPhotosArray()
     {
         self.capturedImages.removeAll(keepCapacity: false)
         
-        for(var i = 1; i <= 20; ++i) {
+        for(var i = 1; i <= 4; ++i) {
             let photoName: String = "\(i).jpg"
             let photo: UIImage = UIImage(named: photoName)
             self.capturedImages.append(photo)
         }
-        
-        
     }
     
     override func viewDidLoad() {
@@ -62,8 +63,72 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.collectionView.dataSource = self
         self.setupPhotosArray()
         
+        // needed so we can save via managed context
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
         self.context = appDelegate.managedObjectContext
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        if self.frameSet != nil {
+            self.capturedImages.removeAll(keepCapacity: false)
+            
+            self.descriptionField.text = self.frameSet!.synopsis
+            
+            let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
+            
+            let frames = frameSet!.frames
+            
+            let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
+            
+            for frame in sortedFrames {
+                let frameData = frame as Frame
+                
+                let photo: UIImage = UIImage(data: frameData.imageData)
+                self.capturedImages.append(photo)
+            }
+        }
+        self.collectionView.reloadData()
+    }
+//    override func viewDidAppear(animated: Bool) {
+//        
+//        if self.frameSet != nil {
+//            self.capturedImages.removeAll(keepCapacity: false)
+//            
+//            self.descriptionField.text = self.frameSet!.synopsis
+//            
+//            let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
+//            
+//            let frames = frameSet!.frames
+//            
+//            let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
+//            
+//            for frame in sortedFrames {
+//                let frameData = frame as Frame
+//                
+//                let photo: UIImage = UIImage(data: frameData.imageData)
+//                self.capturedImages.append(photo)
+//            }
+//        }
+//        self.collectionView.reloadData()
+//    }
+    
+    func setFrames(frameSet: FrameSet) {
+        self.capturedImages.removeAll(keepCapacity: false)
+        
+        self.descriptionField.text = frameSet.synopsis
+        
+        let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
+        
+        let frames = frameSet.frames
+        
+        let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
+        
+        for frame in sortedFrames {
+            let frameData = frame as Frame
+            
+            let photo: UIImage = UIImage(data: frameData.imageData)
+            self.capturedImages.append(photo)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -81,41 +146,51 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.collectionView.reloadData()
     }
     
+    @IBAction func save(sender: AnyObject) {
+        
+        if(self.descriptionField.text == "") {
+            let alert: UIAlertView = UIAlertView(title: "Missing information!", message: "Please enter a description", delegate: nil, cancelButtonTitle: "OK")
+          
+            alert.show()
+        } else {
+            let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+            
+            frameSet.frameCount = self.capturedImages.count
+            frameSet.synopsis = self.descriptionField.text
+            
+            let frames: NSMutableSet = NSMutableSet()
+            
+            // a frameSet has frames
+            for var i = 0; i < self.capturedImages.count; ++i {
+                
+                let image = self.capturedImages[i]
+                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
+                
+                frame.frameSet = frameSet
+                
+                // convert image to NSData
+                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+                frame.frameNumber = i
+                
+                // add frame to frameSet
+                frames.addObject(frame)
+            }
+            frameSet.frames = frames
+            
+            var error: NSError?
+            if( !self.context!.save(&error)) {
+                println("could not save FrameSet: \(error?.localizedDescription)")
+            }
+            
+            self.performSegueWithIdentifier("unwindToList", sender: self)
+        }
+    }
     
     override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
-        // Get the new view controller using segue.destinationViewController.
-        //
+       
+        // if the save button was not pressed return
         if(sender !== self.saveBtn) {
             return
-        }
-        
-        let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
-        
-        frameSet.frameCount = self.capturedImages.count
-        frameSet.synopsis = self.descriptionField.text
-        
-        let frames: NSMutableSet = NSMutableSet()
-        
-        // a frameSet has frames
-        for var i = 0; i < self.capturedImages.count; ++i {
-            
-            let image = self.capturedImages[i]
-            let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
-            
-            frame.frameSet = frameSet
-            
-            // convert image to NSData
-            frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-            frame.frameNumber = i
-            
-            // add frame to frameSet
-            frames.addObject(frame)
-        }
-        frameSet.frames = frames
-        
-        var error: NSError?
-        if( !self.context!.save(&error)) {
-            println("could not save FrameSet: \(error?.localizedDescription)")
         }
     }
     
@@ -315,6 +390,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         
         self.capturedImages.append(newImage)
         self.previewView.image = newImage
+        
         //self.imageView.image = newImage
         
         //let chosenImage: UIImage = info[UIImagePickerControllerEditedImage] as UIImage
@@ -366,11 +442,11 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             // what size the system will likely display the image at on screen.
             // NOTE: screenSize.width may seem odd in this calculation - but, remember,
             // the devices only take 4:3 images when they are oriented *sideways*.
-            let cameraAspectRatio: CGFloat = 4.0 / 3.0;
-            let imageWidth: CGFloat = screenSize.width * cameraAspectRatio
-            let scale: CGFloat = (screenSize.height / imageWidth) * 10.0 / 10.0
+            //let cameraAspectRatio: CGFloat = 4.0 / 3.0;
+            //let imageWidth: CGFloat = screenSize.width * cameraAspectRatio
+            //let scale: CGFloat = (screenSize.height / imageWidth) * 10.0 / 10.0
             
-            imagePickerController.cameraViewTransform = CGAffineTransformMakeScale(scale, scale)
+            //imagePickerController.cameraViewTransform = CGAffineTransformMakeScale(scale, scale)
             
             /*
             Load the overlay view from the OverlayView nib file. Self is the File's Owner for the nib file, so the overlayView outlet is set to the main view in the nib. Pass that view to the image picker controller to use as its overlay view, and set self's reference to the view to nil.

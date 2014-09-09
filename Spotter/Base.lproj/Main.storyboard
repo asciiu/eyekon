@@ -12,7 +12,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7Ui-Lu-1fh">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7Ui-Lu-1fh">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -26,6 +26,7 @@
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="QHJ-c1-pPb" id="QJM-GP-tf1"/>
+                                    <outlet property="delegate" destination="QHJ-c1-pPb" id="sYt-QT-P02"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -34,10 +35,13 @@
                     <navigationItem key="navigationItem" title="Your List" id="vSA-Oa-JTh">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
                             <connections>
-                                <segue destination="tH4-5w-EKm" kind="push" id="Kad-l7-lKq"/>
+                                <segue destination="tH4-5w-EKm" kind="push" identifier="CaptureSegue" id="Kad-l7-lKq"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="7Ui-Lu-1fh" id="zT9-oX-O6e"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -108,7 +112,7 @@
         <!--Capture View Controller-->
         <scene sceneID="BcV-bH-nnr">
             <objects>
-                <viewController id="tH4-5w-EKm" customClass="CaptureViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CaptureViewController" id="tH4-5w-EKm" customClass="CaptureViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rWE-lk-NJD">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -157,12 +161,12 @@
                     <navigationItem key="navigationItem" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToList:" id="2FX-a2-jVI"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" identifier="unwindToList" unwindAction="unwindToList:" id="2FX-a2-jVI"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Save" id="R2A-gU-lFb">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToList:" id="nav-Lv-gFW"/>
+                                <action selector="save:" destination="tH4-5w-EKm" id="IY9-3J-c7u"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -171,6 +175,7 @@
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
                         <outlet property="descriptionField" destination="iJN-sB-qv4" id="waI-ed-dZ0"/>
                         <outlet property="saveBtn" destination="R2A-gU-lFb" id="tYt-Ql-Ntr"/>
+                        <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToList:" id="gjM-Gy-WH3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -9,17 +9,21 @@
 import UIKit
 import CoreData
 
-class HowToListViewController: UIViewController, UITableViewDataSource {
+class HowToListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var context: NSManagedObjectContext?
     var frameSets: [FrameSet] = [FrameSet]()
+    var captureViewController: CaptureViewController?
+    var frameSet: FrameSet?
+    
+    @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //self.context = NSManagedObjectContext()
-        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        self.tableView.allowsMultipleSelectionDuringEditing = false
         
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         self.context = appDelegate.managedObjectContext
         self.loadList()
     }
@@ -31,8 +35,9 @@ class HowToListViewController: UIViewController, UITableViewDataSource {
     }
     
     @IBAction func unwindToList(unwindSegue: UIStoryboardSegue) {
-        println("Canceled Creation")
         self.loadList()
+        
+        self.frameSet = nil
     }
     
     func loadList() {
@@ -51,7 +56,22 @@ class HowToListViewController: UIViewController, UITableViewDataSource {
         }
     }
     
-    func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
+        println(indexPath.row)
+        
+        let frameSet: FrameSet = self.frameSets[indexPath.row]
+        
+        self.frameSets.removeAtIndex(indexPath.row)
+        self.context!.deleteObject(frameSet)
+        
+        self.tableView.reloadData()
+    }
+    
+    func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {        
         return self.frameSets.count
     }
     
@@ -62,14 +82,35 @@ class HowToListViewController: UIViewController, UITableViewDataSource {
         cell.textLabel.text = frameSet.synopsis
         return cell
     }
-    
+  
+    func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+        self.frameSet = self.frameSets[indexPath.row]
+        //println(frameSet.frames.count)
+        
+        //let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        //let captureViewController: CaptureViewController = storyboard.instantiateViewControllerWithIdentifier("CaptureViewController") as CaptureViewController
+        
+        //self.captureViewController = captureViewController
+        //self.presentViewController(captureViewController, animated: true, completion: nil)
+        //self.captureViewController!.setFrames(frameSet)
+        
+        self.performSegueWithIdentifier("CaptureSegue", sender: self)
+    }
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        let captureViewController: CaptureViewController = segue.destinationViewController as CaptureViewController
+        
+        if self.frameSet != nil {
+            captureViewController.frameSet = self.frameSet
+        } else {
+            captureViewController.frameSet = nil
+        }
     }
     
-
+    
 }

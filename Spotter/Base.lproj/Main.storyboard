@@ -12,10 +12,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7Ui-Lu-1fh">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7Ui-Lu-1fh">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ListPrototypeCell" id="StX-SX-OOa">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="StX-SX-OOa" id="TLt-fg-3CU">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="QHJ-c1-pPb" id="QJM-GP-tf1"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -30,7 +41,69 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="290" y="137"/>
+            <point key="canvasLocation" x="-1102" y="149"/>
+        </scene>
+        <!--Annotate View Controller-->
+        <scene sceneID="N8l-OS-Pu6">
+            <objects>
+                <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RGA-sS-Dqi">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="8Zv-me-7DR">
+                                <rect key="frame" x="0.0" y="72" width="320" height="424"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Eif-hD-Sd9">
+                                        <rect key="frame" x="0.0" y="31" width="320" height="361"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JC6-Yc-X2i">
+                                        <rect key="frame" x="8" y="8" width="31" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Prev">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="previousImage:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="6XH-DJ-Ke4"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XUm-dU-Nsn">
+                                        <rect key="frame" x="273" y="8" width="32" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Next">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="nextImage:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="HTX-ao-Ufh"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="L6d-8k-5Sh">
+                                        <rect key="frame" x="142" y="394" width="37" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Done">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="done:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="mUq-DP-gFj"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
+                        <outlet property="nextBtn" destination="XUm-dU-Nsn" id="q7M-XV-9Q0"/>
+                        <outlet property="previousBtn" destination="JC6-Yc-X2i" id="KVB-Lk-sSg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1094" y="970"/>
         </scene>
         <!--Capture View Controller-->
         <scene sceneID="BcV-bH-nnr">
@@ -44,17 +117,12 @@
                                 <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem title="Photos" id="9Dz-XC-zDs">
-                                        <connections>
-                                            <action selector="showImagePickerForPhotoPicker:" destination="tH4-5w-EKm" id="6mV-B3-ezE"/>
-                                        </connections>
-                                    </barButtonItem>
                                     <barButtonItem systemItem="camera" id="VQF-kB-JdS">
                                         <connections>
                                             <action selector="showImagePickerForCamera:" destination="tH4-5w-EKm" id="wRK-Bh-3ia"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem width="180" style="plain" systemItem="fixedSpace" id="G1f-0h-y3K"/>
+                                    <barButtonItem width="234" style="plain" systemItem="fixedSpace" id="G1f-0h-y3K"/>
                                     <barButtonItem systemItem="trash" id="FMZ-jA-IzT"/>
                                 </items>
                             </toolbar>
@@ -89,24 +157,26 @@
                     <navigationItem key="navigationItem" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToThisViewController:" id="GN7-SR-Ayo"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToList:" id="2FX-a2-jVI"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Save" id="R2A-gU-lFb">
                             <connections>
-                                <action selector="saveReel:" destination="tH4-5w-EKm" id="lII-4O-Dvx"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToList:" id="nav-Lv-gFW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="cancelBtn" destination="OZM-LZ-oyX" id="sJJ-Oe-Nj9"/>
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
                         <outlet property="descriptionField" destination="iJN-sB-qv4" id="waI-ed-dZ0"/>
+                        <outlet property="saveBtn" destination="R2A-gU-lFb" id="tYt-Ql-Ntr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pjG-vN-5Fb" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="749" y="137"/>
+            <point key="canvasLocation" x="-623" y="149"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nPn-oT-Wfq">
@@ -124,7 +194,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kxF-SX-c4U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-242" y="137"/>
+            <point key="canvasLocation" x="-1102" y="-556"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

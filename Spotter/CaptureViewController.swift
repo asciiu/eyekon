@@ -7,11 +7,19 @@
 //
 
 import UIKit
+import CoreData
 
-class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
+
+protocol ViewControllerExit {
+    func controllerDidFinish(controller: UIViewController)
+}
+
+class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, ViewControllerExit {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var descriptionField: UITextField!
+    @IBOutlet var cancelBtn: UIBarButtonItem!
+    @IBOutlet var saveBtn: UIBarButtonItem!
     
     // refer to CameraOverlayView.xib for these
     @IBOutlet var overlayView: UIView!
@@ -20,6 +28,9 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
     
     var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
+    
+    var annotateViewController: AnnotateViewController?
+    var context: NSManagedObjectContext?
     
     func setupPhotosArray()
     {
@@ -30,6 +41,8 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             let photo: UIImage = UIImage(named: photoName)
             self.capturedImages.append(photo)
         }
+        
+        
     }
     
     override func viewDidLoad() {
@@ -48,6 +61,9 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.setupPhotosArray()
+        
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
+        self.context = appDelegate.managedObjectContext
     }
     
     override func didReceiveMemoryWarning() {
@@ -65,9 +81,81 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.collectionView.reloadData()
     }
     
-    // storyboard actions
-    @IBAction func saveReel(sender: AnyObject) {
+    
+    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+        // Get the new view controller using segue.destinationViewController.
+        //
+        if(sender !== self.saveBtn) {
+            return
+        }
+        
+        let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+        
+        frameSet.frameCount = self.capturedImages.count
+        frameSet.synopsis = self.descriptionField.text
+        
+        let frames: NSMutableSet = NSMutableSet()
+        
+        // a frameSet has frames
+        for var i = 0; i < self.capturedImages.count; ++i {
+            
+            let image = self.capturedImages[i]
+            let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
+            
+            frame.frameSet = frameSet
+            
+            // convert image to NSData
+            frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+            frame.frameNumber = i
+            
+            // add frame to frameSet
+            frames.addObject(frame)
+        }
+        frameSet.frames = frames
+        
+        var error: NSError?
+        if( !self.context!.save(&error)) {
+            println("could not save FrameSet: \(error?.localizedDescription)")
+        }
     }
+    
+    // storyboard actions
+//    @IBAction func saveReel(sender: AnyObject) {
+//        // need to save with a synopsis first
+//        
+//        
+//        let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+//        
+//        frameSet.frameCount = self.capturedImages.count
+//        frameSet.synopsis = self.descriptionField.text
+//        
+//        let frames: NSMutableSet = NSMutableSet()
+//        
+//        // a frameSet has frames
+//        for var i = 0; i < self.capturedImages.count; ++i {
+//            
+//            let image = self.capturedImages[i]
+//            let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
+//            
+//            frame.frameSet = frameSet
+//            
+//            // convert image to NSData
+//            frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+//            frame.frameNumber = i
+//            
+//            // add frame to frameSet
+//            frames.addObject(frame)
+//        }
+//        frameSet.frames = frames
+//        
+//        var error: NSError?
+//        if( !self.context!.save(&error)) {
+//            println("could not save FrameSet: \(error?.localizedDescription)")
+//        }
+//        
+//        
+//        self.dismissViewControllerAnimated(true, completion: nil)
+//    }
     
     @IBAction func showImagePickerForCamera(sender: AnyObject) {
         self.showImagePickerForSourceType(UIImagePickerControllerSourceType.Camera)
@@ -179,7 +267,6 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         return true
     }
     
-    // this never gets invoked. why?
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
@@ -188,10 +275,11 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         //if (indexPath.section == 0) {
         //    return
         //}
-        if (self.capturedImages.count == 1) {
-            return
-        }
+        //if (self.capturedImages.count == 1) {
+        //    return
+        //}
         
+        /*
         self.collectionView.performBatchUpdates({
             self.capturedImages.removeAtIndex(indexPath.item)
             self.collectionView.deleteItemsAtIndexPaths([indexPath])
@@ -199,7 +287,23 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         },completion: { Bool in
                 self.collectionView.reloadData()
         })
+        */
+        
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
+        
+        self.annotateViewController = annotateViewController
+        self.presentViewController(annotateViewController, animated: true, completion: nil)
+        
+        self.annotateViewController!.imageView.image = self.capturedImages[indexPath.item]
+
     }
+    
+    func controllerDidFinish(controller: UIViewController) {
+        
+    }
+
+    
     
 //    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
 //        return true

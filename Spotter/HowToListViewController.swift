@@ -34,19 +34,16 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func unwindToList(unwindSegue: UIStoryboardSegue) {
-        self.loadList()
-        
-        self.frameSet = nil
-    }
+   
     
     func loadList() {
-        let entityDesc: NSEntityDescription = NSEntityDescription.entityForName("FrameSet", inManagedObjectContext: self.context!)
+        
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("FrameSet", inManagedObjectContext: self.context!)
         
         // create a fetch request with the entity description
         // this works like a SQL SELECT statement
         let request: NSFetchRequest = NSFetchRequest()
-        request.entity = entityDesc
+        request.entity = entityDesc!
         
         var error: NSError?
         self.frameSets = self.context!.executeFetchRequest(request, error: &error) as [FrameSet]
@@ -56,8 +53,26 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
+    // MARK: - UITableViewDelegate
+    
     func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
         return true
+    }
+    
+    func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+        self.frameSet = self.frameSets[indexPath.row]
+        
+        self.performSegueWithIdentifier("CaptureSegue", sender: self)
+    }
+    
+    // MARK: - UITableViewDataSource
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("ListPrototypeCell", forIndexPath: indexPath) as UITableViewCell
+        
+        let frameSet: FrameSet = self.frameSets[indexPath.row]
+        cell.textLabel?.text = frameSet.synopsis
+        return cell
     }
     
     func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
@@ -71,35 +86,14 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         self.tableView.reloadData()
     }
     
-    func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {        
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.frameSets.count
     }
     
-    func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("ListPrototypeCell", forIndexPath: indexPath) as UITableViewCell
-    
-        let frameSet: FrameSet = self.frameSets[indexPath.row]
-        cell.textLabel.text = frameSet.synopsis
-        return cell
-    }
-  
-    func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
-        self.frameSet = self.frameSets[indexPath.row]
-        //println(frameSet.frames.count)
-        
-        //let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        //let captureViewController: CaptureViewController = storyboard.instantiateViewControllerWithIdentifier("CaptureViewController") as CaptureViewController
-        
-        //self.captureViewController = captureViewController
-        //self.presentViewController(captureViewController, animated: true, completion: nil)
-        //self.captureViewController!.setFrames(frameSet)
-        
-        self.performSegueWithIdentifier("CaptureSegue", sender: self)
-    }
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
@@ -112,5 +106,9 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    
+    @IBAction func unwindToList(unwindSegue: UIStoryboardSegue) {
+        self.loadList()
+        
+        self.frameSet = nil
+    }
 }

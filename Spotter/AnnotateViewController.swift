@@ -14,8 +14,6 @@ class AnnotateViewController: UIViewController {
     @IBOutlet var previousBtn: UIButton!
     @IBOutlet var nextBtn: UIButton!
     
-    var delegate: ViewControllerExit?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 

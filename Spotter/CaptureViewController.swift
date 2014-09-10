@@ -10,11 +10,7 @@ import UIKit
 import CoreData
 
 
-protocol ViewControllerExit {
-    func controllerDidFinish(controller: UIViewController)
-}
-
-class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, ViewControllerExit {
+class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var descriptionField: UITextField!
@@ -164,7 +160,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             for var i = 0; i < self.capturedImages.count; ++i {
                 
                 let image = self.capturedImages[i]
-                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
+                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
                 
                 frame.frameSet = frameSet
                 
@@ -186,7 +182,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
        
         // if the save button was not pressed return
         if(sender !== self.saveBtn) {
@@ -260,8 +256,9 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
 //        return true
 //    }
     
-    // collection view data source
-    func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
+    // MARK: - UICollectionViewDataSource
+
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         let identifier: NSString = "ImageCollectionViewCell"
 
@@ -275,14 +272,16 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         return cell;
     }
     
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //println(self.capturedImages.count)
+        return self.capturedImages.count
+    }
+    
+    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
-        //println(self.capturedImages.count)
-        return self.capturedImages.count
-    }
     
     func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
         return 5.0
@@ -374,12 +373,6 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
 
     }
     
-    func controllerDidFinish(controller: UIViewController) {
-        
-    }
-
-    
-    
 //    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
 //        return true
 //    }
@@ -452,7 +445,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             Load the overlay view from the OverlayView nib file. Self is the File's Owner for the nib file, so the overlayView outlet is set to the main view in the nib. Pass that view to the image picker controller to use as its overlay view, and set self's reference to the view to nil.
             */
             NSBundle.mainBundle().loadNibNamed("CameraOverlayView", owner: self, options: nil)
-            self.overlayView.frame = imagePickerController.cameraOverlayView.frame
+            self.overlayView.frame = imagePickerController.cameraOverlayView!.frame
             imagePickerController.cameraOverlayView = self.overlayView
         }
     

@@ -34,8 +34,6 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         // Dispose of any resources that can be recreated.
     }
     
-   
-    
     func loadList() {
         
         let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("FrameSet", inManagedObjectContext: self.context!)
@@ -108,6 +106,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
     
     @IBAction func unwindToList(unwindSegue: UIStoryboardSegue) {
         self.loadList()
+        self.tableView.reloadData()
         
         self.frameSet = nil
     }

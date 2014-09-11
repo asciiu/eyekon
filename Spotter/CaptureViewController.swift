@@ -149,7 +149,13 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
           
             alert.show()
         } else {
-            let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+            var error: NSError?
+
+            if self.frameSet == nil {
+                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
+            }
+            
+            let frameSet = self.frameSet!
             
             frameSet.frameCount = self.capturedImages.count
             frameSet.synopsis = self.descriptionField.text
@@ -173,10 +179,10 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             }
             frameSet.frames = frames
             
-            var error: NSError?
-            if( !self.context!.save(&error)) {
+            if( !frameSet.managedObjectContext.save(&error)) {
                 println("could not save FrameSet: \(error?.localizedDescription)")
             }
+            
             
             self.performSegueWithIdentifier("unwindToList", sender: self)
         }

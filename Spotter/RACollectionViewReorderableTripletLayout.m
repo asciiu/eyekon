@@ -10,8 +10,8 @@
 
 typedef NS_ENUM(NSInteger, RAScrollDirction) {
     RAScrollDirctionNone,
-    RAScrollDirctionUp,
-    RAScrollDirctionDown
+    RAScrollDirctionLeft,
+    RAScrollDirctionRight
 };
 
 
@@ -156,34 +156,56 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
     CGSize boundsSize = self.collectionView.bounds.size;
     CGFloat increment = 0;
     
-    if (self.scrollDirection == RAScrollDirctionDown) {
-        CGFloat percentage = (((CGRectGetMaxY(_cellFakeView.frame) - contentOffset.y) - (boundsSize.height - _scrollTrigerEdgeInsets.bottom - _scrollTrigePadding.bottom)) / _scrollTrigerEdgeInsets.bottom);
+    if (self.scrollDirection == RAScrollDirctionRight) {
+        
+        CGFloat percentage = (((CGRectGetMaxX(_cellFakeView.frame) - contentOffset.x) - (boundsSize.width - _scrollTrigerEdgeInsets.right - _scrollTrigePadding.right)) / _scrollTrigerEdgeInsets.right);
         increment = 10 * percentage;
-        if (increment >= 10.f) {
-            increment = 10.f;
+        
+        
+//        if (increment >= 10.f) {
+//            increment = 10.f;
+//        }
+        
+        if (contentOffset.x + increment >= contentSize.width - boundsSize.width - contentInset.right) {
+            
+            [UIView animateWithDuration:.07f delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                CGFloat diff = contentSize.width - boundsSize.width - contentInset.right - contentOffset.x;
+                self.collectionView.contentOffset = CGPointMake(contentSize.width - boundsSize.width - contentInset.right, contentOffset.y);
+                _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x+diff, _cellFakeViewCenter.y);
+                _cellFakeView.center = CGPointMake(_cellFakeViewCenter.x + _panTranslation.x, _cellFakeViewCenter.y + _panTranslation.y);
+            } completion:nil];
+            
+            [self invalidateDisplayLink];
+            return;
+            
         }
-    }else if (self.scrollDirection == RAScrollDirctionUp) {
-        CGFloat percentage = (1.f - ((CGRectGetMinY(_cellFakeView.frame) - contentOffset.y - _scrollTrigePadding.top) / _scrollTrigerEdgeInsets.top));
+    } else if (self.scrollDirection == RAScrollDirctionLeft) {
+        CGFloat percentage = (1.f - ((CGRectGetMinX(_cellFakeView.frame) - contentOffset.x - _scrollTrigePadding.left) / _scrollTrigerEdgeInsets.left));
         increment = -10.f * percentage;
-        if (increment <= -10.f) {
-            increment = -10.f;
-        }
+//        assert(increment <= 10.f);
+//
+//        if (increment <= -10.f) {
+//            increment = -10.f;
+//        }
     }
     
-    if (contentOffset.y + increment <= -contentInset.top) {
+    if(increment <= -10.f) increment = -10.f;
+    if(increment >= 10.f) increment = 10.f;
+    
+    if (contentOffset.x + increment <= -contentInset.left) {
         [UIView animateWithDuration:.07f delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            CGFloat diff = -contentInset.top - contentOffset.y;
-            self.collectionView.contentOffset = CGPointMake(contentOffset.x, -contentInset.top);
-            _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x, _cellFakeViewCenter.y + diff);
+            CGFloat diff = -contentInset.left - contentOffset.x;
+            self.collectionView.contentOffset = CGPointMake(-contentInset.left, contentOffset.y);
+            _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x + diff, _cellFakeViewCenter.y);
             _cellFakeView.center = CGPointMake(_cellFakeViewCenter.x + _panTranslation.x, _cellFakeViewCenter.y + _panTranslation.y);
         } completion:nil];
         [self invalidateDisplayLink];
         return;
-    }else if (contentOffset.y + increment >= contentSize.height - boundsSize.height - contentInset.bottom) {
+    } else if (contentOffset.x + increment >= contentSize.width - boundsSize.width - contentInset.right) {
         [UIView animateWithDuration:.07f delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            CGFloat diff = contentSize.height - boundsSize.height - contentInset.bottom - contentOffset.y;
-            self.collectionView.contentOffset = CGPointMake(contentOffset.x, contentSize.height - boundsSize.height - contentInset.bottom);
-            _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x, _cellFakeViewCenter.y + diff);
+            CGFloat diff = contentSize.width - boundsSize.width - contentInset.right - contentOffset.x;
+            self.collectionView.contentOffset = CGPointMake(contentSize.width - boundsSize.width - contentInset.right, contentOffset.y);
+            _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x+diff, _cellFakeViewCenter.y);
             _cellFakeView.center = CGPointMake(_cellFakeViewCenter.x + _panTranslation.x, _cellFakeViewCenter.y + _panTranslation.y);
         } completion:nil];
         [self invalidateDisplayLink];
@@ -191,11 +213,12 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
     }
     
     [self.collectionView performBatchUpdates:^{
-        _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x, _cellFakeViewCenter.y + increment);
+        _cellFakeViewCenter = CGPointMake(_cellFakeViewCenter.x + increment, _cellFakeViewCenter.y);
         _cellFakeView.center = CGPointMake(_cellFakeViewCenter.x + _panTranslation.x, _cellFakeViewCenter.y + _panTranslation.y);
-        self.collectionView.contentOffset = CGPointMake(contentOffset.x, contentOffset.y + increment);
+        self.collectionView.contentOffset = CGPointMake(contentOffset.x + increment, contentOffset.y);
     } completion:nil];
     [self moveItemIfNeeded];
+    
 }
 
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)longPress
@@ -306,15 +329,16 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
             _cellFakeView.center = CGPointMake(_cellFakeViewCenter.x + _panTranslation.x, _cellFakeViewCenter.y + _panTranslation.y);
             //move layout
             [self moveItemIfNeeded];
+            
             //scroll
-            if (CGRectGetMaxY(_cellFakeView.frame) >= self.collectionView.contentOffset.y + (self.collectionView.bounds.size.height - _scrollTrigerEdgeInsets.bottom -_scrollTrigePadding.bottom)) {
-                if (ceilf(self.collectionView.contentOffset.y) < self.collectionView.contentSize.height - self.collectionView.bounds.size.height) {
-                    self.scrollDirection = RAScrollDirctionDown;
+            if (CGRectGetMaxX(_cellFakeView.frame) >= self.collectionView.contentOffset.x + (self.collectionView.bounds.size.width - _scrollTrigerEdgeInsets.right -_scrollTrigePadding.right)) {
+                if (ceilf(self.collectionView.contentOffset.x) < self.collectionView.contentSize.width - self.collectionView.bounds.size.width) {
+                    self.scrollDirection = RAScrollDirctionRight;
                     [self setUpDisplayLink];
                 }
-            }else if (CGRectGetMinY(_cellFakeView.frame) <= self.collectionView.contentOffset.y + _scrollTrigerEdgeInsets.top + _scrollTrigePadding.top) {
-                if (self.collectionView.contentOffset.y > -self.collectionView.contentInset.top) {
-                    self.scrollDirection = RAScrollDirctionUp;
+            }else if (CGRectGetMinX(_cellFakeView.frame) <= self.collectionView.contentOffset.x + _scrollTrigerEdgeInsets.left + _scrollTrigePadding.left) {
+                if (self.collectionView.contentOffset.x > -self.collectionView.contentInset.left) {
+                    self.scrollDirection = RAScrollDirctionLeft;
                     [self setUpDisplayLink];
                 }
             }else {

@@ -300,6 +300,7 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func insetsForCollectionView(collectionView: UICollectionView!) -> UIEdgeInsets {
         return UIEdgeInsetsMake(5.0, 0, 5.0, 0)
+        //return UIEdgeInsetsMake(0, 5.0, 0, 5.0)
     }
     
     func collectionView(collectionView: UICollectionView!, sizeForLargeItemsInSection section: Int) -> CGSize {
@@ -310,11 +311,14 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func autoScrollTrigerEdgeInsets(collectionView: UICollectionView!) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(50.0, 0, 50.0, 0)
+        //return UIEdgeInsetsMake(50.0, 0, 50.0, 0)
+        return UIEdgeInsetsMake(0, 25.0, 0, 25.0)
     }
     
     func autoScrollTrigerPadding(collectionView: UICollectionView!) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(64.0, 0, 0, 0)
+        //return UIEdgeInsetsMake(64.0, 0, 0, 0)
+        return UIEdgeInsetsMake(0, 64.0, 0, 0.0)
+
     }
     
     func reorderingItemAlpha(collectionview: UICollectionView!) -> CGFloat {

@@ -53,6 +53,8 @@
     if ([self.delegate respondsToSelector:@selector(insetsForCollectionView:)]) {
         _insets = [self.delegate insetsForCollectionView:self.collectionView];
     }
+    
+    [self setScrollDirection:UICollectionViewScrollDirectionHorizontal];
 }
 
 
@@ -120,17 +122,21 @@
     // multiply the number of images * height + spacing
     
     //CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 2.f;
-    CGSize contentSize = CGSizeMake(_collectionViewSize.width, 0);
+    //CGSize contentSize = CGSizeMake(_collectionViewSize.width, 0);
+    
+    CGSize contentSize = CGSizeMake(0, _collectionViewSize.height);
+    
     for (NSInteger i = 0; i < self.collectionView.numberOfSections; i++) {
         //NSInteger numberOfLines = ceil((CGFloat)[self.collectionView numberOfItemsInSection:i] / 3.f);
-        NSInteger numberOfLines = [self.collectionView numberOfItemsInSection:i];
+        
+        NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:i];
 
         //CGFloat lineHeight = numberOfLines * ([_largeCellSizeArray[i] CGSizeValue].height + _lineSpacing) - _lineSpacing;
         
-        CGFloat totalSpacing = _lineSpacing * numberOfLines;
-        CGFloat lineHeight = _largeCellSize.height * numberOfLines + totalSpacing + _insets.top;
+        CGFloat totalSpacing = _lineSpacing * numberOfItems;
+        CGFloat lineHeight = contentSize.height * numberOfItems + totalSpacing + _insets.top;
         
-        contentSize.height += lineHeight;
+        contentSize.width += lineHeight;
     }
     /*
     contentSize.height += _insets.top + _insets.bottom + _sectionSpacing * (self.collectionView.numberOfSections - 1);
@@ -177,10 +183,19 @@
     UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
 
     //cellSize
-    CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 2.f;
-    CGFloat smallCellSideLength = (largeCellSideLength - _itemSpacing) / 2.f;
-    _largeCellSize = CGSizeMake(largeCellSideLength, largeCellSideLength);
-    _smallCellSize = CGSizeMake(smallCellSideLength, smallCellSideLength);
+    
+    //CGFloat largeCellSideLength = (2.f * (_collectionViewSize.width - _insets.left - _insets.right) - _itemSpacing) / 2.f;
+    
+    // cell size when not shrunken
+    CGFloat largeCellSideHeight = (2.f * (_collectionViewSize.height - _insets.left - _insets.right) - _itemSpacing) / 2.f;
+    
+    // cell size when shrunken
+    CGFloat smallCellSideHeight = (largeCellSideHeight - _itemSpacing) / 2.f;
+    
+    // establish the cell size so we can shrink it later from a gesture
+    _largeCellSize = CGSizeMake(largeCellSideHeight, largeCellSideHeight);
+    _smallCellSize = CGSizeMake(smallCellSideHeight, smallCellSideHeight);
+    
     if ([self.delegate respondsToSelector:@selector(collectionView:sizeForLargeItemsInSection:)]) {
         if (!CGSizeEqualToSize([self.delegate collectionView:self.collectionView sizeForLargeItemsInSection:indexPath.section], RACollectionViewTripletLayoutStyleSquare)) {
             _largeCellSize = [self.delegate collectionView:self.collectionView sizeForLargeItemsInSection:indexPath.section];
@@ -215,12 +230,14 @@
     NSInteger line = indexPath.item;
     CGFloat lineSpaceForIndexPath = _lineSpacing * line;
     //CGFloat lineOriginY = _largeCellSize.height * line + sectionHeight + lineSpaceForIndexPath + _insets.top;
-    CGFloat lineOriginY = _largeCellSize.height * line + lineSpaceForIndexPath + _insets.top;
+    CGFloat lineOriginY = _collectionViewSize.height * line + lineSpaceForIndexPath + _insets.top;
     //CGFloat rightSideLargeCellOriginX = _collectionViewSize.width - _largeCellSize.width - _insets.right;
     //CGFloat rightSideSmallCellOriginX = _collectionViewSize.width - _smallCellSize.width - _insets.right;
     
-    attribute.frame = CGRectMake(_insets.left, lineOriginY, _collectionViewSize.width, _largeCellSize.height);
+    //attribute.frame = CGRectMake(_insets.left, lineOriginY, _collectionViewSize.width, _largeCellSize.height);
 
+    attribute.frame = CGRectMake(lineOriginY, 0, _collectionViewSize.height, _largeCellSize.height);
+    
     /*
     if (indexPath.item % 6 == 0) {
         attribute.frame = CGRectMake(_insets.left, lineOriginY, _largeCellSize.width, _largeCellSize.height);

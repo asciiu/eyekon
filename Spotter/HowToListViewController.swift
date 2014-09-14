@@ -27,7 +27,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         self.context = appDelegate.managedObjectContext
         self.loadList()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
@@ -50,7 +50,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
             println("Empty List")
         }
     }
-    
+
     // MARK: - UITableViewDelegate
     
     func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {

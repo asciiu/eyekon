@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 
-class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
+class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var descriptionField: UITextField!
@@ -57,6 +57,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
+        
         self.setupPhotosArray()
         
         // needed so we can save via managed context
@@ -68,7 +69,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         if self.frameSet != nil {
             self.capturedImages.removeAll(keepCapacity: false)
             
-            self.descriptionField.text = self.frameSet!.synopsis
+            //self.descriptionField.text = self.frameSet!.synopsis
             
             let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
             
@@ -76,14 +77,16 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
             
             let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
             
-            for frame in sortedFrames {
-                let frameData = frame as Frame
+            for (var i = 0; i < sortedFrames.count; ++i) {
+                let frame: Frame = sortedFrames[i] as Frame
                 
-                let photo: UIImage = UIImage(data: frameData.imageData)
+                let photo: UIImage = UIImage(data: frame.imageData)
                 self.capturedImages.append(photo)
             }
+            
         }
         self.collectionView.reloadData()
+        //self.showImagePickerForSourceType(UIImagePickerControllerSourceType.Camera)
     }
 //    override func viewDidAppear(animated: Bool) {
 //        
@@ -188,13 +191,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-       
-        // if the save button was not pressed return
-        if(sender !== self.saveBtn) {
-            return
-        }
-    }
+
     
     // storyboard actions
 //    @IBAction func saveReel(sender: AnyObject) {
@@ -376,7 +373,7 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
         self.presentViewController(annotateViewController, animated: true, completion: nil)
         
         self.annotateViewController!.imageView.image = self.capturedImages[indexPath.item]
-
+        self.annotateViewController!.frameNum = indexPath.item
     }
     
 //    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
@@ -457,8 +454,29 @@ class CaptureViewController: UIViewController ,UIImagePickerControllerDelegate, 
     
         self.imagePickerController = imagePickerController
         self.presentViewController(self.imagePickerController!, animated: true, completion: nil)
+        //self.overlayCollectionView.delegate = self
+        //self.overlayCollectionView.dataSource = self
     }
     
+    // MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        
+        let destinationController: PreviewViewController? = segue.destinationViewController as? PreviewViewController
+        
+        if destinationController != nil {
+            destinationController!.segments = self.capturedImages
+            //destinationController!.imageView.image = self.capturedImages[0]
+        }
+        
+        // if the save button was not pressed return
+        //if(sender !== self.saveBtn) {
+        //    return
+        //}
+    }
+    
+    @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {
+        
+    }
 //    func navigationController(navigationController: UINavigationController!, willShowViewController viewController: UIViewController!, animated: Bool) {
 //        
 //        UIApplication.sharedApplication().statusBarHidden = true

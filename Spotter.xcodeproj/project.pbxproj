@@ -42,6 +42,9 @@
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
 		6EC03DD419AC270B006CB2E2 /* CameraOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */; };
+		6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* PreviewViewController.swift */; };
+		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
+		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +100,9 @@
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
 		6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CameraOverlayView.xib; sourceTree = "<group>"; };
+		6EE0135019C2185A00152F7E /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
+		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +141,8 @@
 				6E3A3B0E19AEE3B40023499C /* HowToListViewController.swift */,
 				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
 				6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */,
+				6EE0135019C2185A00152F7E /* PreviewViewController.swift */,
+				6EE0135219C27CF900152F7E /* PublishViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -145,6 +153,7 @@
 				6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */,
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
 				6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */,
+				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -370,12 +379,15 @@
 				6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* HowToListViewController.swift in Sources */,
 				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
+				6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */,
 				6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */,
 				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
+				6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,
+				6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

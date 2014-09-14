@@ -123,7 +123,10 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
         _panGesture.delegate = self;
         for (UIGestureRecognizer *gestureRecognizer in self.collectionView.gestureRecognizers) {
             if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
-                [gestureRecognizer requireGestureRecognizerToFail:_longPressGesture]; }}
+                [gestureRecognizer requireGestureRecognizerToFail:_longPressGesture];
+            }
+        }
+        
         [self.collectionView addGestureRecognizer:_longPressGesture];
         [self.collectionView addGestureRecognizer:_panGesture];
         _setUped = YES;

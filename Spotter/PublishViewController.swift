@@ -1,22 +1,15 @@
 //
-//  AnnotateViewController.swift
+//  PublishViewController.swift
 //  Spotter
 //
-//  Created by LV426 on 9/2/14.
+//  Created by LV426 on 9/11/14.
 //  Copyright (c) 2014 Bleu Bee LLC. All rights reserved.
 //
 
 import UIKit
 
-class AnnotateViewController: UIViewController {
+class PublishViewController: UIViewController {
 
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var previousBtn: UIButton!
-    @IBOutlet var nextBtn: UIButton!
-    @IBOutlet var textView: UITextView!
-
-    var frameNum: Int?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,17 +21,7 @@ class AnnotateViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func done(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-        //self.delegate?.controllerDidFinish(self)
-    }
-    
-    @IBAction func nextImage(sender: AnyObject) {
-    }
-    
-    @IBAction func previousImage(sender: AnyObject) {
-    }
-    
+
     /*
     // MARK: - Navigation
 

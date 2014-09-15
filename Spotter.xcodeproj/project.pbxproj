@@ -45,6 +45,8 @@
 		6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* PreviewViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
+		6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135619C6407700152F7E /* CaptureSessionManager.swift */; };
+		6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE0135819C64BD000152F7E /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +105,8 @@
 		6EE0135019C2185A00152F7E /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
+		6EE0135619C6407700152F7E /* CaptureSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureSessionManager.swift; sourceTree = "<group>"; };
+		6EE0135819C64BD000152F7E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +148,7 @@
 				6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */,
 				6EE0135019C2185A00152F7E /* PreviewViewController.swift */,
 				6EE0135219C27CF900152F7E /* PublishViewController.swift */,
+				6EE0135619C6407700152F7E /* CaptureSessionManager.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -198,6 +204,7 @@
 		6EC03D7519A66669006CB2E2 = {
 			isa = PBXGroup;
 			children = (
+				6EE0135A19C64BE300152F7E /* Frameworks */,
 				6EC03D8019A66669006CB2E2 /* Spotter */,
 				6EC03D9619A6666A006CB2E2 /* SpotterTests */,
 				6EC03D7F19A66669006CB2E2 /* Products */,
@@ -252,6 +259,14 @@
 				6EC03D9819A6666A006CB2E2 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6EE0135A19C64BE300152F7E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6EE0135819C64BD000152F7E /* AVFoundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -388,6 +403,7 @@
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,
 				6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */,
+				6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

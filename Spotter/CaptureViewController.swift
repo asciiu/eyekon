@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import AVFoundation
 
 
 class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
@@ -16,6 +17,7 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet var descriptionField: UITextField!
     @IBOutlet var cancelBtn: UIBarButtonItem!
     @IBOutlet var saveBtn: UIBarButtonItem!
+    @IBOutlet var cameraView: UIView!
     
     // refer to CameraOverlayView.xib for these
     @IBOutlet var overlayView: UIView!
@@ -23,8 +25,11 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet var textView: UITextView!
     @IBOutlet var overlayCollectionView: UICollectionView!
     
+    var captureManager: CaptureSessionManager?
     var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
+    
+    var stillImageCapture: AVCaptureStillImageOutput?
     
     var annotateViewController: AnnotateViewController?
     var context: NSManagedObjectContext?
@@ -63,6 +68,31 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         // needed so we can save via managed context
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
         self.context = appDelegate.managedObjectContext
+        
+        
+        // setup the camera 
+        self.captureManager = CaptureSessionManager()
+        self.captureManager!.addVideoInput()
+        self.captureManager!.addVideoPreviewLayer()
+        self.captureManager!.addStillImageOutput()
+        
+        let cameraLayer = self.cameraView.layer
+        cameraLayer.masksToBounds = true
+        
+        let frame = self.cameraView.frame
+        let rect = self.cameraView.layer.bounds
+        
+        //self.captureManager!.previewLayer!.bounds = rect
+        //self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect),
+        //    CGRectGetMidY(rect))
+        self.captureManager!.previewLayer!.frame = frame
+        self.cameraView.layer.addSublayer(self.captureManager!.previewLayer!)
+        
+        self.captureManager!.captureSession!.startRunning()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveImageToRoll", name: kImageCapturedSuccessfully, object: nil)
+        
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImageToPhotoAlbum) name:kImageCapturedSuccessfully object:nil];
+
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -86,6 +116,13 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
             
         }
         self.collectionView.reloadData()
+        
+//        self.stillImageCapture = AVCaptureStillImageOutput()
+//        let outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+//        self.stillImageCapture?.outputSettings = outputSettings
+//        self.captureManager!.captureSession!.startRunning()
+        
+        
         //self.showImagePickerForSourceType(UIImagePickerControllerSourceType.Camera)
     }
 //    override func viewDidAppear(animated: Bool) {
@@ -135,9 +172,18 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Dispose of any resources that can be recreated.
     }
     
+    func saveImageToRoll() {
+        let image = self.captureManager?.stillImage
+        self.capturedImages.append(image!)
+        self.collectionView.reloadData()
+    }
+    
     // camera overlay actions
-    @IBAction func takePhoto(sender: AnyObject){
-        self.imagePickerController?.takePicture()
+//    @IBAction func takePhoto(sender: AnyObject){
+//        self.imagePickerController?.takePicture()
+//    }
+    @IBAction func takePhoto(sender: AnyObject) {
+        self.captureManager?.captureStillImage()
     }
     
     @IBAction func done(sender: AnyObject) {
@@ -284,7 +330,6 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
         return 1
     }
-    
     
     func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
         return 5.0

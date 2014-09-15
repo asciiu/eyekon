@@ -11,41 +11,22 @@ import CoreData
 import AVFoundation
 
 
-class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
+class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
-    @IBOutlet var descriptionField: UITextField!
+    //@IBOutlet var descriptionField: UITextField!
     @IBOutlet var cancelBtn: UIBarButtonItem!
     @IBOutlet var saveBtn: UIBarButtonItem!
     @IBOutlet var cameraView: UIView!
     
-    // refer to CameraOverlayView.xib for these
-    @IBOutlet var overlayView: UIView!
-    @IBOutlet var previewView: UIImageView!
-    @IBOutlet var textView: UITextView!
-    @IBOutlet var overlayCollectionView: UICollectionView!
-    
     var captureManager: CaptureSessionManager?
-    var imagePickerController: UIImagePickerController?
+    //var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
-    
-    var stillImageCapture: AVCaptureStillImageOutput?
     
     var annotateViewController: AnnotateViewController?
     var context: NSManagedObjectContext?
     
     var frameSet: FrameSet?
-    
-    func setupPhotosArray()
-    {
-        self.capturedImages.removeAll(keepCapacity: false)
-        
-        for(var i = 1; i <= 4; ++i) {
-            let photoName: String = "\(i).jpg"
-            let photo: UIImage = UIImage(named: photoName)
-            self.capturedImages.append(photo)
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +50,6 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
         self.context = appDelegate.managedObjectContext
         
-        
         // setup the camera 
         self.captureManager = CaptureSessionManager()
         self.captureManager!.addVideoInput()
@@ -79,20 +59,14 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         let cameraLayer = self.cameraView.layer
         cameraLayer.masksToBounds = true
         
-        let frame = self.cameraView.frame
+        // position the custom camera onto the cameraView layer
         let rect = self.cameraView.layer.bounds
-        
-        //self.captureManager!.previewLayer!.bounds = rect
-        //self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect),
-        //    CGRectGetMidY(rect))
-        self.captureManager!.previewLayer!.frame = frame
+        self.captureManager!.previewLayer!.bounds = rect
+        self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
         self.cameraView.layer.addSublayer(self.captureManager!.previewLayer!)
         
         self.captureManager!.captureSession!.startRunning()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveImageToRoll", name: kImageCapturedSuccessfully, object: nil)
-        
-        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImageToPhotoAlbum) name:kImageCapturedSuccessfully object:nil];
-
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -113,17 +87,8 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
                 let photo: UIImage = UIImage(data: frame.imageData)
                 self.capturedImages.append(photo)
             }
-            
         }
         self.collectionView.reloadData()
-        
-//        self.stillImageCapture = AVCaptureStillImageOutput()
-//        let outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
-//        self.stillImageCapture?.outputSettings = outputSettings
-//        self.captureManager!.captureSession!.startRunning()
-        
-        
-        //self.showImagePickerForSourceType(UIImagePickerControllerSourceType.Camera)
     }
 //    override func viewDidAppear(animated: Bool) {
 //        
@@ -148,10 +113,26 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
 //        self.collectionView.reloadData()
 //    }
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func setupPhotosArray()
+    {
+        self.capturedImages.removeAll(keepCapacity: false)
+        
+        for(var i = 1; i <= 4; ++i) {
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
+        }
+    }
+    
     func setFrames(frameSet: FrameSet) {
         self.capturedImages.removeAll(keepCapacity: false)
         
-        self.descriptionField.text = frameSet.synopsis
+        //self.descriptionField.text = frameSet.synopsis
         
         let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
         
@@ -167,133 +148,79 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+    // invoked when the camera capture has completed
     func saveImageToRoll() {
         let image = self.captureManager?.stillImage
         self.capturedImages.append(image!)
         self.collectionView.reloadData()
+        
+        let index: NSIndexPath = NSIndexPath(forRow: self.capturedImages.count-1, inSection: 0)
+        
+
+        self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
     }
     
-    // camera overlay actions
-//    @IBAction func takePhoto(sender: AnyObject){
-//        self.imagePickerController?.takePicture()
-//    }
+    // MARK: - Actions
+    
     @IBAction func takePhoto(sender: AnyObject) {
         self.captureManager?.captureStillImage()
     }
     
-    @IBAction func done(sender: AnyObject) {
-        self.imagePickerController?.dismissViewControllerAnimated(true, completion: nil)
-        self.collectionView.reloadData()
-    }
-    
-    @IBAction func save(sender: AnyObject) {
-        
-        if(self.descriptionField.text == "") {
-            let alert: UIAlertView = UIAlertView(title: "Missing information!", message: "Please enter a description", delegate: nil, cancelButtonTitle: "OK")
-          
-            alert.show()
-        } else {
-            var error: NSError?
-
-            if self.frameSet == nil {
-                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
-            }
-            
-            let frameSet = self.frameSet!
-            
-            frameSet.frameCount = self.capturedImages.count
-            frameSet.synopsis = self.descriptionField.text
-            
-            let frames: NSMutableSet = NSMutableSet()
-            
-            // a frameSet has frames
-            for var i = 0; i < self.capturedImages.count; ++i {
-                
-                let image = self.capturedImages[i]
-                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
-                
-                frame.frameSet = frameSet
-                
-                // convert image to NSData
-                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-                frame.frameNumber = i
-                
-                // add frame to frameSet
-                frames.addObject(frame)
-            }
-            frameSet.frames = frames
-            
-            if( !frameSet.managedObjectContext.save(&error)) {
-                println("could not save FrameSet: \(error?.localizedDescription)")
-            }
-            
-            
-            self.performSegueWithIdentifier("unwindToList", sender: self)
-        }
-    }
-    
-
-    
-    // storyboard actions
-//    @IBAction func saveReel(sender: AnyObject) {
-//        // need to save with a synopsis first
+//    @IBAction func save(sender: AnyObject) {
 //        
-//        
-//        let frameSet: FrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
-//        
-//        frameSet.frameCount = self.capturedImages.count
-//        frameSet.synopsis = self.descriptionField.text
-//        
-//        let frames: NSMutableSet = NSMutableSet()
-//        
-//        // a frameSet has frames
-//        for var i = 0; i < self.capturedImages.count; ++i {
+////        if(self.descriptionField.text == "") {
+////            let alert: UIAlertView = UIAlertView(title: "Missing information!", message: "Please enter a description", delegate: nil, cancelButtonTitle: "OK")
+////          
+////            alert.show()
+////        } else {
+//            var error: NSError?
+//
+//            if self.frameSet == nil {
+//                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
+//            }
 //            
-//            let image = self.capturedImages[i]
-//            let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context) as Frame
+//            let frameSet = self.frameSet!
 //            
-//            frame.frameSet = frameSet
+//            frameSet.frameCount = self.capturedImages.count
+//            frameSet.synopsis = self.descriptionField.text
 //            
-//            // convert image to NSData
-//            frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-//            frame.frameNumber = i
+//            let frames: NSMutableSet = NSMutableSet()
 //            
-//            // add frame to frameSet
-//            frames.addObject(frame)
-//        }
-//        frameSet.frames = frames
+//            // a frameSet has frames
+//            for var i = 0; i < self.capturedImages.count; ++i {
+//                
+//                let image = self.capturedImages[i]
+//                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+//                
+//                frame.frameSet = frameSet
+//                
+//                // convert image to NSData
+//                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+//                frame.frameNumber = i
+//                
+//                // add frame to frameSet
+//                frames.addObject(frame)
+//            }
+//            frameSet.frames = frames
+//            
+//            if( !frameSet.managedObjectContext.save(&error)) {
+//                println("could not save FrameSet: \(error?.localizedDescription)")
+//            }
+//            
+//            
+//            self.performSegueWithIdentifier("unwindToList", sender: self)
 //        
-//        var error: NSError?
-//        if( !self.context!.save(&error)) {
-//            println("could not save FrameSet: \(error?.localizedDescription)")
-//        }
-//        
-//        
-//        self.dismissViewControllerAnimated(true, completion: nil)
 //    }
     
-    @IBAction func showImagePickerForCamera(sender: AnyObject) {
-        self.showImagePickerForSourceType(UIImagePickerControllerSourceType.Camera)
-    }
-    
-    @IBAction func showImagePickerForPhotoPicker(sender: AnyObject) {
-        self.showImagePickerForSourceType(UIImagePickerControllerSourceType.PhotoLibrary)
-    }
-    
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        
-        if(textField == self.descriptionField) {
-            textField.resignFirstResponder()
-            // set the description here
-            
-        }
-        return false
-    }
+//    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+//        
+//        if(textField == self.descriptionField) {
+//            textField.resignFirstResponder()
+//            // set the description here
+//            
+//        }
+//        return false
+//    }
 
     // moved
 //    func textView(textView: UITextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
@@ -322,7 +249,6 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //println(self.capturedImages.count)
         return self.capturedImages.count
     }
     
@@ -386,34 +312,11 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
         
-        //if (toIndexPath.section == 0) {
-        //    return true
-        //}
-        
         return true
     }
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
-        
-        // todo pop up larger view of image
-        
-        //if (indexPath.section == 0) {
-        //    return
-        //}
-        //if (self.capturedImages.count == 1) {
-        //    return
-        //}
-        
-        /*
-        self.collectionView.performBatchUpdates({
-            self.capturedImages.removeAtIndex(indexPath.item)
-            self.collectionView.deleteItemsAtIndexPaths([indexPath])
-        
-        },completion: { Bool in
-                self.collectionView.reloadData()
-        })
-        */
         
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
@@ -425,89 +328,40 @@ class CaptureViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.annotateViewController!.frameNum = indexPath.item
     }
     
-//    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
-//        return true
+    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return true
+    }
+   
+//    func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!) {
+//        
+//        let newImage: UIImage = info[UIImagePickerControllerOriginalImage] as UIImage
+//        
+//        self.capturedImages.append(newImage)
+//        self.previewView.image = newImage
+//        
+//        //self.imageView.image = newImage
+//        
+//        //let chosenImage: UIImage = info[UIImagePickerControllerEditedImage] as UIImage
+//        //self.imageView.image = chosenImage
+//        
+//        /*
+//        let mediaType: NSString = info[UIImagePickerControllerMediaType] as NSString;
+//        
+//        if (mediaType == kUTTypeImage) {
+//            // Media is an image
+//        } else if (mediaType == kUTTypeMovie) {
+//            // Media is a video
+//        }*/
+//        
+//        //picker.dismissViewControllerAnimated(true, completion: nil)
 //    }
-//    
-    func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!) {
-        
-        let newImage: UIImage = info[UIImagePickerControllerOriginalImage] as UIImage
-        
-        self.capturedImages.append(newImage)
-        self.previewView.image = newImage
-        
-        //self.imageView.image = newImage
-        
-        //let chosenImage: UIImage = info[UIImagePickerControllerEditedImage] as UIImage
-        //self.imageView.image = chosenImage
-        
-        /*
-        let mediaType: NSString = info[UIImagePickerControllerMediaType] as NSString;
-        
-        if (mediaType == kUTTypeImage) {
-            // Media is an image
-        } else if (mediaType == kUTTypeMovie) {
-            // Media is a video
-        }*/
-        
-        //picker.dismissViewControllerAnimated(true, completion: nil)
-    }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
-        picker.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func showImagePickerForSourceType(sourceType: UIImagePickerControllerSourceType) {
-        
-        /*if (self.imageView.isAnimating()) {
-            self.imageView.stopAnimating()
-        }*/
-    
-        /*
-        if (self.capturedImages.count > 0)
-        {
-        [self.capturedImages removeAllObjects];
-        }*/
-    
-        let imagePickerController: UIImagePickerController = UIImagePickerController()
-        imagePickerController.modalPresentationStyle = UIModalPresentationStyle.CurrentContext
-        imagePickerController.sourceType = sourceType
-        imagePickerController.delegate = self
-    
-        if (sourceType == UIImagePickerControllerSourceType.Camera) {
-            // hide default controls
-            imagePickerController.showsCameraControls = false
-            imagePickerController.navigationBarHidden = true
-            imagePickerController.toolbarHidden = true
-            
-            let screenSize: CGSize = UIScreen.mainScreen().bounds.size
-            
-            // iOS is going to calculate a size which constrains the 4:3 aspect ratio
-            // to the screen size. We're basically mimicking that here to determine
-            // what size the system will likely display the image at on screen.
-            // NOTE: screenSize.width may seem odd in this calculation - but, remember,
-            // the devices only take 4:3 images when they are oriented *sideways*.
-            //let cameraAspectRatio: CGFloat = 4.0 / 3.0;
-            //let imageWidth: CGFloat = screenSize.width * cameraAspectRatio
-            //let scale: CGFloat = (screenSize.height / imageWidth) * 10.0 / 10.0
-            
-            //imagePickerController.cameraViewTransform = CGAffineTransformMakeScale(scale, scale)
-            
-            /*
-            Load the overlay view from the OverlayView nib file. Self is the File's Owner for the nib file, so the overlayView outlet is set to the main view in the nib. Pass that view to the image picker controller to use as its overlay view, and set self's reference to the view to nil.
-            */
-            NSBundle.mainBundle().loadNibNamed("CameraOverlayView", owner: self, options: nil)
-            self.overlayView.frame = imagePickerController.cameraOverlayView!.frame
-            imagePickerController.cameraOverlayView = self.overlayView
-        }
-    
-        self.imagePickerController = imagePickerController
-        self.presentViewController(self.imagePickerController!, animated: true, completion: nil)
-        //self.overlayCollectionView.delegate = self
-        //self.overlayCollectionView.dataSource = self
-    }
+//    func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
+//        picker.dismissViewControllerAnimated(true, completion: nil)
+//    }
     
     // MARK: - Navigation
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         
         let destinationController: PreviewViewController? = segue.destinationViewController as? PreviewViewController

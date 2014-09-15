@@ -100,7 +100,9 @@ class CaptureSessionManager: NSObject {
         
         self.stillImageOutput!.captureStillImageAsynchronouslyFromConnection(videoConnection!, completionHandler: { (imageDataSampleBuffer: CMSampleBuffer!, error: NSError!) -> Void in
             
-            if imageDataSampleBuffer != nil {
+            if error != nil {
+                println("Capture still image failed \(error.localizedDescription)")
+            } else if imageDataSampleBuffer != nil {
                 let imageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
                 self.stillImage = UIImage(data: imageData)
                 NSNotificationCenter.defaultCenter().postNotificationName(kImageCapturedSuccessfully, object: nil)

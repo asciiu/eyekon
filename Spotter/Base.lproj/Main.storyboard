@@ -125,21 +125,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="VFn-2y-N5i">
-                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <items>
-                                    <barButtonItem systemItem="camera" id="VQF-kB-JdS">
-                                        <connections>
-                                            <action selector="showImagePickerForCamera:" destination="tH4-5w-EKm" id="wRK-Bh-3ia"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem width="234" style="plain" systemItem="fixedSpace" id="G1f-0h-y3K"/>
-                                    <barButtonItem systemItem="trash" id="FMZ-jA-IzT"/>
-                                </items>
-                            </toolbar>
+                            <view contentMode="scaleToFill" id="P1Y-BW-yG7">
+                                <rect key="frame" x="0.0" y="65" width="320" height="367"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6zX-21-LcO">
+                                <rect key="frame" x="133" y="502" width="55" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Capture">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="takePhoto:" destination="tH4-5w-EKm" eventType="touchUpInside" id="1Je-6o-d19"/>
+                                </connections>
+                            </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="WlQ-oV-DvZ">
-                                <rect key="frame" x="16" y="383" width="288" height="60"/>
+                                <rect key="frame" x="0.0" y="434" width="320" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewLayout key="collectionViewLayout" id="iK9-Wb-55s" customClass="RACollectionViewReorderableTripletLayout"/>
@@ -154,21 +156,6 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <view contentMode="scaleToFill" id="P1Y-BW-yG7">
-                                <rect key="frame" x="0.0" y="65" width="320" height="317"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6zX-21-LcO">
-                                <rect key="frame" x="133" y="466" width="55" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Capture">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="takePhoto:" destination="tH4-5w-EKm" eventType="touchUpInside" id="1Je-6o-d19"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -180,7 +167,6 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Preview" id="R2A-gU-lFb">
                             <connections>
-                                <action selector="save:" destination="tH4-5w-EKm" id="IY9-3J-c7u"/>
                                 <segue destination="uya-p5-87Y" kind="push" id="lRc-EE-9Kb"/>
                             </connections>
                         </barButtonItem>

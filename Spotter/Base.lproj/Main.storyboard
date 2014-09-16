@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
-        <!--Your List-->
+        <!--Collection-->
         <scene sceneID="cSa-05-lOE">
             <objects>
                 <viewController id="QHJ-c1-pPb" customClass="HowToListViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
@@ -32,7 +32,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Your List" id="vSA-Oa-JTh">
+                    <navigationItem key="navigationItem" title="Collection" id="vSA-Oa-JTh">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
                             <connections>
                                 <segue destination="tH4-5w-EKm" kind="push" identifier="CaptureSegue" id="4xg-G6-Ixf"/>
@@ -212,10 +212,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="VAJ-cc-y9H">
-                                <rect key="frame" x="0.0" y="64" width="320" height="410"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" sectionIndexMinimumDisplayRowCount="-2" rowHeight="20" sectionHeaderHeight="22" sectionFooterHeight="22" id="hLZ-Tf-uIN">
+                                <rect key="frame" x="-16" y="10" width="336" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" rowHeight="20" id="RNV-sa-jZ1">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RNV-sa-jZ1" id="3Hd-M8-HVZ">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                                <connections>
+                                    <outlet property="dataSource" destination="uya-p5-87Y" id="IZ3-iH-C78"/>
+                                    <outlet property="delegate" destination="uya-p5-87Y" id="gw6-LQ-SUo"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -232,7 +246,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="imageView" destination="VAJ-cc-y9H" id="nDs-R6-lIZ"/>
+                        <outlet property="tableView" destination="hLZ-Tf-uIN" id="qbo-GJ-oIF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>

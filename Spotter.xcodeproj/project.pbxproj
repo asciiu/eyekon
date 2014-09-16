@@ -47,6 +47,8 @@
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
 		6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135619C6407700152F7E /* CaptureSessionManager.swift */; };
 		6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE0135819C64BD000152F7E /* AVFoundation.framework */; };
+		6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */; };
+		6EE0136219C82D3600152F7E /* SimpleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6EE0136019C82D3600152F7E /* SimpleTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,8 @@
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
 		6EE0135619C6407700152F7E /* CaptureSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureSessionManager.swift; sourceTree = "<group>"; };
 		6EE0135819C64BD000152F7E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
+		6EE0136019C82D3600152F7E /* SimpleTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +164,8 @@
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
 				6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */,
 				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
+				6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */,
+				6EE0136019C82D3600152F7E /* SimpleTableViewCell.xib */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -365,6 +371,7 @@
 				6E1CE30419B525A00085FF19 /* 18.jpg in Resources */,
 				6E1CE2FE19B525A00085FF19 /* 12.jpg in Resources */,
 				6E1CE2F819B525A00085FF19 /* 6.jpg in Resources */,
+				6EE0136219C82D3600152F7E /* SimpleTableViewCell.xib in Resources */,
 				6E1CE2FC19B525A00085FF19 /* 10.jpg in Resources */,
 				6E1CE30319B525A00085FF19 /* 17.jpg in Resources */,
 				6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */,
@@ -393,6 +400,7 @@
 				6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */,
 				6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* HowToListViewController.swift in Sources */,
+				6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */,
 				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
 				6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */,
 				6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */,

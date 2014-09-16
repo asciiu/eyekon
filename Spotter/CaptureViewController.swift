@@ -395,12 +395,12 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         
-        let destinationController: PreviewViewController? = segue.destinationViewController as? PreviewViewController
-        
-        if destinationController != nil {
-            destinationController!.segments = self.capturedImages
-            //destinationController!.imageView.image = self.capturedImages[0]
-        }
+//        let destinationController: PreviewViewController? = segue.destinationViewController as? PreviewViewController
+//        
+//        if destinationController != nil {
+//            destinationController!.segments = self.capturedImages
+//            //destinationController!.imageView.image = self.capturedImages[0]
+//        }
         
         // if the save button was not pressed return
         //if(sender !== self.saveBtn) {

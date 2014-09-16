@@ -61,7 +61,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         self.frameSet = self.frameSets[indexPath.row]
         SharedDataFrameSet.dataFrameSet = self.frameSet
         
-        self.performSegueWithIdentifier("CaptureSegue", sender: self)
+        //self.performSegueWithIdentifier("CaptureSegue", sender: self)
     }
     
     // MARK: - UITableViewDataSource
@@ -70,7 +70,11 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("ListPrototypeCell", forIndexPath: indexPath) as UITableViewCell
         
         let frameSet: FrameSet = self.frameSets[indexPath.row]
-        cell.textLabel?.text = frameSet.title
+        
+        if (cell.textLabel != nil) {
+            cell.textLabel!.text = frameSet.title
+        }
+        
         return cell
     }
     
@@ -96,7 +100,13 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        let captureViewController: CaptureViewController = segue.destinationViewController as CaptureViewController
+        //let viewController: PreviewViewController? = segue.destinationViewController as? PreviewViewController
+        
+        //if (viewController != nil) {
+        //    viewController!.upperRightButton. = false
+        //}
+        
+        //let captureViewController: CaptureViewController = segue.destinationViewController as CaptureViewController
         
         //if self.frameSet != nil {
             //captureViewController.frameSet = self.frameSet

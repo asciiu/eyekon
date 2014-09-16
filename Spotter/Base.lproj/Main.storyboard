@@ -17,11 +17,14 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ListPrototypeCell" id="StX-SX-OOa">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ListPrototypeCell" id="StX-SX-OOa">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="StX-SX-OOa" id="TLt-fg-3CU">
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="uya-p5-87Y" kind="push" id="vWw-TK-alT"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -257,7 +260,7 @@
                     <navigationItem key="navigationItem" title="Preview" id="QrM-5l-46K">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="aCd-ev-e6q">
                             <connections>
-                                <segue destination="bnI-rk-rUW" kind="unwind" unwindAction="unwindToCapture:" id="3eP-BE-OHR"/>
+                                <action selector="returnToPrevious:" destination="uya-p5-87Y" id="uUW-2j-pQZ"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Publish" id="D4p-fQ-QS0">
@@ -268,10 +271,11 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="hLZ-Tf-uIN" id="qbo-GJ-oIF"/>
+                        <outlet property="upperLeftButton" destination="aCd-ev-e6q" id="IpQ-00-HeA"/>
+                        <outlet property="upperRightButton" destination="D4p-fQ-QS0" id="Chd-AF-9OF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="bnI-rk-rUW" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-176" y="149"/>
         </scene>
@@ -357,4 +361,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="vWw-TK-alT"/>
+    </inferredMetricsTieBreakers>
 </document>

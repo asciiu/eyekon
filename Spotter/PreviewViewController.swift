@@ -12,6 +12,8 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
 
     //@IBOutlet var imageView: UIImageView!
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var upperLeftButton: UIBarButtonItem!
+    @IBOutlet var upperRightButton: UIBarButtonItem!
     
     //var segments: [UIImage]?
     //var segmentIndex: Int?
@@ -40,6 +42,15 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     
     override func viewWillAppear(animated: Bool) {
         self.dataFrames = SharedDataFrameSet.sortedDataFrames()
+        
+        let controllers = self.navigationController!.viewControllers
+        
+        if (controllers[controllers.count-2] is HowToListViewController) {
+            self.upperRightButton.title = "Edit"
+            self.upperRightButton.enabled = false
+        } else if(controllers[controllers.count-2] is CaptureViewController) {
+            self.upperRightButton.enabled = true
+        }
 //        let firstFrame: Frame = SharedDataFrameSet.sortedDataFrames()[0]
 //        let image: UIImage = UIImage(data: firstFrame.imageData)
 //        
@@ -147,7 +158,14 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     // MARK: - Actions
+    
+    @IBAction func returnToPrevious(sender: AnyObject) {
+        println("PreviewViewController: returnToPrevious")
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
     @IBAction func publish(sender: AnyObject) {
+        println("PreviewViewController: publish")
     }
 
     
@@ -155,6 +173,8 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        //println("PreviewViewController: prepareForSeque")
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
 //        let publishController: PublishViewController? = segue.destinationViewController as? PublishViewController

@@ -33,9 +33,9 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.keyboardToolBar?.addSubview(self.keyboardToolBarTextView!)
         
         self.textView.inputAccessoryView = self.keyboardToolBar
-        self.textView.backgroundColor = UIColor.blackColor()
-        self.textView.textColor = UIColor.whiteColor()
-        self.textView.font.fontWithSize(10)
+        //self.textView.backgroundColor = UIColor.blackColor()
+        //self.textView.textColor = UIColor.whiteColor()
+        //self.textView.font.fontWithSize(10)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -70,16 +70,16 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         let originalWidth = image.size.width
         let originalHeight = image.size.height
         
-        let height = frameWidth * originalHeight / originalWidth
-        let imageFrame = CGRectMake(origin.x, origin.y, frameWidth, height)
-        self.imageView.frame = imageFrame
+        //let height = frameWidth * originalHeight / originalWidth
+        //let imageFrame = CGRectMake(origin.x, origin.y, frameWidth, height)
+        //self.imageView.frame = imageFrame
         self.imageView.image = image
         
-        if (SharedDataFrame.dataFrame!.annotation != nil) {
+        if (SharedDataFrame.dataFrame!.annotation != nil && SharedDataFrame.dataFrame!.annotation != "") {
             self.textView.hidden = false
-            self.textView.frame.origin.y = imageFrame.origin.y + imageFrame.height
+            //self.textView.frame.origin.y = imageFrame.origin.y + imageFrame.height
             self.textView.text = SharedDataFrame.dataFrame!.annotation
-            self.textView.frame.size.height = self.textView.contentSize.height + 9
+            //self.textView.frame.size.height = self.textView.contentSize.height + 9
         } else {
             self.resetAnnotationView()
         }
@@ -156,20 +156,22 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     
     func keyboardWillHide(notification: NSNotification) {
         let imageFrame = self.imageView.frame
-
-        if self.textView.hidden {
-            self.textView.frame = CGRectMake(0, imageFrame.origin.y + imageFrame.height, imageFrame.width, 30)
+        SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
+        
+        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
+            //self.textView.frame = CGRectMake(0, imageFrame.origin.y + imageFrame.height, imageFrame.width, 30)
             
-            self.textView.backgroundColor = UIColor.blackColor()
-            self.textView.textColor = UIColor.whiteColor()
-            self.textView.font.fontWithSize(10)
+            //self.textView.backgroundColor = UIColor.blackColor()
+            //self.textView.textColor = UIColor.whiteColor()
+            //self.textView.font.fontWithSize(10)
             
             self.textView.hidden = false
+        } else if (self.keyboardToolBarTextView!.text == "") {
+            self.textView.hidden = true
         }
         
-        SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
         self.textView.text = self.keyboardToolBarTextView!.text
-        self.textView.frame.size.height = self.textView.contentSize.height + 9
+        //self.textView.frame.size.height = self.textView.contentSize.height + 9
     }
     
     // MARK: TextViewDelegate

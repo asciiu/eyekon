@@ -175,52 +175,55 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         let customTableIdentifier = "SimpleTableViewCell";
         
         // try to get a reusable cell for our custom cell class
-        var cell: SimpleTableViewCell? = tableView.dequeueReusableCellWithIdentifier(customTableIdentifier) as? SimpleTableViewCell
+        var cell: SimpleTableViewCell = tableView.dequeueReusableCellWithIdentifier(customTableIdentifier) as SimpleTableViewCell
         
-        if cell == nil {
-            // create a new cell because we could not get a reusable one
-            // take note of the "CustomTableCell" identifier it is the identifier that you
-            // set when you were designing the custom cell in interface builder
-            // refer to illustration below
-            cell = NSBundle.mainBundle().loadNibNamed(customTableIdentifier, owner:self, options:nil)[0] as? SimpleTableViewCell
-        }
+//        if cell == nil {
+//            // create a new cell because we could not get a reusable one
+//            // take note of the "CustomTableCell" identifier it is the identifier that you
+//            // set when you were designing the custom cell in interface builder
+//            // refer to illustration below
+//            cell = NSBundle.mainBundle().loadNibNamed(customTableIdentifier, owner:self, options:nil)[0] as? SimpleTableViewCell
+//        }
         
         let frame = self.dataFrames![indexPath.row]
         let image = UIImage(data: frame.imageData)
         
-        cell!.mainImage.image = image
-        if(frame.annotation != nil) {
-            let textView = UITextView()
-            let contentFrame = cell!.contentView.frame
-            textView.text = frame.annotation
+        cell.mainImage.image = image
+    
+        if(frame.annotation != nil && frame.annotation != "") {
+            //let textView = UITextView()
+            //let contentFrame = cell.contentView.frame
+            cell.annotationTextView.text = frame.annotation
             
-            let imageFrame = cell!.mainImage.frame
-            let textFrame = textView.contentSize
+            //let imageFrame = cell.mainImage.frame
+            let textFrame = cell.annotationTextView.contentSize
             
-            textView.frame = CGRectMake(0, 0, self.tableView.frame.width, 30)
-            textView.backgroundColor = UIColor.blackColor()
-            textView.textColor = UIColor.whiteColor()
-            cell!.mainImage.addSubview(textView)
+            //textView.frame = CGRectMake(0, 0, self.tableView.frame.width, 30)
+            cell.annotationTextView.backgroundColor = UIColor.blackColor()
+            cell.annotationTextView.textColor = UIColor.whiteColor()
+            //cell.mainImage.addSubview(textView)
+        } else {
+            cell.annotationTextView.hidden = true
         }
         
-        return cell!
+        return cell
     }
 
     // MARK: UITableViewDelegate
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        let frame = self.dataFrames![indexPath.row]
-        let image = UIImage(data: frame.imageData)
-        
-        let frameWidth = self.tableView.frame.width
-        let originalWidth = image.size.width
-        let originalHeight = image.size.height
-        let height = frameWidth * originalHeight / originalWidth
-        
-        //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
-        //cell.textField.text = frame.annotation
-        //let textHeight = cell.textField.contentSize.height + 7
-    
-        return height
-    }
+//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//        
+//        let frame = self.dataFrames![indexPath.row]
+//        let image = UIImage(data: frame.imageData)
+//        
+//        let frameWidth = self.tableView.frame.width
+//        let originalWidth = image.size.width
+//        let originalHeight = image.size.height
+//        let height = frameWidth * originalHeight / originalWidth
+//        
+//        //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
+//        //cell.textField.text = frame.annotation
+//        //let textHeight = cell.textField.contentSize.height + 7
+//    
+//        return height
+//    }
 }

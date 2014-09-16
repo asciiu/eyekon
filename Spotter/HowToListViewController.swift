@@ -69,7 +69,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("ListPrototypeCell", forIndexPath: indexPath) as UITableViewCell
         
         let frameSet: FrameSet = self.frameSets[indexPath.row]
-        cell.textLabel?.text = frameSet.synopsis
+        cell.textLabel?.text = frameSet.title
         return cell
     }
     

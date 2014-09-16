@@ -70,6 +70,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        // if editing an existing set clear
+        // else use the existing captured images
         if self.frameSet != nil {
             self.capturedImages.removeAll(keepCapacity: false)
             
@@ -87,7 +90,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
                 let photo: UIImage = UIImage(data: frame.imageData)
                 self.capturedImages.append(photo)
             }
+        } else if self.annotateViewController?.images? != nil {
+            self.capturedImages = self.annotateViewController!.images!
         }
+        
         self.collectionView.reloadData()
     }
 //    override func viewDidAppear(animated: Bool) {
@@ -324,8 +330,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.annotateViewController = annotateViewController
         self.presentViewController(annotateViewController, animated: true, completion: nil)
         
-        self.annotateViewController!.imageView.image = self.capturedImages[indexPath.item]
-        self.annotateViewController!.frameNum = indexPath.item
+        self.annotateViewController!.images = self.capturedImages
+        self.annotateViewController?.displayImageAtIndex(indexPath.item)        
     }
     
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {

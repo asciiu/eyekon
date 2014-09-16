@@ -56,15 +56,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="8Zv-me-7DR">
-                                <rect key="frame" x="0.0" y="72" width="320" height="424"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Eif-hD-Sd9">
-                                        <rect key="frame" x="0.0" y="31" width="320" height="291"/>
+                                        <rect key="frame" x="0.0" y="60" width="320" height="464"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JC6-Yc-X2i">
-                                        <rect key="frame" x="8" y="8" width="31" height="30"/>
+                                        <rect key="frame" x="8" y="34" width="31" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="Prev">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -74,7 +74,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XUm-dU-Nsn">
-                                        <rect key="frame" x="273" y="8" width="32" height="30"/>
+                                        <rect key="frame" x="63" y="34" width="32" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="Next">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -84,22 +84,36 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="L6d-8k-5Sh">
-                                        <rect key="frame" x="142" y="394" width="37" height="30"/>
+                                        <rect key="frame" x="272" y="34" width="40" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Done">
+                                        <state key="normal" title="Close">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="done:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="mUq-DP-gFj"/>
+                                            <action selector="close:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="s95-W2-ax9"/>
                                         </connections>
                                     </button>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="annotation" id="jFX-9O-NyX">
-                                        <rect key="frame" x="8" y="330" width="297" height="68"/>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="b5t-YS-EJ5">
+                                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                        <items>
+                                            <barButtonItem title="Text Tool" id="3Ks-nd-k3f">
+                                                <connections>
+                                                    <action selector="textTool:" destination="SiY-lW-Nsg" id="9Fk-Ad-1ym"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </items>
+                                    </toolbar>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YUD-T8-FTj">
+                                        <rect key="frame" x="203" y="34" width="44" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                    </textView>
+                                        <state key="normal" title="Delete">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="deleteImage:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="RFb-WA-Bsv"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -110,7 +124,6 @@
                         <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
                         <outlet property="nextBtn" destination="XUm-dU-Nsn" id="q7M-XV-9Q0"/>
                         <outlet property="previousBtn" destination="JC6-Yc-X2i" id="KVB-Lk-sSg"/>
-                        <outlet property="textView" destination="jFX-9O-NyX" id="pL3-iu-5Ce"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -206,7 +219,6 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Publish" id="D4p-fQ-QS0">
                             <connections>
-                                <action selector="publish:" destination="uya-p5-87Y" id="40l-aG-x4b"/>
                                 <segue destination="Rux-43-RDk" kind="push" id="sf7-Oz-xeN"/>
                             </connections>
                         </barButtonItem>
@@ -232,22 +244,21 @@
                                 <rect key="frame" x="132" y="139" width="166" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardAppearance="alert" returnKeyType="done"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Rux-43-RDk" id="By3-AN-Rde"/>
+                                </connections>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter detailed top level description here" id="XYN-uY-dPY">
                                 <rect key="frame" x="16" y="233" width="282" height="116"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardAppearance="alert"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardAppearance="alert" returnKeyType="done"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Rux-43-RDk" id="0Ch-jM-o1h"/>
+                                </connections>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="fAJ-8z-bPY">
-                                <rect key="frame" x="137" y="518" width="40" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Share">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="EX6-o7-kFg">
                                 <rect key="frame" x="16" y="101" width="108" height="106"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -256,9 +267,22 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Publish" id="Y02-fG-ruf"/>
+                    <navigationItem key="navigationItem" title="Publish" id="Y02-fG-ruf">
+                        <barButtonItem key="rightBarButtonItem" title="Save" id="AAA-K3-gAB">
+                            <connections>
+                                <action selector="save:" destination="Rux-43-RDk" id="RgE-Qc-lfX"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="descriptionField" destination="XYN-uY-dPY" id="RkS-BI-68C"/>
+                        <outlet property="imageView" destination="EX6-o7-kFg" id="OSd-vJ-qjc"/>
+                        <outlet property="titleField" destination="O56-LP-AKw" id="Mq9-hk-P3p"/>
+                        <segue destination="19O-ct-9Ce" kind="unwind" identifier="unwindToList" unwindAction="unwindToList:" id="xsA-YK-Bxx"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L8x-js-t1s" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="19O-ct-9Ce" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="284" y="149"/>
         </scene>

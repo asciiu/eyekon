@@ -14,5 +14,5 @@ class Frame: NSManagedObject {
     @NSManaged var imageData: NSData
     @NSManaged var frameNumber: NSNumber
     @NSManaged var frameSet: FrameSet
-
+    @NSManaged var annotation: NSString?
 }

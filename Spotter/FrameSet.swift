@@ -12,7 +12,7 @@ import CoreData
 class FrameSet: NSManagedObject {
 
     @NSManaged var frameCount: NSNumber
-    @NSManaged var synopsis: String
+    @NSManaged var detailedDescription: String
+    @NSManaged var title: String
     @NSManaged var frames: NSSet
-
 }

@@ -44,13 +44,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
-        self.setupPhotosArray()
-        
         // needed so we can save via managed context
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
         self.context = appDelegate.managedObjectContext
         
-        // setup the camera 
+        // setup the camera
         self.captureManager = CaptureSessionManager()
         self.captureManager!.addVideoInput()
         self.captureManager!.addVideoPreviewLayer()
@@ -71,31 +69,25 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     override func viewWillAppear(animated: Bool) {
         
-        // if editing an existing set clear
-        // else use the existing captured images
-        if self.frameSet != nil {
+        if SharedDataFrameSet.dataFrameSet != nil {
             self.capturedImages.removeAll(keepCapacity: false)
             
-            //self.descriptionField.text = self.frameSet!.synopsis
-            
-            let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
-            
-            let frames = frameSet!.frames
-            
-            let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
+            let sortedFrames = SharedDataFrameSet.sortedDataFrames()
             
             for (var i = 0; i < sortedFrames.count; ++i) {
-                let frame: Frame = sortedFrames[i] as Frame
+                let frame: Frame = sortedFrames[i]
                 
                 let photo: UIImage = UIImage(data: frame.imageData)
                 self.capturedImages.append(photo)
+                frame.frameNumber = i
             }
-        } else if self.annotateViewController?.images? != nil {
-            self.capturedImages = self.annotateViewController!.images!
+        } else {
+            self.setupPhotosArray()
         }
         
         self.collectionView.reloadData()
     }
+    
 //    override func viewDidAppear(animated: Bool) {
 //        
 //        if self.frameSet != nil {
@@ -128,11 +120,24 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     {
         self.capturedImages.removeAll(keepCapacity: false)
         
+        let newFrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+        
+        let set = NSMutableSet()
         for(var i = 1; i <= 4; ++i) {
+            
             let photoName: String = "\(i).jpg"
             let photo: UIImage = UIImage(named: photoName)
             self.capturedImages.append(photo)
+
+            let segment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+            
+            segment.imageData = NSData.dataWithData(UIImagePNGRepresentation(photo))
+            segment.frameNumber = i-1
+            segment.frameSet = newFrameSet
+            set.addObject(segment)
         }
+        newFrameSet.frames = set
+        SharedDataFrameSet.dataFrameSet = newFrameSet
     }
     
     func setFrames(frameSet: FrameSet) {
@@ -162,6 +167,13 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         let index: NSIndexPath = NSIndexPath(forRow: self.capturedImages.count-1, inSection: 0)
         
+        // create a new segment for the captured image
+        let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+        
+        newSegment.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+        newSegment.frameNumber = self.capturedImages.count-1
+        newSegment.frameSet = SharedDataFrameSet.dataFrameSet!
+        SharedDataFrameSet.dataFrameSet!.frames.addObject(newSegment)
 
         self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
     }
@@ -314,6 +326,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.removeAtIndex(fromIndexPath.item)
         self.capturedImages.insert(image, atIndex: toIndexPath.item)
         
+        let frames = NSMutableArray(array: SharedDataFrameSet.sortedDataFrames())
+        let frame: Frame = frames[fromIndexPath.item] as Frame
+        frames.removeObject(frame)
+        frames.insertObject(frame, atIndex: toIndexPath.item)
+        
+        for(var i = 0; i < frames.count; ++i) {
+            let frm = frames[i] as Frame
+            frm.frameNumber = i
+        }
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
@@ -324,14 +345,18 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
+        // set the shared dataFrame
+        SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
+                
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
         
         self.annotateViewController = annotateViewController
-        self.presentViewController(annotateViewController, animated: true, completion: nil)
-        
+       
         self.annotateViewController!.images = self.capturedImages
-        self.annotateViewController?.displayImageAtIndex(indexPath.item)        
+        self.presentViewController(annotateViewController, animated: true, completion: nil)
+        //self.annotateViewController!.resetView()
+        //self.annotateViewController!.displayImageAtIndex(indexPath.item)
     }
     
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {

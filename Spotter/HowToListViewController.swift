@@ -59,6 +59,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
         self.frameSet = self.frameSets[indexPath.row]
+        SharedDataFrameSet.dataFrameSet = self.frameSet
         
         self.performSegueWithIdentifier("CaptureSegue", sender: self)
     }
@@ -97,11 +98,11 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         
         let captureViewController: CaptureViewController = segue.destinationViewController as CaptureViewController
         
-        if self.frameSet != nil {
-            captureViewController.frameSet = self.frameSet
-        } else {
-            captureViewController.frameSet = nil
-        }
+        //if self.frameSet != nil {
+            //captureViewController.frameSet = self.frameSet
+        //} else {
+            //captureViewController.frameSet = nil
+        //}
     }
     
     @IBAction func unwindToList(unwindSegue: UIStoryboardSegue) {

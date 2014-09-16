@@ -11,7 +11,7 @@ import CoreData
 
 class PublishViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
-    var segments: [UIImage]?
+    //var segments: [UIImage]?
     var frameSet: FrameSet?
     var context: NSManagedObjectContext?
 
@@ -27,7 +27,12 @@ class PublishViewController: UIViewController, UITextFieldDelegate, UITextViewDe
     }
     
     override func viewWillAppear(animated: Bool) {
-            self.imageView.image = self.segments![0]
+        let frames: [Frame] = SharedDataFrameSet.sortedDataFrames()
+        let image: UIImage = UIImage(data: frames[0].imageData)
+        self.imageView.image = image
+        
+        self.titleField.text = SharedDataFrameSet.dataFrameSet!.title
+        self.descriptionField.text = SharedDataFrameSet.dataFrameSet!.detailedDescription
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,34 +54,34 @@ class PublishViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         } else {
             var error: NSError?
 
-            if self.frameSet == nil {
-                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
-            }
+//            if self.frameSet == nil {
+//                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
+//            }
 
-            let frameSet = self.frameSet!
+            let frameSet = SharedDataFrameSet.dataFrameSet!
 
-            frameSet.frameCount = self.segments!.count
+            frameSet.frameCount = frameSet.frames.count
             frameSet.title = self.titleField.text
             frameSet.detailedDescription = self.descriptionField.text
 
-            let frames: NSMutableSet = NSMutableSet()
+//            let frames: NSMutableSet = NSMutableSet()
 
             // a frameSet has frames
-            for var i = 0; i < frameSet.frameCount; ++i {
-
-                let image = self.segments![i]
-                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
-
-                frame.frameSet = frameSet
-
-                // convert image to NSData
-                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-                frame.frameNumber = i
-
-                // add frame to frameSet
-                frames.addObject(frame)
-            }
-            frameSet.frames = frames
+//            for var i = 0; i < frameSet.frameCount; ++i {
+//
+//                let image = self.segments![i]
+//                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+//
+//                frame.frameSet = frameSet
+//
+//                // convert image to NSData
+//                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+//                frame.frameNumber = i
+//
+//                // add frame to frameSet
+//                frames.addObject(frame)
+//            }
+//            frameSet.frames = frames
 
             if( !frameSet.managedObjectContext.save(&error)) {
                 println("could not save FrameSet: \(error?.localizedDescription)")

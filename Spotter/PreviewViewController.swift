@@ -137,12 +137,12 @@ class PreviewViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        let publishController: PublishViewController? = segue.destinationViewController as? PublishViewController
-        
-        if publishController != nil {
-            publishController!.segments = self.segments
-            //destinationController!.imageView.image = self.capturedImages[0]
-        }
+//        let publishController: PublishViewController? = segue.destinationViewController as? PublishViewController
+//        
+//        if publishController != nil {
+//            publishController!.segments = self.segments
+//            //destinationController!.imageView.image = self.capturedImages[0]
+//        }
         
     }
     

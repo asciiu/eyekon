@@ -9,6 +9,10 @@
 import Foundation
 import CoreData
 
+struct SharedDataFrame {
+    static var dataFrame: Frame?
+}
+
 class Frame: NSManagedObject {
 
     @NSManaged var imageData: NSData

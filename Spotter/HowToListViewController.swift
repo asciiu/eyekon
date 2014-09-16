@@ -71,9 +71,7 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
         
         let frameSet: FrameSet = self.frameSets[indexPath.row]
         
-        if (cell.textLabel != nil) {
-            cell.textLabel!.text = frameSet.title
-        }
+        cell.textLabel!.text = frameSet.title
         
         return cell
     }
@@ -97,6 +95,8 @@ class HowToListViewController: UIViewController, UITableViewDataSource, UITableV
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        
+        SharedDataFrameSet.dataFrameSet = nil
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         

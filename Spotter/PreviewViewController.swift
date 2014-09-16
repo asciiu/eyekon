@@ -160,7 +160,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - Actions
     
     @IBAction func returnToPrevious(sender: AnyObject) {
-        println("PreviewViewController: returnToPrevious")
+        //println("PreviewViewController: returnToPrevious")
         self.navigationController?.popViewControllerAnimated(true)
     }
     
@@ -221,6 +221,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
             //textView.frame = CGRectMake(0, 0, self.tableView.frame.width, 30)
             cell.annotationTextView.backgroundColor = UIColor.blackColor()
             cell.annotationTextView.textColor = UIColor.whiteColor()
+            cell.annotationTextView.hidden = false
             //cell.mainImage.addSubview(textView)
         } else {
             cell.annotationTextView.hidden = true

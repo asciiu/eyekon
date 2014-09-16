@@ -31,7 +31,10 @@ class PublishViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         let image: UIImage = UIImage(data: frames[0].imageData)
         self.imageView.image = image
         
+        //if(SharedDataFrameSet.dataFrameSet!.title != nil) {
         self.titleField.text = SharedDataFrameSet.dataFrameSet!.title
+        //}
+        
         self.descriptionField.text = SharedDataFrameSet.dataFrameSet!.detailedDescription
     }
 

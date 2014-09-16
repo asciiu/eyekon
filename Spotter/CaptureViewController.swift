@@ -136,6 +136,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
             segment.frameSet = newFrameSet
             set.addObject(segment)
         }
+        newFrameSet.title = "Untitled"
+        newFrameSet.detailedDescription = "Empty description"
         newFrameSet.frames = set
         SharedDataFrameSet.dataFrameSet = newFrameSet
     }

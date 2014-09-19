@@ -90,7 +90,7 @@ class PublishViewController: UIViewController, UITextFieldDelegate, UITextViewDe
                 println("could not save FrameSet: \(error?.localizedDescription)")
             }
             
-            self.performSegueWithIdentifier("unwindToList", sender: self)
+            self.performSegueWithIdentifier("fromPublishToCollection", sender: self)
         }
     }
     

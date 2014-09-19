@@ -17,13 +17,13 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ListPrototypeCell" id="StX-SX-OOa">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CollectionCell" id="StX-SX-OOa">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="StX-SX-OOa" id="TLt-fg-3CU">
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="uya-p5-87Y" kind="push" id="vWw-TK-alT"/>
+                                            <segue destination="uya-p5-87Y" kind="push" identifier="FromCollectionToPreview" id="vWw-TK-alT"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -38,7 +38,7 @@
                     <navigationItem key="navigationItem" title="Collection" id="vSA-Oa-JTh">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
                             <connections>
-                                <segue destination="tH4-5w-EKm" kind="push" identifier="CaptureSegue" id="4xg-G6-Ixf"/>
+                                <segue destination="tH4-5w-EKm" kind="push" identifier="FromCollectionToCapture" id="4xg-G6-Ixf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -48,7 +48,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1102" y="149"/>
+            <point key="canvasLocation" x="-663" y="-223"/>
         </scene>
         <!--Annotate View Controller-->
         <scene sceneID="N8l-OS-Pu6">
@@ -140,7 +140,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1094" y="970"/>
+            <point key="canvasLocation" x="-1254" y="961"/>
         </scene>
         <!--Capture View Controller-->
         <scene sceneID="BcV-bH-nnr">
@@ -187,12 +187,12 @@
                     <navigationItem key="navigationItem" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" identifier="unwindToList" unwindAction="unwindToList:" id="2FX-a2-jVI"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToCollection:" id="mi0-Gb-wZe"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Preview" id="R2A-gU-lFb">
                             <connections>
-                                <segue destination="uya-p5-87Y" kind="push" id="lRc-EE-9Kb"/>
+                                <segue destination="uya-p5-87Y" kind="push" identifier="FromCaptureToPreview" id="lRc-EE-9Kb"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -200,13 +200,13 @@
                         <outlet property="cameraView" destination="P1Y-BW-yG7" id="4bV-Ij-zWx"/>
                         <outlet property="cancelBtn" destination="OZM-LZ-oyX" id="sJJ-Oe-Nj9"/>
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
-                        <outlet property="saveBtn" destination="R2A-gU-lFb" id="tYt-Ql-Ntr"/>
+                        <outlet property="previewBtn" destination="R2A-gU-lFb" id="qkZ-Hw-qrl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pjG-vN-5Fb" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-623" y="149"/>
+            <point key="canvasLocation" x="-663" y="490"/>
         </scene>
         <!--Preview-->
         <scene sceneID="wL7-hp-1go">
@@ -265,7 +265,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Publish" id="D4p-fQ-QS0">
                             <connections>
-                                <segue destination="Rux-43-RDk" kind="push" id="sf7-Oz-xeN"/>
+                                <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="sf7-Oz-xeN"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -277,7 +277,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-176" y="149"/>
+            <point key="canvasLocation" x="-119" y="106"/>
         </scene>
         <!--Publish-->
         <scene sceneID="xCC-hv-Kwa">
@@ -325,13 +325,13 @@
                         <outlet property="descriptionField" destination="XYN-uY-dPY" id="RkS-BI-68C"/>
                         <outlet property="imageView" destination="EX6-o7-kFg" id="OSd-vJ-qjc"/>
                         <outlet property="titleField" destination="O56-LP-AKw" id="Mq9-hk-P3p"/>
-                        <segue destination="19O-ct-9Ce" kind="unwind" identifier="unwindToList" unwindAction="unwindToList:" id="xsA-YK-Bxx"/>
+                        <segue destination="19O-ct-9Ce" kind="unwind" identifier="fromPublishToCollection" unwindAction="unwindToCollection:" id="xsA-YK-Bxx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L8x-js-t1s" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="19O-ct-9Ce" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="284" y="149"/>
+            <point key="canvasLocation" x="354" y="106"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nPn-oT-Wfq">
@@ -349,7 +349,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kxF-SX-c4U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1102" y="-556"/>
+            <point key="canvasLocation" x="-1254" y="-223"/>
         </scene>
     </scenes>
     <resources>
@@ -362,6 +362,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="vWw-TK-alT"/>
+        <segue reference="lRc-EE-9Kb"/>
     </inferredMetricsTieBreakers>
 </document>

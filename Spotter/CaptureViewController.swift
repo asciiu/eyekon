@@ -14,19 +14,14 @@ import AVFoundation
 class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
-    //@IBOutlet var descriptionField: UITextField!
     @IBOutlet var cancelBtn: UIBarButtonItem!
-    @IBOutlet var saveBtn: UIBarButtonItem!
+    @IBOutlet var previewBtn: UIBarButtonItem!
     @IBOutlet var cameraView: UIView!
     
     var captureManager: CaptureSessionManager?
-    //var imagePickerController: UIImagePickerController?
     var capturedImages: [UIImage] = [UIImage]()
     
-    var annotateViewController: AnnotateViewController?
     var context: NSManagedObjectContext?
-    
-    var frameSet: FrameSet?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,8 +40,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.collectionView.dataSource = self
         
         // needed so we can save via managed context
-        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate        
-        self.context = appDelegate.managedObjectContext
+        //let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        //self.context = appDelegate.managedObjectContext
+        self.context = NSManagedObjectContext()
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
         
         // setup the camera
         self.captureManager = CaptureSessionManager()
@@ -63,12 +61,14 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
         self.cameraView.layer.addSublayer(self.captureManager!.previewLayer!)
         
-        self.captureManager!.captureSession!.startRunning()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveImageToRoll", name: kImageCapturedSuccessfully, object: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
         
+        self.captureManager!.captureSession!.startRunning()
+        
+        // not creating a new set?
         if SharedDataFrameSet.dataFrameSet != nil {
             self.capturedImages.removeAll(keepCapacity: false)
             
@@ -88,28 +88,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.collectionView.reloadData()
     }
     
-//    override func viewDidAppear(animated: Bool) {
-//        
-//        if self.frameSet != nil {
-//            self.capturedImages.removeAll(keepCapacity: false)
-//            
-//            self.descriptionField.text = self.frameSet!.synopsis
-//            
-//            let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
-//            
-//            let frames = frameSet!.frames
-//            
-//            let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
-//            
-//            for frame in sortedFrames {
-//                let frameData = frame as Frame
-//                
-//                let photo: UIImage = UIImage(data: frameData.imageData)
-//                self.capturedImages.append(photo)
-//            }
-//        }
-//        self.collectionView.reloadData()
-//    }
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.captureManager!.captureSession!.stopRunning()
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -142,25 +124,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         SharedDataFrameSet.dataFrameSet = newFrameSet
     }
     
-    func setFrames(frameSet: FrameSet) {
-        self.capturedImages.removeAll(keepCapacity: false)
-        
-        //self.descriptionField.text = frameSet.synopsis
-        
-        let frameNumDescriptor: NSSortDescriptor = NSSortDescriptor(key: "frameNumber", ascending: true)
-        
-        let frames = frameSet.frames
-        
-        let sortedFrames = frames.sortedArrayUsingDescriptors(NSArray(object:frameNumDescriptor))
-        
-        for frame in sortedFrames {
-            let frameData = frame as Frame
-            
-            let photo: UIImage = UIImage(data: frameData.imageData)
-            self.capturedImages.append(photo)
-        }
-    }
-    
     // invoked when the camera capture has completed
     func saveImageToRoll() {
         let image = self.captureManager?.stillImage
@@ -186,72 +149,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager?.captureStillImage()
     }
     
-//    @IBAction func save(sender: AnyObject) {
-//        
-////        if(self.descriptionField.text == "") {
-////            let alert: UIAlertView = UIAlertView(title: "Missing information!", message: "Please enter a description", delegate: nil, cancelButtonTitle: "OK")
-////          
-////            alert.show()
-////        } else {
-//            var error: NSError?
-//
-//            if self.frameSet == nil {
-//                self.frameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as? FrameSet
-//            }
-//            
-//            let frameSet = self.frameSet!
-//            
-//            frameSet.frameCount = self.capturedImages.count
-//            frameSet.synopsis = self.descriptionField.text
-//            
-//            let frames: NSMutableSet = NSMutableSet()
-//            
-//            // a frameSet has frames
-//            for var i = 0; i < self.capturedImages.count; ++i {
-//                
-//                let image = self.capturedImages[i]
-//                let frame: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
-//                
-//                frame.frameSet = frameSet
-//                
-//                // convert image to NSData
-//                frame.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-//                frame.frameNumber = i
-//                
-//                // add frame to frameSet
-//                frames.addObject(frame)
-//            }
-//            frameSet.frames = frames
-//            
-//            if( !frameSet.managedObjectContext.save(&error)) {
-//                println("could not save FrameSet: \(error?.localizedDescription)")
-//            }
-//            
-//            
-//            self.performSegueWithIdentifier("unwindToList", sender: self)
-//        
-//    }
-    
-//    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-//        
-//        if(textField == self.descriptionField) {
-//            textField.resignFirstResponder()
-//            // set the description here
-//            
-//        }
-//        return false
-//    }
-
-    // moved
-//    func textView(textView: UITextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
-//        
-//        if(text == "\n") {
-//            textView.resignFirstResponder()
-//        }
-//        
-//        return true
-//    }
-    
     // MARK: - UICollectionViewDataSource
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -276,6 +173,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
         return 1
     }
+    
+    // MARK: - RACollectionViewDelegateReorderableTripletLayout
     
     func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
         return 5.0
@@ -316,6 +215,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         return 0.3
     }
     
+    
     func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
         
         self.collectionView.reloadData()
@@ -347,15 +247,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
-        // set the shared dataFrame
+        // set the shared dataFrame with the one we selected from the collection view
         SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
                 
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
         
-        self.annotateViewController = annotateViewController
+        //self.annotateViewController = annotateViewController
        
-        self.annotateViewController!.images = self.capturedImages
+        //self.annotateViewController!.images = self.capturedImages
         self.presentViewController(annotateViewController, animated: true, completion: nil)
         //self.annotateViewController!.resetView()
         //self.annotateViewController!.displayImageAtIndex(indexPath.item)
@@ -364,58 +264,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
         return true
     }
-   
-//    func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!) {
-//        
-//        let newImage: UIImage = info[UIImagePickerControllerOriginalImage] as UIImage
-//        
-//        self.capturedImages.append(newImage)
-//        self.previewView.image = newImage
-//        
-//        //self.imageView.image = newImage
-//        
-//        //let chosenImage: UIImage = info[UIImagePickerControllerEditedImage] as UIImage
-//        //self.imageView.image = chosenImage
-//        
-//        /*
-//        let mediaType: NSString = info[UIImagePickerControllerMediaType] as NSString;
-//        
-//        if (mediaType == kUTTypeImage) {
-//            // Media is an image
-//        } else if (mediaType == kUTTypeMovie) {
-//            // Media is a video
-//        }*/
-//        
-//        //picker.dismissViewControllerAnimated(true, completion: nil)
-//    }
-    
-//    func imagePickerControllerDidCancel(picker: UIImagePickerController!) {
-//        picker.dismissViewControllerAnimated(true, completion: nil)
-//    }
     
     // MARK: - Navigation
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        
-//        let destinationController: PreviewViewController? = segue.destinationViewController as? PreviewViewController
-//        
-//        if destinationController != nil {
-//            destinationController!.segments = self.capturedImages
-//            //destinationController!.imageView.image = self.capturedImages[0]
-//        }
-        
-        // if the save button was not pressed return
-        //if(sender !== self.saveBtn) {
-        //    return
-        //}
+    
     }
     
     @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {
         
     }
-//    func navigationController(navigationController: UINavigationController!, willShowViewController viewController: UIViewController!, animated: Bool) {
-//        
-//        UIApplication.sharedApplication().statusBarHidden = true
-//    }
 }
 

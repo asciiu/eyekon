@@ -16,26 +16,25 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     @IBOutlet var textView: UITextView!
 
     var frameNum: Int = 0
-    var images: [UIImage]?
     var keyboardToolBar: UIToolbar?
     var keyboardToolBarTextView: UITextView?
     var dataFrames: [Frame]?
     
+    // MARK: - Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let toolbarRect = CGRectMake(0, 0, self.view.frame.width, 44)
+        
         // setup a textview on the keyboardToolBar
-        self.keyboardToolBar = UIToolbar(frame: CGRectMake(0, 0, self.view.frame.width, 44))
-        self.keyboardToolBarTextView = UITextView(frame: CGRectMake(0, 0, self.view.frame.width, 44))
-        self.keyboardToolBarTextView?.returnKeyType = UIReturnKeyType.Done
-        self.keyboardToolBarTextView?.delegate = self
+        self.keyboardToolBar = UIToolbar(frame: toolbarRect)
+        self.keyboardToolBarTextView = UITextView(frame: toolbarRect)
+        self.keyboardToolBarTextView!.returnKeyType = UIReturnKeyType.Done
+        self.keyboardToolBarTextView!.delegate = self
 
-        self.keyboardToolBar?.addSubview(self.keyboardToolBarTextView!)
+        self.keyboardToolBar!.addSubview(self.keyboardToolBarTextView!)
         
         self.textView.inputAccessoryView = self.keyboardToolBar
-        //self.textView.backgroundColor = UIColor.blackColor()
-        //self.textView.textColor = UIColor.whiteColor()
-        //self.textView.font.fontWithSize(10)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -60,26 +59,18 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func resetAnnotationView() {
-        self.textView.hidden = true
-    }
-    
+    // MARK: - Custom Stuff
     func displayImage(image: UIImage) {
         let origin = self.imageView.frame.origin
         let frameWidth = self.imageView.frame.width
         let originalWidth = image.size.width
         let originalHeight = image.size.height
         
-        //let height = frameWidth * originalHeight / originalWidth
-        //let imageFrame = CGRectMake(origin.x, origin.y, frameWidth, height)
-        //self.imageView.frame = imageFrame
         self.imageView.image = image
         
         if (SharedDataFrame.dataFrame!.annotation != nil && SharedDataFrame.dataFrame!.annotation != "") {
             self.textView.hidden = false
-            //self.textView.frame.origin.y = imageFrame.origin.y + imageFrame.height
             self.textView.text = SharedDataFrame.dataFrame!.annotation
-            //self.textView.frame.size.height = self.textView.contentSize.height + 9
         } else {
             self.resetAnnotationView()
         }
@@ -108,6 +99,10 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         } else {
             self.previousBtn.hidden = false
         }
+    }
+    
+    func resetAnnotationView() {
+        self.textView.hidden = true
     }
     
     // MARK: - Actions
@@ -159,24 +154,18 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
         
         if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
-            //self.textView.frame = CGRectMake(0, imageFrame.origin.y + imageFrame.height, imageFrame.width, 30)
-            
-            //self.textView.backgroundColor = UIColor.blackColor()
-            //self.textView.textColor = UIColor.whiteColor()
-            //self.textView.font.fontWithSize(10)
-            
             self.textView.hidden = false
         } else if (self.keyboardToolBarTextView!.text == "") {
             self.textView.hidden = true
         }
         
         self.textView.text = self.keyboardToolBarTextView!.text
-        //self.textView.frame.size.height = self.textView.contentSize.height + 9
     }
     
     // MARK: TextViewDelegate
     func textView(textView: UITextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
         
+        // triggered when done button is touched
         if(text == "\n") {
             self.keyboardToolBarTextView!.resignFirstResponder()
             self.textView.resignFirstResponder()

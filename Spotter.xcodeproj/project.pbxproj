@@ -41,7 +41,6 @@
 		6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8A19A66669006CB2E2 /* Main.storyboard */; };
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
-		6EC03DD419AC270B006CB2E2 /* CameraOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */; };
 		6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* PreviewViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
@@ -102,7 +101,6 @@
 		6EC03D9319A6666A006CB2E2 /* SpotterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
-		6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CameraOverlayView.xib; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -158,7 +156,6 @@
 		6E1CE2D119B511E40085FF19 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
-				6EC03DD319AC270B006CB2E2 /* CameraOverlayView.xib */,
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
 				6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */,
 				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
@@ -362,7 +359,6 @@
 				6E1CE30119B525A00085FF19 /* 15.jpg in Resources */,
 				6E1CE2FF19B525A00085FF19 /* 13.jpg in Resources */,
 				6E1CE2F419B525A00085FF19 /* 2.jpg in Resources */,
-				6EC03DD419AC270B006CB2E2 /* CameraOverlayView.xib in Resources */,
 				6E1CE30519B525A00085FF19 /* 19.jpg in Resources */,
 				6E1CE2F719B525A00085FF19 /* 5.jpg in Resources */,
 				6E1CE30419B525A00085FF19 /* 18.jpg in Resources */,

@@ -160,7 +160,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - Actions
     
     @IBAction func returnToPrevious(sender: AnyObject) {
-        //println("PreviewViewController: returnToPrevious")
+        // pop myself off the stack of view controllers and show the previous 
         self.navigationController?.popViewControllerAnimated(true)
     }
     
@@ -173,17 +173,6 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        //println("PreviewViewController: prepareForSeque")
-        
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-//        let publishController: PublishViewController? = segue.destinationViewController as? PublishViewController
-//        
-//        if publishController != nil {
-//            publishController!.segments = self.segments
-//            //destinationController!.imageView.image = self.capturedImages[0]
-//        }
-        
     }
     
     // MARK: - UITableViewDataSource
@@ -192,37 +181,24 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let customTableIdentifier = "SimpleTableViewCell";
         
         // try to get a reusable cell for our custom cell class
-        var cell: SimpleTableViewCell = tableView.dequeueReusableCellWithIdentifier(customTableIdentifier) as SimpleTableViewCell
-        
-//        if cell == nil {
-//            // create a new cell because we could not get a reusable one
-//            // take note of the "CustomTableCell" identifier it is the identifier that you
-//            // set when you were designing the custom cell in interface builder
-//            // refer to illustration below
-//            cell = NSBundle.mainBundle().loadNibNamed(customTableIdentifier, owner:self, options:nil)[0] as? SimpleTableViewCell
-//        }
+        var cell: SimpleTableViewCell = tableView.dequeueReusableCellWithIdentifier("SimpleTableViewCell") as SimpleTableViewCell
         
         let frame = self.dataFrames![indexPath.row]
         let image = UIImage(data: frame.imageData)
         
         cell.mainImage.image = image
     
+        // show annotation if the info frame has one
         if(frame.annotation != nil && frame.annotation != "") {
-            //let textView = UITextView()
-            //let contentFrame = cell.contentView.frame
             cell.annotationTextView.text = frame.annotation
             
-            //let imageFrame = cell.mainImage.frame
             let textFrame = cell.annotationTextView.contentSize
             
-            //textView.frame = CGRectMake(0, 0, self.tableView.frame.width, 30)
             cell.annotationTextView.backgroundColor = UIColor.blackColor()
             cell.annotationTextView.textColor = UIColor.whiteColor()
             cell.annotationTextView.hidden = false
-            //cell.mainImage.addSubview(textView)
         } else {
             cell.annotationTextView.hidden = true
         }

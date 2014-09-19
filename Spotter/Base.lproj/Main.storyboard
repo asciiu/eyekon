@@ -7,7 +7,7 @@
         <!--Collection-->
         <scene sceneID="cSa-05-lOE">
             <objects>
-                <viewController id="QHJ-c1-pPb" customClass="HowToListViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QHJ-c1-pPb" customClass="CollectionViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cY8-PV-uXl">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -362,6 +362,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="lRc-EE-9Kb"/>
+        <segue reference="vWw-TK-alT"/>
     </inferredMetricsTieBreakers>
 </document>

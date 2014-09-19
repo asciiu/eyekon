@@ -45,7 +45,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         
         let controllers = self.navigationController!.viewControllers
         
-        if (controllers[controllers.count-2] is HowToListViewController) {
+        if (controllers[controllers.count-2] is CollectionViewController) {
             self.upperRightButton.title = "Edit"
             self.upperRightButton.enabled = false
         } else if(controllers[controllers.count-2] is CaptureViewController) {

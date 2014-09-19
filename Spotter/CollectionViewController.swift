@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class HowToListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class CollectionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var context: NSManagedObjectContext?
     var frameSets: [FrameSet] = [FrameSet]()

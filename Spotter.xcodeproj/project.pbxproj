@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */; };
-		6E1CE2CE19B428210085FF19 /* ImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */; };
 		6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */; };
 		6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE2DB19B516E80085FF19 /* RACollectionViewTripletLayout.m */; };
 		6E1CE2F319B525A00085FF19 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2DF19B525A00085FF19 /* 1.jpg */; };
@@ -61,7 +60,6 @@
 
 /* Begin PBXFileReference section */
 		6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
-		6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageCollectionViewCell.xib; sourceTree = "<group>"; };
 		6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spotter-Bridging-Header.h"; sourceTree = "<group>"; };
 		6E1CE2D819B516E80085FF19 /* RACollectionViewReorderableTripletLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACollectionViewReorderableTripletLayout.h; sourceTree = "<group>"; };
 		6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACollectionViewReorderableTripletLayout.m; sourceTree = "<group>"; };
@@ -157,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
-				6E1CE2CC19B428210085FF19 /* ImageCollectionViewCell.xib */,
 				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
 				6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */,
 			);
@@ -367,7 +364,6 @@
 				6E1CE2FC19B525A00085FF19 /* 10.jpg in Resources */,
 				6E1CE30319B525A00085FF19 /* 17.jpg in Resources */,
 				6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */,
-				6E1CE2CE19B428210085FF19 /* ImageCollectionViewCell.xib in Resources */,
 				6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */,
 				6E1CE2F519B525A00085FF19 /* 3.jpg in Resources */,
 				6E1CE2F319B525A00085FF19 /* 1.jpg in Resources */,

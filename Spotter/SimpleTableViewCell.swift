@@ -13,7 +13,7 @@ class SimpleTableViewCell: UITableViewCell {
     @IBOutlet var mainImage: UIImageView!
     @IBOutlet var annotationTextView: UITextView!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//    }
 }

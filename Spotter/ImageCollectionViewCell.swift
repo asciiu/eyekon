@@ -13,10 +13,10 @@ class ImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet var numberLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//        // Initialization code
+//    }
     
     
 }

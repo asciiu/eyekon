@@ -33,8 +33,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         }
         
         // register the custom collection view cell
-        let cellNib: UINib = UINib(nibName: "ImageCollectionViewCell", bundle: nil)
-        self.collectionView.registerNib(cellNib, forCellWithReuseIdentifier:"ImageCollectionViewCell")
+        //let cellNib: UINib = UINib(nibName: "ImageCollectionViewCell", bundle: nil)
+        //self.collectionView.registerNib(cellNib, forCellWithReuseIdentifier:"ImageCollectionViewCell")
         
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
@@ -143,7 +143,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     // MARK: - Actions
     
     @IBAction func takePhoto(sender: AnyObject) {
-        self.captureManager?.captureStillImage()
+        self.captureManager!.captureStillImage()
     }
     
     // MARK: - UICollectionViewDataSource
@@ -154,7 +154,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
 
         var cell: ImageCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as ImageCollectionViewCell
 
-        //cell.imageView.removeFromSuperview()
         cell.imageView.frame = cell.bounds
         cell.numberLabel.text = String(indexPath.row + 1)
         cell.imageView.image = self.capturedImages[indexPath.row]
@@ -165,7 +164,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.capturedImages.count
     }
-    
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
         return 1
@@ -250,12 +248,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
         
-        //self.annotateViewController = annotateViewController
-       
-        //self.annotateViewController!.images = self.capturedImages
         self.presentViewController(annotateViewController, animated: true, completion: nil)
-        //self.annotateViewController!.resetView()
-        //self.annotateViewController!.displayImageAtIndex(indexPath.item)
     }
     
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {

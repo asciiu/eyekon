@@ -44,7 +44,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         self.dataFrames = SharedDataFrameSet.sortedDataFrames()
         
         let controllers = self.navigationController!.viewControllers
-        let previousController = controllers[controllers.count-2]
+        let previousController: UIViewController = controllers[controllers.count-2] as UIViewController
         
         if (previousController is CollectionViewController) {
             self.upperRightButton.title = "Edit"

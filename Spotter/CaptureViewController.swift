@@ -67,10 +67,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     override func viewWillAppear(animated: Bool) {
         
         self.captureManager!.captureSession!.startRunning()
-        
+        self.capturedImages.removeAll(keepCapacity: false)
+
         // not creating a new set?
         if SharedDataFrameSet.dataFrameSet != nil {
-            self.capturedImages.removeAll(keepCapacity: false)
             
             let sortedFrames = SharedDataFrameSet.sortedDataFrames()
             
@@ -82,7 +82,30 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
                 frame.frameNumber = i
             }
         } else {
-            self.setupPhotosArray()
+            
+            let newFrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
+            
+            let set = NSMutableSet()
+            
+            // need to remove this stuff
+            for(var i = 1; i <= 4; ++i) {
+                
+                let photoName: String = "\(i).jpg"
+                let photo: UIImage = UIImage(named: photoName)
+                self.capturedImages.append(photo)
+                
+                let segment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+                
+                segment.imageData = NSData.dataWithData(UIImagePNGRepresentation(photo))
+                segment.frameNumber = i-1
+                segment.frameSet = newFrameSet
+                set.addObject(segment)
+            }
+            
+            newFrameSet.title = "Untitled"
+            newFrameSet.detailedDescription = "Empty description"
+            newFrameSet.frames = set
+            SharedDataFrameSet.dataFrameSet = newFrameSet
         }
         
         self.collectionView.reloadData()
@@ -98,37 +121,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // Dispose of any resources that can be recreated.
     }
     
-    func setupPhotosArray()
-    {
-        self.capturedImages.removeAll(keepCapacity: false)
-        
-        let newFrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
-        
-        let set = NSMutableSet()
-        for(var i = 1; i <= 4; ++i) {
-            
-            let photoName: String = "\(i).jpg"
-            let photo: UIImage = UIImage(named: photoName)
-            self.capturedImages.append(photo)
-
-            let segment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
-            
-            segment.imageData = NSData.dataWithData(UIImagePNGRepresentation(photo))
-            segment.frameNumber = i-1
-            segment.frameSet = newFrameSet
-            set.addObject(segment)
-        }
-        newFrameSet.title = "Untitled"
-        newFrameSet.detailedDescription = "Empty description"
-        newFrameSet.frames = set
-        SharedDataFrameSet.dataFrameSet = newFrameSet
-    }
-    
     // invoked when the camera capture has completed
     func saveImageToRoll() {
-        let image = self.captureManager?.stillImage
+        let image = self.captureManager!.stillImage
         self.capturedImages.append(image!)
-        self.collectionView.reloadData()
         
         let index: NSIndexPath = NSIndexPath(forRow: self.capturedImages.count-1, inSection: 0)
         
@@ -140,6 +136,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         newSegment.frameSet = SharedDataFrameSet.dataFrameSet!
         SharedDataFrameSet.dataFrameSet!.frames.addObject(newSegment)
 
+        self.collectionView.insertItemsAtIndexPaths([index])
         self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
     }
     

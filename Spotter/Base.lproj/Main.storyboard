@@ -50,7 +50,7 @@
             </objects>
             <point key="canvasLocation" x="-663" y="-223"/>
         </scene>
-        <!--Annotate View Controller-->
+        <!--Annotations-->
         <scene sceneID="N8l-OS-Pu6">
             <objects>
                 <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
@@ -66,36 +66,6 @@
                                         <rect key="frame" x="0.0" y="60" width="320" height="395"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JC6-Yc-X2i">
-                                        <rect key="frame" x="8" y="34" width="31" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Prev">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="previousImage:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="6XH-DJ-Ke4"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XUm-dU-Nsn">
-                                        <rect key="frame" x="63" y="34" width="32" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Next">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="nextImage:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="HTX-ao-Ufh"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="L6d-8k-5Sh">
-                                        <rect key="frame" x="272" y="34" width="40" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Close">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="close:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="s95-W2-ax9"/>
-                                        </connections>
-                                    </button>
                                     <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="b5t-YS-EJ5">
                                         <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -107,9 +77,10 @@
                                             </barButtonItem>
                                         </items>
                                     </toolbar>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YUD-T8-FTj">
-                                        <rect key="frame" x="203" y="34" width="44" height="30"/>
+                                    <button opaque="NO" alpha="0.84999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YUD-T8-FTj">
+                                        <rect key="frame" x="138" y="60" width="44" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <state key="normal" title="Delete">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -131,18 +102,30 @@
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Annotations" id="cz8-Ro-zXf">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="QAv-V6-Zfy">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="LMR-qc-ioJ">
+                                <rect key="frame" x="235" y="87" width="54" height="48"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Preview">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="uya-p5-87Y" kind="push" identifier="FromAnnotationToPreview" id="5Ob-G7-gHx"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
-                        <outlet property="nextBtn" destination="XUm-dU-Nsn" id="q7M-XV-9Q0"/>
-                        <outlet property="previousBtn" destination="JC6-Yc-X2i" id="KVB-Lk-sSg"/>
                         <outlet property="textView" destination="1tr-9w-jy1" id="dxU-ZO-Fvw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1254" y="961"/>
+            <point key="canvasLocation" x="-663" y="1216"/>
         </scene>
-        <!--Capture View Controller-->
+        <!--Capture-->
         <scene sceneID="BcV-bH-nnr">
             <objects>
                 <viewController storyboardIdentifier="CaptureViewController" id="tH4-5w-EKm" customClass="CaptureViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
@@ -196,6 +179,7 @@
                                         <connections>
                                             <outlet property="imageView" destination="DcZ-fI-ar6" id="QQW-PV-11K"/>
                                             <outlet property="numberLabel" destination="p66-9Q-NLD" id="n3E-KG-zdu"/>
+                                            <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToAnnotation" id="R7n-cy-ZF7"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -203,7 +187,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="j94-dq-yeb">
+                    <navigationItem key="navigationItem" title="Capture" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
                                 <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToCollection:" id="mi0-Gb-wZe"/>
@@ -277,11 +261,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Preview" id="QrM-5l-46K">
-                        <barButtonItem key="leftBarButtonItem" title="Back" id="aCd-ev-e6q">
-                            <connections>
-                                <action selector="returnToPrevious:" destination="uya-p5-87Y" id="uUW-2j-pQZ"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Publish" id="D4p-fQ-QS0">
                             <connections>
                                 <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="sf7-Oz-xeN"/>
@@ -290,7 +269,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="hLZ-Tf-uIN" id="qbo-GJ-oIF"/>
-                        <outlet property="upperLeftButton" destination="aCd-ev-e6q" id="IpQ-00-HeA"/>
                         <outlet property="upperRightButton" destination="D4p-fQ-QS0" id="Chd-AF-9OF"/>
                     </connections>
                 </viewController>

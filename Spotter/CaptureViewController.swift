@@ -245,10 +245,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // set the shared dataFrame with the one we selected from the collection view
         SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
                 
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
-        
-        self.presentViewController(annotateViewController, animated: true, completion: nil)
+//        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//        let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
+//        
+//        self.presentViewController(annotateViewController, animated: true, completion: nil)
     }
     
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {

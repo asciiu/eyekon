@@ -11,14 +11,15 @@ import UIKit
 class AnnotateViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet var imageView: UIImageView!
-    @IBOutlet var previousBtn: UIButton!
-    @IBOutlet var nextBtn: UIButton!
+    //@IBOutlet var previousBtn: UIButton!
+    //@IBOutlet var nextBtn: UIButton!
     @IBOutlet var textView: UITextView!
 
     var frameNum: Int = 0
     var keyboardToolBar: UIToolbar?
     var keyboardToolBarTextView: UITextView?
     var dataFrames: [Frame]?
+    var secondaryImageView: UIImageView?
     
     // MARK: - Overrides
     override func viewDidLoad() {
@@ -33,8 +34,29 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.keyboardToolBarTextView!.delegate = self
 
         self.keyboardToolBar!.addSubview(self.keyboardToolBarTextView!)
-        
         self.textView.inputAccessoryView = self.keyboardToolBar
+        
+        // setup the swipe gestures so the user can swipe left and right
+        self.view.userInteractionEnabled = true
+
+        let swipeLeft: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+
+         // Setting the swipe direction.
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+
+        // Adding the swipe gesture on image view
+        self.view.addGestureRecognizer(swipeLeft)
+        self.view.addGestureRecognizer(swipeRight)
+        
+        self.view.clipsToBounds = true
+        
+        // this image view is used to animate the swipe
+        let viewFrame = self.imageView.frame
+        let secondFrame = CGRectMake(viewFrame.width, viewFrame.origin.y, viewFrame.width, viewFrame.height)
+        
+        let secondaryImageView = UIImageView(frame: secondFrame)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -78,6 +100,12 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     
     func displayImageAtIndex(index: Int) {
         
+        if (index >= self.dataFrames!.count) {
+            return
+        } else if ( index < 0) {
+            return
+        }
+        
         let dataFrame: Frame = self.dataFrames![index]
         SharedDataFrame.dataFrame = dataFrame
 
@@ -87,17 +115,61 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.frameNum = index
 
         // hide next button if last image
-        if(self.frameNum == self.dataFrames!.count-1) {
-            self.nextBtn.hidden = true
-        } else {
-            self.nextBtn.hidden = false
+//        if(self.frameNum == self.dataFrames!.count-1) {
+//            self.nextBtn.hidden = true
+//        } else {
+//            self.nextBtn.hidden = false
+//        }
+//        
+//        // hide prev button if first image
+//        if(self.frameNum == 0) {
+//            self.previousBtn.hidden = true
+//        } else {
+//            self.previousBtn.hidden = false
+//        }
+    }
+    
+    func handleSwipe(swipe: UISwipeGestureRecognizer) {
+
+        if swipe.direction == UISwipeGestureRecognizerDirection.Left {
+            
+            self.displayImageAtIndex(self.frameNum+1)
+            
+//            if self.segmentIndex! < self.segments!.count - 1 {
+//
+//                let imageView1 = self.segmentViews[self.segmentIndex!++]
+//                let imageView2 = self.segmentViews[self.segmentIndex!]
+//
+//                UIView.animateWithDuration(0.25,
+//                    animations: {
+//
+//                        imageView1.frame = CGRectMake(-imageView1.frame.width, imageView1.frame.origin.y, imageView1.frame.width, imageView1.frame.height)
+//                        imageView2.frame = CGRectMake(0, imageView2.frame.origin.y, imageView2.frame.width, imageView2.frame.height)
+//
+//                    }, completion: { (value: Bool) in
+//
+//                })
+//            }
         }
-        
-        // hide prev button if first image
-        if(self.frameNum == 0) {
-            self.previousBtn.hidden = true
-        } else {
-            self.previousBtn.hidden = false
+
+        if swipe.direction == UISwipeGestureRecognizerDirection.Right {
+
+            self.displayImageAtIndex(self.frameNum-1)
+//            if self.segmentIndex! > 0 {
+//
+//                let imageView1 = self.segmentViews[self.segmentIndex!--]
+//                let imageView2 = self.segmentViews[self.segmentIndex!]
+//
+//                UIView.animateWithDuration(0.25,
+//                    animations: {
+//
+//                        imageView1.frame = CGRectMake(imageView1.frame.width, imageView1.frame.origin.y, imageView1.frame.width, imageView1.frame.height)
+//                        imageView2.frame = CGRectMake(0, imageView2.frame.origin.y, imageView2.frame.width, imageView2.frame.height)
+//
+//                    }, completion: { (value: Bool) in
+//                        
+//                })
+//            }
         }
     }
     
@@ -107,10 +179,10 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     
     // MARK: - Actions
     
-    @IBAction func close(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-        //self.delegate?.controllerDidFinish(self)
-    }
+//    @IBAction func close(sender: AnyObject) {
+//        self.dismissViewControllerAnimated(true, completion: nil)
+//        //self.delegate?.controllerDidFinish(self)
+//    }
     
     @IBAction func deleteImage(sender: AnyObject) {
     
@@ -129,13 +201,13 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    @IBAction func nextImage(sender: AnyObject) {
-        self.displayImageAtIndex(self.frameNum+1)
-    }
-    
-    @IBAction func previousImage(sender: AnyObject) {
-        self.displayImageAtIndex(self.frameNum-1)
-    }
+//    @IBAction func nextImage(sender: AnyObject) {
+//        self.displayImageAtIndex(self.frameNum+1)
+//    }
+//    
+//    @IBAction func previousImage(sender: AnyObject) {
+//        self.displayImageAtIndex(self.frameNum-1)
+//    }
     
     @IBAction func textTool(sender: AnyObject) {
         self.textView.becomeFirstResponder()

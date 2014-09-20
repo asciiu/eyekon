@@ -44,11 +44,13 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         self.dataFrames = SharedDataFrameSet.sortedDataFrames()
         
         let controllers = self.navigationController!.viewControllers
+        let previousController = controllers[controllers.count-2]
         
-        if (controllers[controllers.count-2] is CollectionViewController) {
+        if (previousController is CollectionViewController) {
             self.upperRightButton.title = "Edit"
             self.upperRightButton.enabled = false
-        } else if(controllers[controllers.count-2] is CaptureViewController) {
+        } else if(previousController is CaptureViewController || previousController is AnnotateViewController) {
+            self.upperRightButton.title = "Publish"
             self.upperRightButton.enabled = true
         }
 //        let firstFrame: Frame = SharedDataFrameSet.sortedDataFrames()[0]
@@ -115,48 +117,6 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         // Dispose of any resources that can be recreated.
     }
     
-//    func handleSwipe(swipe: UISwipeGestureRecognizer) {
-//    
-//        if swipe.direction == UISwipeGestureRecognizerDirection.Left {
-//            
-//            if self.segmentIndex! < self.segments!.count - 1 {
-//                
-//                let imageView1 = self.segmentViews[self.segmentIndex!++]
-//                let imageView2 = self.segmentViews[self.segmentIndex!]
-//                
-//                UIView.animateWithDuration(0.25,
-//                    animations: {
-//                        
-//                        imageView1.frame = CGRectMake(-imageView1.frame.width, imageView1.frame.origin.y, imageView1.frame.width, imageView1.frame.height)
-//                        imageView2.frame = CGRectMake(0, imageView2.frame.origin.y, imageView2.frame.width, imageView2.frame.height)
-//
-//                    }, completion: { (value: Bool) in
-//                        
-//                })
-//            }
-//        }
-//        
-//        if swipe.direction == UISwipeGestureRecognizerDirection.Right {
-//            
-//            if self.segmentIndex! > 0 {
-//                
-//                let imageView1 = self.segmentViews[self.segmentIndex!--]
-//                let imageView2 = self.segmentViews[self.segmentIndex!]
-//                
-//                UIView.animateWithDuration(0.25,
-//                    animations: {
-//                        
-//                        imageView1.frame = CGRectMake(imageView1.frame.width, imageView1.frame.origin.y, imageView1.frame.width, imageView1.frame.height)
-//                        imageView2.frame = CGRectMake(0, imageView2.frame.origin.y, imageView2.frame.width, imageView2.frame.height)
-//                        
-//                    }, completion: { (value: Bool) in
-//                        
-//                })
-//            }
-//        }
-//    }
-    
-    
     // MARK: - Actions
     
     @IBAction func returnToPrevious(sender: AnyObject) {
@@ -168,7 +128,6 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         println("PreviewViewController: publish")
     }
 
-    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

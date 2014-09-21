@@ -104,7 +104,9 @@ class CaptureSessionManager: NSObject {
                 println("Capture still image failed \(error.localizedDescription)")
             } else if imageDataSampleBuffer != nil {
                 let imageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
-                self.stillImage = UIImage(data: imageData)
+                
+                let capturedImage = UIImage(data: imageData)
+                self.stillImage = scaleAndRotateImage(capturedImage)
                 NSNotificationCenter.defaultCenter().postNotificationName(kImageCapturedSuccessfully, object: nil)
             }
         })

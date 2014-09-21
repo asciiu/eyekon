@@ -154,7 +154,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
 
         var cell: ImageCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: indexPath) as ImageCollectionViewCell
 
-        cell.imageView.frame = cell.bounds
+        let image = self.capturedImages[indexPath.row]
+
+        //cell.imageView.frame = cell.bounds
         cell.numberLabel.text = String(indexPath.row + 1)
         cell.imageView.image = self.capturedImages[indexPath.row]
         

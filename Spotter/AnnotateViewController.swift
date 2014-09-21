@@ -201,6 +201,15 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         }
     }
     
+    @IBAction func preview(sender: AnyObject) {
+        
+        if(self.keyboardToolBarTextView!.isFirstResponder()) {
+            self.keyboardToolBarTextView!.resignFirstResponder()
+            self.textView.resignFirstResponder()
+        }
+        
+        self.performSegueWithIdentifier("FromAnnotationToPreview", sender: self)
+    }
 //    @IBAction func nextImage(sender: AnyObject) {
 //        self.displayImageAtIndex(self.frameNum+1)
 //    }

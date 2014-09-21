@@ -108,5 +108,6 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     
     @IBAction func unwindToCollection(unwindSegue: UIStoryboardSegue) {
         self.loadManagedCollection()
+        self.tableView.reloadData()
     }
 }

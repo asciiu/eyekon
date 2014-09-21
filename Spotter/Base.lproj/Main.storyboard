@@ -111,7 +111,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="uya-p5-87Y" kind="push" identifier="FromAnnotationToPreview" id="5Ob-G7-gHx"/>
+                                    <action selector="preview:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="BrM-dX-7F7"/>
                                 </connections>
                             </button>
                         </barButtonItem>
@@ -119,6 +119,7 @@
                     <connections>
                         <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
                         <outlet property="textView" destination="1tr-9w-jy1" id="dxU-ZO-Fvw"/>
+                        <segue destination="uya-p5-87Y" kind="push" identifier="FromAnnotationToPreview" id="Cms-bu-0Ed"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -261,20 +262,22 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Preview" id="QrM-5l-46K">
-                        <barButtonItem key="rightBarButtonItem" title="Publish" id="D4p-fQ-QS0">
+                        <barButtonItem key="rightBarButtonItem" title="Publish" id="4bI-f9-ib9">
                             <connections>
-                                <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="sf7-Oz-xeN"/>
+                                <action selector="publish:" destination="uya-p5-87Y" id="7d9-U8-l6j"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="hLZ-Tf-uIN" id="qbo-GJ-oIF"/>
-                        <outlet property="upperRightButton" destination="D4p-fQ-QS0" id="Chd-AF-9OF"/>
+                        <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
+                        <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="POa-vE-3jz"/>
+                        <segue destination="tH4-5w-EKm" kind="push" identifier="FromPreviewToCapture" id="D24-GR-7jr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-119" y="106"/>
+            <point key="canvasLocation" x="-139" y="106"/>
         </scene>
         <!--Publish-->
         <scene sceneID="xCC-hv-Kwa">
@@ -359,6 +362,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="lRc-EE-9Kb"/>
+        <segue reference="D24-GR-7jr"/>
+        <segue reference="Cms-bu-0Ed"/>
     </inferredMetricsTieBreakers>
 </document>

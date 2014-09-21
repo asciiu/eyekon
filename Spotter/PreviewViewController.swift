@@ -48,10 +48,10 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         
         if (previousController is CollectionViewController) {
             self.upperRightButton.title = "Edit"
-            self.upperRightButton.enabled = false
+            //self.upperRightButton.enabled = true
         } else if(previousController is CaptureViewController || previousController is AnnotateViewController) {
             self.upperRightButton.title = "Publish"
-            self.upperRightButton.enabled = true
+            //self.upperRightButton.enabled = true
         }
 //        let firstFrame: Frame = SharedDataFrameSet.sortedDataFrames()[0]
 //        let image: UIImage = UIImage(data: firstFrame.imageData)
@@ -125,13 +125,19 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     @IBAction func publish(sender: AnyObject) {
-        println("PreviewViewController: publish")
+        
+        if (self.upperRightButton.title == "Publish") {
+            self.performSegueWithIdentifier("FromPreviewToPublish", sender: self)
+        } else {
+            self.performSegueWithIdentifier("FromPreviewToCapture", sender: self)
+        }
     }
 
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        
     }
     
     // MARK: - UITableViewDataSource

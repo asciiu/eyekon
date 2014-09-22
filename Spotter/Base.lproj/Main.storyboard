@@ -152,7 +152,7 @@
                                     <action selector="takePhoto:" destination="tH4-5w-EKm" eventType="touchUpInside" id="1Je-6o-d19"/>
                                 </connections>
                             </button>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="WlQ-oV-DvZ">
+                            <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="WlQ-oV-DvZ">
                                 <rect key="frame" x="0.0" y="434" width="320" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>

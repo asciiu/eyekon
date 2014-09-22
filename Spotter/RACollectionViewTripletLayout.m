@@ -190,7 +190,7 @@
     CGFloat largeCellSideHeight = (2.f * (_collectionViewSize.height - _insets.left - _insets.right) - _itemSpacing) / 2.f;
     
     // cell size when shrunken
-    CGFloat smallCellSideHeight = (largeCellSideHeight - _itemSpacing) / 2.f;
+    CGFloat smallCellSideHeight = (largeCellSideHeight - _itemSpacing) * 0.75;
     
     // establish the cell size so we can shrink it later from a gesture
     _largeCellSize = CGSizeMake(largeCellSideHeight, largeCellSideHeight);

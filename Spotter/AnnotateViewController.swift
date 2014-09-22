@@ -21,6 +21,8 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     var dataFrames: [Frame]?
     var secondaryImageView: UIImageView?
     
+    var alertController: UIAlertController?
+    
     // MARK: - Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +59,34 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         let secondFrame = CGRectMake(viewFrame.width, viewFrame.origin.y, viewFrame.width, viewFrame.height)
         
         let secondaryImageView = UIImageView(frame: secondFrame)
+        
+        
+        // alert controller to caution user during a delete
+        self.alertController = UIAlertController(title:"Caution!",
+            message: "Are you sure you want to delete this frame?",
+            preferredStyle:UIAlertControllerStyle.Alert)
+        
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+        
+        let deleteAction: UIAlertAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: {(alert :UIAlertAction!) in
+            
+            self.dataFrames!.removeAtIndex(self.frameNum)
+            SharedDataFrameSet.removeDataFrame(self.frameNum)
+            
+            if(self.frameNum <= self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
+                self.displayImageAtIndex(self.frameNum)
+            } else if(self.frameNum > self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
+                self.displayImageAtIndex(self.frameNum-1)
+            }
+            
+            // no more frames to show close the view
+            if(self.dataFrames!.count == 0) {
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        })
+        
+        self.alertController!.addAction(cancelAction)
+        self.alertController!.addAction(deleteAction)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -185,20 +215,7 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
 //    }
     
     @IBAction func deleteImage(sender: AnyObject) {
-    
-        self.dataFrames!.removeAtIndex(self.frameNum)
-        SharedDataFrameSet.removeDataFrame(self.frameNum)
-        
-        if(frameNum <= self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
-            self.displayImageAtIndex(self.frameNum)
-        } else if(frameNum > self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
-            self.displayImageAtIndex(self.frameNum-1)
-        }
-        
-        // no more frames to show close the view
-        if(self.dataFrames!.count == 0) {
-            self.dismissViewControllerAnimated(true, completion: nil)
-        }
+        self.presentViewController(self.alertController!, animated: true, completion: nil)
     }
     
     @IBAction func preview(sender: AnyObject) {

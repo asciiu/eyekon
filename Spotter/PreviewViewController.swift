@@ -161,8 +161,8 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
             
             let textFrame = cell.annotationTextView.contentSize
             
-            cell.annotationTextView.backgroundColor = UIColor.blackColor()
-            cell.annotationTextView.textColor = UIColor.whiteColor()
+            //cell.annotationTextView.backgroundColor = UIColor.blackColor()
+            //cell.annotationTextView.textColor = UIColor.whiteColor()
             cell.annotationTextView.hidden = false
         } else {
             cell.annotationTextView.hidden = true

@@ -68,6 +68,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         self.captureManager!.captureSession!.startRunning()
         self.capturedImages.removeAll(keepCapacity: false)
+        self.title = ""
+        //self.navigationController?.navigationBar.backgroundColor = UIColor.blackColor()
+        //self.navigationController?.navigationBar.alpha = 0.5
+        
 
         // not creating a new set?
         if SharedDataFrameSet.dataFrameSet != nil {

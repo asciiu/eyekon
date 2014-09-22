@@ -118,6 +118,7 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
 {
     if (!_setUped) {
         _longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
+        _longPressGesture.minimumPressDuration = 0.25;
         _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
         _longPressGesture.delegate = self;
         _panGesture.delegate = self;

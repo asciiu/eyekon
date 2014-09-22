@@ -154,7 +154,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         let image = UIImage(data: frame.imageData)
         
         cell.mainImage.image = image
-        let frameWidth = self.tableView.frame.width
+        let frameWidth = cell.mainImage.frame.width
         let originalWidth = image.size.width
         let originalHeight = image.size.height
         let height = frameWidth * originalHeight / originalWidth
@@ -202,6 +202,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         //cell.textField.text = frame.annotation
         //let textHeight = cell.textField.contentSize.height + 7
     
-        return height + 10
+        let gap = (self.tableView.frame.width - self.tableView.contentSize.width) / 2
+        return height + gap - 2
     }
 }

@@ -49,8 +49,8 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
 
         // Adding the swipe gesture on image view
-        self.toolBar.addGestureRecognizer(swipeLeft)
-        self.toolBar.addGestureRecognizer(swipeRight)
+        self.view.addGestureRecognizer(swipeLeft)
+        self.view.addGestureRecognizer(swipeRight)
         
         //self.view.clipsToBounds = true
         
@@ -113,7 +113,7 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     
     // MARK: - Custom Stuff
     func displayImage(image: UIImage) {
-        let origin = self.scrollView.frame.origin
+        let origin = self.imageView.frame.origin
         let frameWidth = self.imageView.frame.width
         let originalWidth = image.size.width
         let originalHeight = image.size.height
@@ -141,7 +141,7 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
             self.textView.text = SharedDataFrame.dataFrame!.annotation
             self.textView.sizeToFit()
             
-            height += self.textView.contentSize.height
+            height += self.textView.contentSize.height + 10
         } else {
             self.textView.hidden = true
             //self.resetAnnotationView()

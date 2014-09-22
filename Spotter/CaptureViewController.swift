@@ -131,9 +131,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.append(image!)
         
         let index: NSIndexPath = NSIndexPath(forRow: self.capturedImages.count-1, inSection: 0)
+        let context = SharedDataFrameSet.dataFrameSet!.managedObjectContext
         
         // create a new segment for the captured image
-        let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
+        let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: context) as Frame
         
         newSegment.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
         newSegment.frameNumber = self.capturedImages.count-1

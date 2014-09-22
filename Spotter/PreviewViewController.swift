@@ -154,12 +154,19 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         let image = UIImage(data: frame.imageData)
         
         cell.mainImage.image = image
+        let frameWidth = self.tableView.frame.width
+        let originalWidth = image.size.width
+        let originalHeight = image.size.height
+        let height = frameWidth * originalHeight / originalWidth
+        cell.mainImage.frame.size = CGSizeMake(frameWidth, height)
+        cell.annotationTextView.frame.origin.y = height
     
         // show annotation if the info frame has one
         if(frame.annotation != nil && frame.annotation != "") {
             cell.annotationTextView.text = frame.annotation
             
-            let textFrame = cell.annotationTextView.contentSize
+            cell.annotationTextView.sizeToFit()
+            //let textFrame = cell.annotationTextView.contentSize
             
             //cell.annotationTextView.backgroundColor = UIColor.blackColor()
             //cell.annotationTextView.textColor = UIColor.whiteColor()
@@ -172,20 +179,29 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     // MARK: UITableViewDelegate
-//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//        
-//        let frame = self.dataFrames![indexPath.row]
-//        let image = UIImage(data: frame.imageData)
-//        
-//        let frameWidth = self.tableView.frame.width
-//        let originalWidth = image.size.width
-//        let originalHeight = image.size.height
-//        let height = frameWidth * originalHeight / originalWidth
-//        
-//        //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
-//        //cell.textField.text = frame.annotation
-//        //let textHeight = cell.textField.contentSize.height + 7
-//    
-//        return height
-//    }
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        let frame = self.dataFrames![indexPath.row]
+        let image = UIImage(data: frame.imageData)
+        
+        let frameWidth = self.tableView.frame.width
+        let originalWidth = image.size.width
+        let originalHeight = image.size.height
+        var height = frameWidth * originalHeight / originalWidth
+        
+        if( frame.annotation != nil) {
+            let attributes: NSDictionary = [NSFontAttributeName: UIFont.systemFontOfSize(15)]
+            
+            // NSString class method: boundingRectWithSize:options:attributes:context is
+            // available only on ios7.0 sdk.
+            let rect: CGRect = frame.annotation!.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes, context: nil)
+            
+            height += rect.height + 10
+        }
+        //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
+        //cell.textField.text = frame.annotation
+        //let textHeight = cell.textField.contentSize.height + 7
+    
+        return height + 10
+    }
 }

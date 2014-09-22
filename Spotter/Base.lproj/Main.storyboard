@@ -62,11 +62,23 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1.jpg" id="Eif-hD-Sd9">
-                                        <rect key="frame" x="0.0" y="60" width="320" height="395"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    </imageView>
-                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="b5t-YS-EJ5">
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="MyB-6l-M1x">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="524"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1.jpg" id="Eif-hD-Sd9">
+                                                <rect key="frame" x="0.0" y="95" width="320" height="228"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            </imageView>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" text="Annotation" id="1tr-9w-jy1">
+                                                <rect key="frame" x="0.0" y="326" width="320" height="29"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            </textView>
+                                        </subviews>
+                                    </scrollView>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" id="b5t-YS-EJ5">
                                         <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                         <items>
@@ -78,17 +90,12 @@
                                             <barButtonItem width="200" style="plain" systemItem="fixedSpace" id="xPu-Fb-KVQ"/>
                                             <barButtonItem systemItem="trash" id="Dfe-e1-rpt">
                                                 <connections>
-                                                    <action selector="deleteImage:" destination="SiY-lW-Nsg" id="01j-5s-qrD"/>
+                                                    <action selector="deleteImage:" destination="SiY-lW-Nsg" id="Kyt-BG-017"/>
                                                 </connections>
                                             </barButtonItem>
                                         </items>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </toolbar>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Annotation" id="1tr-9w-jy1">
-                                        <rect key="frame" x="0.0" y="463" width="320" height="29"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                    </textView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -111,7 +118,9 @@
                     </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
+                        <outlet property="scrollView" destination="MyB-6l-M1x" id="ZLx-uZ-isj"/>
                         <outlet property="textView" destination="1tr-9w-jy1" id="dxU-ZO-Fvw"/>
+                        <outlet property="toolBar" destination="b5t-YS-EJ5" id="g9a-7K-uz9"/>
                         <segue destination="uya-p5-87Y" kind="push" identifier="FromAnnotationToPreview" id="Cms-bu-0Ed"/>
                     </connections>
                 </viewController>
@@ -214,23 +223,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" sectionIndexMinimumDisplayRowCount="-2" rowHeight="239" sectionHeaderHeight="22" sectionFooterHeight="22" id="hLZ-Tf-uIN">
-                                <rect key="frame" x="-16" y="10" width="336" height="568"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" sectionIndexMinimumDisplayRowCount="-2" rowHeight="246" sectionHeaderHeight="22" sectionFooterHeight="22" id="hLZ-Tf-uIN">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="578"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="SimpleTableViewCell" rowHeight="239" id="RNV-sa-jZ1" customClass="SimpleTableViewCell" customModule="Spotter" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="SimpleTableViewCell" rowHeight="246" id="RNV-sa-jZ1" customClass="SimpleTableViewCell" customModule="Spotter" customModuleProvider="target">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="RNV-sa-jZ1" id="3Hd-M8-HVZ">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="11.jpg" id="wIZ-NB-wRK">
-                                                    <rect key="frame" x="19" y="8" width="309" height="177"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="177"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <textView autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Sample Annotation" id="6KM-ae-QLO">
-                                                    <rect key="frame" x="19" y="193" width="309" height="37"/>
+                                                    <rect key="frame" x="0.0" y="185" width="320" height="53"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -330,7 +339,7 @@
         <!--Navigation Controller-->
         <scene sceneID="nPn-oT-Wfq">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rj4-nm-DwQ" sceneMemberID="viewController">
+                <navigationController modalTransitionStyle="flipHorizontal" hidesBarsOnSwipe="YES" id="rj4-nm-DwQ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" opaque="NO" contentMode="scaleToFill" barStyle="black" id="ynm-Yv-Toc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -342,6 +351,9 @@
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="PQ6-n2-nOS">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="QHJ-c1-pPb" kind="relationship" relationship="rootViewController" id="TBf-qo-iWA"/>
                     </connections>

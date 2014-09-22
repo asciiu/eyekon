@@ -10,9 +10,9 @@ import UIKit
 
 class AnnotateViewController: UIViewController, UITextViewDelegate {
 
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var toolBar: UIToolbar!
     @IBOutlet var imageView: UIImageView!
-    //@IBOutlet var previousBtn: UIButton!
-    //@IBOutlet var nextBtn: UIButton!
     @IBOutlet var textView: UITextView!
 
     var frameNum: Int = 0
@@ -49,17 +49,16 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
 
         // Adding the swipe gesture on image view
-        self.view.addGestureRecognizer(swipeLeft)
-        self.view.addGestureRecognizer(swipeRight)
+        self.toolBar.addGestureRecognizer(swipeLeft)
+        self.toolBar.addGestureRecognizer(swipeRight)
         
-        self.view.clipsToBounds = true
+        //self.view.clipsToBounds = true
         
         // this image view is used to animate the swipe
-        let viewFrame = self.imageView.frame
-        let secondFrame = CGRectMake(viewFrame.width, viewFrame.origin.y, viewFrame.width, viewFrame.height)
+        //let viewFrame = self.imageView.frame
+        //let secondFrame = CGRectMake(viewFrame.width, viewFrame.origin.y, viewFrame.width, viewFrame.height)
         
-        let secondaryImageView = UIImageView(frame: secondFrame)
-        
+        //let secondaryImageView = UIImageView(frame: secondFrame)
         
         // alert controller to caution user during a delete
         self.alertController = UIAlertController(title:"Caution!",
@@ -98,6 +97,7 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.frameNum = SharedDataFrame.dataFrame!.frameNumber
         self.dataFrames = SharedDataFrameSet.sortedDataFrames()
         self.displayImageAtIndex(self.frameNum)
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -113,19 +113,44 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     
     // MARK: - Custom Stuff
     func displayImage(image: UIImage) {
-        let origin = self.imageView.frame.origin
+        let origin = self.scrollView.frame.origin
         let frameWidth = self.imageView.frame.width
         let originalWidth = image.size.width
         let originalHeight = image.size.height
-        
+        let frameHeight = frameWidth * originalHeight / originalWidth
+        var height = frameHeight
+
         self.imageView.image = image
+        self.imageView.frame = CGRectMake(origin.x, origin.y, frameWidth, frameHeight)
+        
+        self.textView.frame = CGRectMake(origin.x, origin.y + frameHeight, frameWidth, 10)
+        //        let image = UIImage(data: frame.imageData)
+        //
+        //        let frameWidth = self.tableView.frame.width
+        //        let originalWidth = image.size.width
+        //        let originalHeight = image.size.height
+        //
+        //
+        //        //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
+        //        //cell.textField.text = frame.annotation
+        //        //let textHeight = cell.textField.contentSize.height + 7
         
         if (SharedDataFrame.dataFrame!.annotation != nil && SharedDataFrame.dataFrame!.annotation != "") {
             self.textView.hidden = false
+            
             self.textView.text = SharedDataFrame.dataFrame!.annotation
+            self.textView.sizeToFit()
+            
+            height += self.textView.contentSize.height
         } else {
-            self.resetAnnotationView()
+            self.textView.hidden = true
+            //self.resetAnnotationView()
         }
+        
+        let contentSize = self.scrollView.contentSize
+        let toolBarHeight = self.toolBar.frame.height
+        self.scrollView.contentSize = CGSizeMake(contentSize.width, height + toolBarHeight + 20)
+        //self.view.frame.size.height = CGRectMake(x,y, width, height)
     }
     
     func displayImageAtIndex(index: Int) {
@@ -162,7 +187,6 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
     func handleSwipe(swipe: UISwipeGestureRecognizer) {
 
         if swipe.direction == UISwipeGestureRecognizerDirection.Left {
-            
             self.displayImageAtIndex(self.frameNum+1)
             
 //            if self.segmentIndex! < self.segments!.count - 1 {
@@ -258,6 +282,9 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         }
         
         self.textView.text = self.keyboardToolBarTextView!.text
+        self.textView.sizeToFit()
+        
+        self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
     }
     
     // MARK: TextViewDelegate

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AnnotateViewController: UIViewController, UITextViewDelegate {
+class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollViewDelegate {
 
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var toolBar: UIToolbar!
@@ -52,13 +52,9 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.view.addGestureRecognizer(swipeLeft)
         self.view.addGestureRecognizer(swipeRight)
         
-        //self.view.clipsToBounds = true
-        
-        // this image view is used to animate the swipe
-        //let viewFrame = self.imageView.frame
-        //let secondFrame = CGRectMake(viewFrame.width, viewFrame.origin.y, viewFrame.width, viewFrame.height)
-        
-        //let secondaryImageView = UIImageView(frame: secondFrame)
+        self.scrollView.minimumZoomScale = 1.0
+        self.scrollView.maximumZoomScale = 2.0
+        self.scrollView.delegate = self
         
         // alert controller to caution user during a delete
         self.alertController = UIAlertController(title:"Caution!",
@@ -285,6 +281,11 @@ class AnnotateViewController: UIViewController, UITextViewDelegate {
         self.textView.sizeToFit()
         
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
+    }
+    
+    // MARK: ScrollViewDelegate
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return self.imageView
     }
     
     // MARK: TextViewDelegate

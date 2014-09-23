@@ -196,7 +196,7 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
             // available only on ios7.0 sdk.
             let rect: CGRect = frame.annotation!.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes, context: nil)
             
-            height += rect.height + 10
+            height += rect.height
         }
         //let cell: SimpleTableViewCell = tableView.cellForRowAtIndexPath(indexPath) as SimpleTableViewCell
         //cell.textField.text = frame.annotation

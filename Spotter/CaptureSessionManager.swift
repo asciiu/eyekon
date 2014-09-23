@@ -17,6 +17,8 @@ class CaptureSessionManager: NSObject {
     var captureSession: AVCaptureSession?
     var stillImageOutput: AVCaptureStillImageOutput?
     var stillImage: UIImage?
+    var videoDevice: AVCaptureDevice?
+
     
     override init() {
         self.captureSession = AVCaptureSession()
@@ -61,11 +63,13 @@ class CaptureSessionManager: NSObject {
     
     func addVideoInput() {
         
-        let videoDevice: AVCaptureDevice? = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice?
+        self.videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice?
         
         // is the camera available?
-        if videoDevice != nil {
+        if self.videoDevice != nil {
             var error: NSError?
+            
+            
             
             let videoIn: AVCaptureDeviceInput = AVCaptureDeviceInput.deviceInputWithDevice(videoDevice, error: &error) as AVCaptureDeviceInput
             
@@ -80,6 +84,7 @@ class CaptureSessionManager: NSObject {
             }
         }
     }
+    
     
     func captureStillImage() {
         
@@ -111,4 +116,47 @@ class CaptureSessionManager: NSObject {
             }
         })
     }
+    
+    func focusOnPoint(point: CGPoint) {
+        var error: NSError?
+        
+        self.videoDevice!.lockForConfiguration(&error)
+        
+        if (error != nil) {
+            println("Cannot lock device!")
+            return
+        }
+        
+        if(videoDevice!.focusPointOfInterestSupported) {
+            videoDevice!.focusMode = AVCaptureFocusMode.AutoFocus
+            videoDevice!.focusPointOfInterest = point
+        }
+        
+        if(videoDevice!.isExposureModeSupported(AVCaptureExposureMode.ContinuousAutoExposure)) {
+            videoDevice!.exposurePointOfInterest = point
+            videoDevice!.exposureMode = AVCaptureExposureMode.ContinuousAutoExposure
+            self.videoDevice!.addObserver(self, forKeyPath: "adjustingExposure", options: NSKeyValueObservingOptions.New, context: nil)
+        }
+        
+        self.videoDevice!.unlockForConfiguration()
+    }
+    
+    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafeMutablePointer<Void>) {
+        
+        if (keyPath == "adjustingExposure") {            
+            let device = object as AVCaptureDevice
+            if (!device.adjustingExposure) {
+                
+                device.removeObserver(self, forKeyPath: keyPath)
+                
+                if (device.isExposureModeSupported(AVCaptureExposureMode.Locked)) {
+                    var error: NSError?
+                    device.lockForConfiguration(&error)
+                    //device.exposureMode = AVCaptureExposureMode.Locked //causes the crash
+                    device.unlockForConfiguration()
+                }
+            }
+        }
+    }
+
 }

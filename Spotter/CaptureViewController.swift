@@ -10,6 +10,29 @@ import UIKit
 import CoreData
 import AVFoundation
 
+class CameraFocusSquare: UIView {
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        self.backgroundColor = UIColor.clearColor()
+        
+        self.layer.borderWidth = 1.0
+        //self.layer.cornerRadius = frame.width/2
+        self.layer.borderColor = UIColor.whiteColor().CGColor
+        
+        
+        let selectionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "borderColor")
+        selectionAnimation.toValue = UIColor.yellowColor().CGColor
+        selectionAnimation.repeatCount = 8
+        self.layer.addAnimation(selectionAnimation, forKey: "selectionAnimation")
+    }
+}
 
 class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
     
@@ -22,6 +45,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     var capturedImages: [UIImage] = [UIImage]()
     
     var context: NSManagedObjectContext?
+    var camFocus: CameraFocusSquare?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -270,6 +294,67 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {
         
+    }
+    
+    func focus(aPoint: CGPoint) {
+        
+        let captureDeviceClass: AnyClass? = NSClassFromString("AVCaptureDevice")
+
+        if (captureDeviceClass != nil) {
+            captureDeviceClass?.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        
+        //let device: AVCaptureDevice = captureDeviceClass?.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        
+//        if( device.isFocusModeSupported(AVCaptureFocusMode.AutoFocus)
+//            [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+//            CGRect screenRect = [[UIScreen mainScreen] bounds];
+//            double screenWidth = screenRect.size.width;
+//            double screenHeight = screenRect.size.height;
+//            double focus_x = aPoint.x/screenWidth;
+//            double focus_y = aPoint.y/screenHeight;
+//            if([device lockForConfiguration:nil]) {
+//            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
+//            [device setFocusMode:AVCaptureFocusModeAutoFocus];
+//            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
+//            [device setExposureMode:AVCaptureExposureModeAutoExpose];
+//            }
+//            [device unlockForConfiguration];
+//            }
+//            }
+        }
+    }
+    
+    // MARK: - Touch Events
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        let touch: UITouch = touches.anyObject() as UITouch
+        let touchPoint: CGPoint = touch.locationInView(touch.view)
+        
+        //self.focus(touchPoint)
+        self.camFocus?.removeFromSuperview()
+        
+        if (self.cameraView === touch.view) {
+            let focusRect = CGRectMake(touchPoint.x - 40, touchPoint.y - 40, 80, 80)
+            self.camFocus = CameraFocusSquare(frame: focusRect)
+            self.camFocus!.backgroundColor = UIColor.clearColor()
+            self.view.addSubview(self.camFocus!)
+            self.camFocus!.setNeedsDisplay()
+            
+            
+            let screenRect = UIScreen.mainScreen().bounds
+            let screenWidth = screenRect.size.width
+            let screenHeight = screenRect.size.height
+            let focus_x = touchPoint.x/screenWidth
+            let focus_y = touchPoint.y/screenHeight
+            let focusPt = CGPointMake(focus_x, focus_y)
+            
+            self.captureManager?.focusOnPoint(focusPt)
+            
+            UIView.animateWithDuration(1.5, animations: {
+                self.camFocus!.alpha = 0
+                }, completion: {(value: Bool) in
+                    
+            })
+        }
     }
 }
 

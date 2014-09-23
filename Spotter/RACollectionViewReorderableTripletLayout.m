@@ -101,6 +101,7 @@ typedef NS_ENUM(NSInteger, RAScrollDirction) {
     return attribute;
 }
 
+
 - (BOOL)shouldUpdateAttributesArray
 {
     if (_needsUpdateLayout) {

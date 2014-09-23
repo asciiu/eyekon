@@ -34,7 +34,7 @@ class CameraFocusSquare: UIView {
     }
 }
 
-class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource {
+class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var cancelBtn: UIBarButtonItem!
@@ -43,9 +43,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     var captureManager: CaptureSessionManager?
     var capturedImages: [UIImage] = [UIImage]()
+    var processingCapture: Bool = false
     
     var context: NSManagedObjectContext?
     var camFocus: CameraFocusSquare?
+    let backgroundQueue: dispatch_queue_t = dispatch_queue_create("ImageProcessor", nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +74,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         // setup the camera
         self.captureManager = CaptureSessionManager()
+        self.captureManager!.delegate = self
         self.captureManager!.addVideoInput()
         self.captureManager!.addVideoPreviewLayer()
         self.captureManager!.addStillImageOutput()
@@ -84,8 +87,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager!.previewLayer!.bounds = rect
         self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
         self.cameraView.layer.addSublayer(self.captureManager!.previewLayer!)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveImageToRoll", name: kImageCapturedSuccessfully, object: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -149,30 +150,39 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // Dispose of any resources that can be recreated.
     }
     
-    // invoked when the camera capture has completed
-    func saveImageToRoll() {
-        let image = self.captureManager!.stillImage
-        self.capturedImages.append(image!)
-        
-        let index: NSIndexPath = NSIndexPath(forRow: self.capturedImages.count-1, inSection: 0)
-        let context = SharedDataFrameSet.dataFrameSet!.managedObjectContext
-        
-        // create a new segment for the captured image
-        let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: context) as Frame
-        
-        newSegment.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-        newSegment.frameNumber = self.capturedImages.count-1
-        newSegment.frameSet = SharedDataFrameSet.dataFrameSet!
-        SharedDataFrameSet.dataFrameSet!.frames.addObject(newSegment)
-
-        self.collectionView.insertItemsAtIndexPaths([index])
-        self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
-    }
-    
     // MARK: - Actions
     
     @IBAction func takePhoto(sender: AnyObject) {
         self.captureManager!.captureStillImage()
+    }
+    
+    // MARK: - CaptureSessionManagerDelegate
+    
+    // invoked when the camera capture has completed
+    func processCapture(capturedImage: UIImage) {
+        
+        dispatch_async(self.backgroundQueue, {
+            let image = scaleAndRotateImage(capturedImage)
+            
+            self.capturedImages.append(image)
+            
+            let index: NSIndexPath = NSIndexPath(forItem: self.capturedImages.count-1, inSection: 0)
+            let context = SharedDataFrameSet.dataFrameSet!.managedObjectContext
+            
+            // create a new segment for the captured image
+            let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: context) as Frame
+            
+            newSegment.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
+            newSegment.frameNumber = index.row
+            newSegment.frameSet = SharedDataFrameSet.dataFrameSet!
+            SharedDataFrameSet.dataFrameSet!.frames.addObject(newSegment)
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.collectionView.insertItemsAtIndexPaths([index])
+                self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
+                self.processingCapture = false
+            })
+        })
     }
     
     // MARK: - UICollectionViewDataSource
@@ -186,8 +196,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         let image = self.capturedImages[indexPath.row]
 
         //cell.imageView.frame = cell.bounds
-        cell.numberLabel.text = String(indexPath.row + 1)
-        cell.imageView.image = self.capturedImages[indexPath.row]
+        cell.numberLabel.text = String(indexPath.item + 1)
+        cell.imageView.image = self.capturedImages[indexPath.item]
         
         return cell;
     }
@@ -294,34 +304,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {
         
-    }
-    
-    func focus(aPoint: CGPoint) {
-        
-        let captureDeviceClass: AnyClass? = NSClassFromString("AVCaptureDevice")
-
-        if (captureDeviceClass != nil) {
-            captureDeviceClass?.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        
-        //let device: AVCaptureDevice = captureDeviceClass?.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        
-//        if( device.isFocusModeSupported(AVCaptureFocusMode.AutoFocus)
-//            [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-//            CGRect screenRect = [[UIScreen mainScreen] bounds];
-//            double screenWidth = screenRect.size.width;
-//            double screenHeight = screenRect.size.height;
-//            double focus_x = aPoint.x/screenWidth;
-//            double focus_y = aPoint.y/screenHeight;
-//            if([device lockForConfiguration:nil]) {
-//            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
-//            [device setFocusMode:AVCaptureFocusModeAutoFocus];
-//            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
-//            [device setExposureMode:AVCaptureExposureModeAutoExpose];
-//            }
-//            [device unlockForConfiguration];
-//            }
-//            }
-        }
     }
     
     // MARK: - Touch Events

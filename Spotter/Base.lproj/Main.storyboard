@@ -142,7 +142,7 @@
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6zX-21-LcO">
-                                <rect key="frame" x="133" y="502" width="55" height="46"/>
+                                <rect key="frame" x="120" y="502" width="71" height="66"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Capture">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -374,6 +374,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="D24-GR-7jr"/>
-        <segue reference="Cms-bu-0Ed"/>
+        <segue reference="lRc-EE-9Kb"/>
     </inferredMetricsTieBreakers>
 </document>

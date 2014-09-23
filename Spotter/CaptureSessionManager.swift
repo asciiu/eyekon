@@ -11,6 +11,10 @@ import AVFoundation
 
 var kImageCapturedSuccessfully = "imageCapturedSuccessfully"
 
+protocol CaptureSessionManagerDelegate {
+    func processCapture(image: UIImage)
+}
+
 class CaptureSessionManager: NSObject {
     
     var previewLayer: AVCaptureVideoPreviewLayer?
@@ -18,7 +22,7 @@ class CaptureSessionManager: NSObject {
     var stillImageOutput: AVCaptureStillImageOutput?
     var stillImage: UIImage?
     var videoDevice: AVCaptureDevice?
-
+    var delegate: CaptureSessionManagerDelegate?
     
     override init() {
         self.captureSession = AVCaptureSession()
@@ -109,10 +113,10 @@ class CaptureSessionManager: NSObject {
                 println("Capture still image failed \(error.localizedDescription)")
             } else if imageDataSampleBuffer != nil {
                 let imageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
+
+                let image = UIImage(data: imageData)
                 
-                let capturedImage = UIImage(data: imageData)
-                self.stillImage = scaleAndRotateImage(capturedImage)
-                NSNotificationCenter.defaultCenter().postNotificationName(kImageCapturedSuccessfully, object: nil)
+                self.delegate?.processCapture(image)
             }
         })
     }

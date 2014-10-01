@@ -307,6 +307,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     }
     
     // MARK: - Touch Events
+    
+    // touch to focus camera
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         let touch: UITouch = touches.anyObject() as UITouch
         let touchPoint: CGPoint = touch.locationInView(touch.view)
@@ -315,12 +317,12 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.camFocus?.removeFromSuperview()
         
         if (self.cameraView === touch.view) {
+            // draw a box around the focus point
             let focusRect = CGRectMake(touchPoint.x - 40, touchPoint.y - 40, 80, 80)
             self.camFocus = CameraFocusSquare(frame: focusRect)
             self.camFocus!.backgroundColor = UIColor.clearColor()
             self.view.addSubview(self.camFocus!)
             self.camFocus!.setNeedsDisplay()
-            
             
             let screenRect = UIScreen.mainScreen().bounds
             let screenWidth = screenRect.size.width
@@ -329,6 +331,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
             let focus_y = touchPoint.y/screenHeight
             let focusPt = CGPointMake(focus_x, focus_y)
             
+            // set focus point for capture manager
             self.captureManager?.focusOnPoint(focusPt)
             
             UIView.animateWithDuration(1.5, animations: {

@@ -34,6 +34,7 @@
 		6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30919B83BCD0085FF19 /* Frame.swift */; };
 		6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */; };
 		6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */; };
+		6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */; };
 		6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8319A66669006CB2E2 /* AppDelegate.swift */; };
 		6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */; };
 		6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */; };
@@ -89,6 +90,8 @@
 		6E1CE30919B83BCD0085FF19 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameSet.swift; sourceTree = "<group>"; };
 		6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
+		6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
+		6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
 		6EC03D7E19A66669006CB2E2 /* Spotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D8219A66669006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D8319A66669006CB2E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -133,7 +136,6 @@
 				6E1CE2D919B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m */,
 				6E1CE2DA19B516E80085FF19 /* RACollectionViewTripletLayout.h */,
 				6E1CE2DB19B516E80085FF19 /* RACollectionViewTripletLayout.m */,
-				6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */,
 			);
 			name = CollectionView;
 			sourceTree = "<group>";
@@ -198,6 +200,15 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		6E7CB2C219DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */,
+				6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */,
+			);
+			path = LXReorderableCollectionViewFlowLayout;
+			sourceTree = "<group>";
+		};
 		6EC03D7519A66669006CB2E2 = {
 			isa = PBXGroup;
 			children = (
@@ -220,11 +231,13 @@
 		6EC03D8019A66669006CB2E2 /* Spotter */ = {
 			isa = PBXGroup;
 			children = (
+				6E7CB2C219DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout */,
 				6E1CE30D19B83CA30085FF19 /* Models */,
 				6E1CE2DE19B525730085FF19 /* photos */,
 				6E1CE2CF19B511910085FF19 /* CollectionView */,
 				6E1CE2D119B511E40085FF19 /* Custom Views */,
 				6E1CE2D019B511B10085FF19 /* Controllers */,
+				6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */,
 				6EC03D8319A66669006CB2E2 /* AppDelegate.swift */,
 				6EC03D8A19A66669006CB2E2 /* Main.storyboard */,
 				6EC03D8D19A66669006CB2E2 /* Images.xcassets */,
@@ -395,6 +408,7 @@
 				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
 				6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */,
+				6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,

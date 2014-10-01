@@ -226,44 +226,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" sectionIndexMinimumDisplayRowCount="-2" allowsSelection="NO" rowHeight="246" sectionHeaderHeight="22" sectionFooterHeight="22" id="hLZ-Tf-uIN">
-                                <rect key="frame" x="16" y="0.0" width="288" height="578"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="xMK-cc-4UD">
+                                <rect key="frame" x="16" y="0.0" width="288" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="SimpleTableViewCell" rowHeight="246" id="RNV-sa-jZ1" customClass="SimpleTableViewCell" customModule="Spotter" customModuleProvider="target">
+                                <collectionViewLayout key="collectionViewLayout" id="gHi-UL-kM4" customClass="LXReorderableCollectionViewFlowLayout"/>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmptyCell" id="PgV-Yt-a7h">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="RNV-sa-jZ1" id="3Hd-M8-HVZ">
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="11.jpg" id="wIZ-NB-wRK">
-                                                    <rect key="frame" x="0.0" y="0.0" width="288" height="177"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                </imageView>
-                                                <textView autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Sample Annotation" id="6KM-ae-QLO">
-                                                    <rect key="frame" x="0.0" y="185" width="288" height="53"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                </textView>
-                                            </subviews>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </tableViewCellContentView>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                        <connections>
-                                            <outlet property="annotationTextView" destination="6KM-ae-QLO" id="Rfy-aF-PQR"/>
-                                            <outlet property="mainImage" destination="wIZ-NB-wRK" id="hrA-MW-1oR"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                                <sections/>
+                                    </collectionViewCell>
+                                </cells>
                                 <connections>
-                                    <outlet property="dataSource" destination="uya-p5-87Y" id="IZ3-iH-C78"/>
-                                    <outlet property="delegate" destination="uya-p5-87Y" id="gw6-LQ-SUo"/>
+                                    <outlet property="dataSource" destination="uya-p5-87Y" id="d3N-4W-0ff"/>
+                                    <outlet property="delegate" destination="uya-p5-87Y" id="wsu-eC-axA"/>
                                 </connections>
-                            </tableView>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -275,7 +259,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="tableView" destination="hLZ-Tf-uIN" id="qbo-GJ-oIF"/>
+                        <outlet property="collectionView" destination="xMK-cc-4UD" id="dfg-Ms-8hP"/>
                         <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
                         <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="POa-vE-3jz"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromPreviewToCapture" id="D24-GR-7jr"/>
@@ -368,7 +352,6 @@
     </scenes>
     <resources>
         <image name="1.jpg" width="450" height="252"/>
-        <image name="11.jpg" width="600" height="398"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

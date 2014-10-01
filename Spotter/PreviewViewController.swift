@@ -8,22 +8,20 @@
 
 import UIKit
 
-class PreviewViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class PreviewViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, LXReorderableCollectionViewDataSource {
 
-    //@IBOutlet var imageView: UIImageView!
-    @IBOutlet var tableView: UITableView!
-    @IBOutlet var upperLeftButton: UIBarButtonItem!
+    //@IBOutlet var upperLeftButton: UIBarButtonItem!
     @IBOutlet var upperRightButton: UIBarButtonItem!
+    @IBOutlet var collectionView: UICollectionView!
     
-    //var segments: [UIImage]?
-    //var segmentIndex: Int?
-    //var segmentViews: [UIImageView] = [UIImageView]()
     var dataFrames: [Frame]?
+    var cubes: NSMutableArray = NSMutableArray()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.separatorInset = UIEdgeInsets(top: 0, left: 3, bottom: 3, right: 3)
+        self.collectionView.clipsToBounds = false
+        //self.tableView.separatorInset = UIEdgeInsets(top: 0, left: 3, bottom: 3, right: 3)
         
         // Do any additional setup after loading the view.
 //        self.view.userInteractionEnabled = true
@@ -45,73 +43,39 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewWillAppear(animated: Bool) {
         self.dataFrames = SharedDataFrameSet.sortedDataFrames()
         
+        let frameWidth = self.collectionView.frame.width
+        for cube in self.dataFrames! {
+            let image = UIImage(data: cube.imageData)
+            
+            let originalWidth = image.size.width
+            let originalHeight = image.size.height
+            let height = frameWidth * originalHeight / originalWidth
+            
+            let imageView = UIImageView(frame: CGRectMake(0, 0, frameWidth, height))
+            imageView.image = image
+            
+            self.cubes.addObject(imageView)
+            //println("add frame data to cubes array")
+            
+            if(cube.annotation != nil && cube.annotation != "") {
+                let textView = UITextView(frame: CGRectMake(0, 0, frameWidth, 0))
+                textView.editable = false
+                textView.selectable = false
+                textView.text = cube.annotation
+                textView.sizeToFit()
+                
+                self.cubes.addObject(textView)
+            }
+        }
+        
         let controllers = self.navigationController!.viewControllers
         let previousController: UIViewController = controllers[controllers.count-2] as UIViewController
         
         if (previousController is CollectionViewController) {
             self.upperRightButton.title = "Edit"
-            //self.upperRightButton.enabled = true
         } else if(previousController is CaptureViewController || previousController is AnnotateViewController) {
             self.upperRightButton.title = "Publish"
-            //self.upperRightButton.enabled = true
         }
-//        let firstFrame: Frame = SharedDataFrameSet.sortedDataFrames()[0]
-//        let image: UIImage = UIImage(data: firstFrame.imageData)
-//        
-//        self.segmentIndex = 0
-//        //self.imageView.image = self.segments![0]
-//        
-//        let origin = self.imageView.frame.origin
-//        let frameWidth = self.imageView.frame.width
-//        let originalWidth = image.size.width
-//        let originalHeight = image.size.height
-//        
-//        let height = frameWidth * originalHeight / originalWidth
-//        self.imageView.frame = CGRectMake(origin.x, origin.y, frameWidth, height)
-//        self.imageView.image = image
-//        
-//        var imageFrame = self.imageView.frame
-//        
-//        if (firstFrame.annotation != nil) {
-//            let textView: UITextView = UITextView()
-//            textView.backgroundColor = UIColor.blackColor()
-//            textView.textColor = UIColor.whiteColor()
-//            textView.font.fontWithSize(10)
-//            textView.frame.origin.y = imageFrame.origin.y + imageFrame.height
-//            textView.text = SharedDataFrame.dataFrame!.annotation
-//            textView.frame.size.height = textView.contentSize.height + 9
-//            self.view.addSubview(textView)
-//        }
-        
-        //self.imageView.frame = CGRectMake(origin.x, origin.y, originalWidth, originalHeight)
-//        float oldWidth = sourceImage.size.width;
-//        float scaleFactor = i_width / oldWidth;
-//        
-//        float newHeight = sourceImage.size.height * scaleFactor;
-//        float newWidth = oldWidth * scaleFactor;
-//        
-//        UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
-//        [sourceImage drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
-//        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
-//        return newImage;
-        
-//        self.segmentViews.removeAll(keepCapacity: false)
-//        self.segmentViews.append(self.imageView)
-//        
-//        let viewFrame = self.imageView.frame
-//        
-//        for (var i = 1; i < self.segments!.count; ++i) {
-//            let imageWidth = self.segments![i].size.width
-//            let imageHeight = self.segments![i].size.height
-//            let frameHeight = frameWidth * imageHeight / imageWidth
-//            
-//            let imageView: UIImageView = UIImageView(image: self.segments![i])
-//            imageView.frame = CGRectMake(frameWidth, origin.y, frameWidth, frameHeight)
-//            
-//            self.view.addSubview(imageView)
-//            self.segmentViews.append(imageView)
-//        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -131,7 +95,10 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         if (self.upperRightButton.title == "Publish") {
             self.performSegueWithIdentifier("FromPreviewToPublish", sender: self)
         } else {
+            // edit
             self.performSegueWithIdentifier("FromPreviewToCapture", sender: self)
+            
+            // MARK: - todo show editing tools here and remove seque above
         }
     }
 
@@ -142,67 +109,152 @@ class PreviewViewController: UIViewController, UITableViewDataSource, UITableVie
         
     }
     
-    // MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SharedDataFrameSet.dataFrameSet!.frames.count
+    // MARK: - LXReorderableCollectionViewDataSource
+    func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return true
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        // try to get a reusable cell for our custom cell class
-        var cell: SimpleTableViewCell = tableView.dequeueReusableCellWithIdentifier("SimpleTableViewCell") as SimpleTableViewCell
+        var cell: UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("EmptyCell", forIndexPath: indexPath) as UICollectionViewCell
         
-        let frame = self.dataFrames![indexPath.row]
-        let image = UIImage(data: frame.imageData)
-        
-        let frameWidth = cell.mainImage.frame.width
-        let originalWidth = image.size.width
-        let originalHeight = image.size.height
-        let height = frameWidth * originalHeight / originalWidth
-        
-        cell.mainImage.frame.size = CGSizeMake(frameWidth, height)
-        cell.mainImage.image = image
-        cell.annotationTextView.frame.origin.y = height
-    
-        // show annotation if the info frame has one
-        if(frame.annotation != nil && frame.annotation != "") {
-            cell.annotationTextView.text = frame.annotation
-            
-            cell.annotationTextView.sizeToFit()
-            //let textFrame = cell.annotationTextView.contentSize
-            
-            //cell.annotationTextView.backgroundColor = UIColor.blackColor()
-            //cell.annotationTextView.textColor = UIColor.whiteColor()
-            cell.annotationTextView.hidden = false
-        } else {
-            cell.annotationTextView.hidden = true
-        }
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        //let frame = self.dataFrames![indexPath.row]
+        //let image = UIImage(data: frame.imageData)
+        //let imageView = UIImageView(image: image)
+
+        cell.addSubview(view)
         
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
+    }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
+        let view: UIView = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
+        self.cubes.removeObject(view)
+        self.cubes.insertObject(view, atIndex: toIndexPath.row)        
+    }
+    
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //return self.dataFrames!.count
+        return self.cubes.count
+    }
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    // MARK: - UICollectionViewDelegateFlowLayout
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+//        let frame = self.dataFrames![indexPath.row]
+//        let image = UIImage(data: frame.imageData)
+//        
+//        let frameWidth = collectionView.frame.width
+//        let originalWidth = image.size.width
+//        let originalHeight = image.size.height
+//        let height = frameWidth * originalHeight / originalWidth
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        let size = view.frame.size
+        
+        
+        return size
+    }
+    
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, didBeginDraggingItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        self.selectedView = self.cubes.objectAtIndex(indexPath.row) as? UIView
+//        self.cubes.removeObject(self.selectedView!)
+//    }
+//    
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        //self.selectedView = nil
+//        self.isDraggingView = false
+//    }
+    
+    // MARK: - UITableViewDataSource
+   
+//    func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+//        
+//        let data = self.dataFrames![sourceIndexPath.row]
+//        self.dataFrames!.removeAtIndex(sourceIndexPath.row)
+//        self.dataFrames!.insert(data, atIndex: destinationIndexPath.row)
+//    }
+//    
+//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return SharedDataFrameSet.dataFrameSet!.frames.count
+//    }
+//    
+//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+//        
+//        // try to get a reusable cell for our custom cell class
+//        var cell: SimpleTableViewCell = tableView.dequeueReusableCellWithIdentifier("SimpleTableViewCell") as SimpleTableViewCell
+//        
+//        let frame = self.dataFrames![indexPath.row]
+//        let image = UIImage(data: frame.imageData)
+//        
+//        let frameWidth = cell.mainImage.frame.width
+//        let originalWidth = image.size.width
+//        let originalHeight = image.size.height
+//        let height = frameWidth * originalHeight / originalWidth
+//        
+//        cell.mainImage.frame.size = CGSizeMake(frameWidth, height)
+//        cell.mainImage.image = image
+//        cell.annotationTextView.frame.origin.y = height
+//        cell.showsReorderControl = true
+//    
+//        // show annotation if the info frame has one
+//        if(frame.annotation != nil && frame.annotation != "") {
+//            cell.annotationTextView.text = frame.annotation
+//            
+//            cell.annotationTextView.sizeToFit()
+//            //let textFrame = cell.annotationTextView.contentSize
+//            
+//            //cell.annotationTextView.backgroundColor = UIColor.blackColor()
+//            //cell.annotationTextView.textColor = UIColor.whiteColor()
+//            cell.annotationTextView.hidden = false
+//        } else {
+//            cell.annotationTextView.hidden = true
+//        }
+//        
+//        return cell
+//    }
 
     // MARK: UITableViewDelegate
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        let frame = self.dataFrames![indexPath.row]
-        let image = UIImage(data: frame.imageData)
-        
-        let frameWidth = self.tableView.contentSize.width
-        let gap = (self.view.frame.width - frameWidth) / 2
-        let originalWidth = image.size.width
-        let originalHeight = image.size.height
-        var height = frameWidth * originalHeight / originalWidth
-        
-        if( frame.annotation != nil) {
-            let attributes: NSDictionary = [NSFontAttributeName: UIFont.systemFontOfSize(15)]
-            
-            // NSString class method: boundingRectWithSize:options:attributes:context is
-            // available only on ios7.0 sdk.
-            let rect: CGRect = frame.annotation!.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes, context: nil)
-            
-            height += rect.height + 5
-        }
-        
-        return height + gap
-    }
+//    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        return true
+//    }
+//    
+//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//        
+//        let frame = self.dataFrames![indexPath.row]
+//        let image = UIImage(data: frame.imageData)
+//        
+//        let frameWidth = self.tableView.contentSize.width
+//        let gap = (self.view.frame.width - frameWidth) / 2
+//        let originalWidth = image.size.width
+//        let originalHeight = image.size.height
+//        var height = frameWidth * originalHeight / originalWidth
+//        
+//        if( frame.annotation != nil) {
+//            let attributes: NSDictionary = [NSFontAttributeName: UIFont.systemFontOfSize(15)]
+//            
+//            // NSString class method: boundingRectWithSize:options:attributes:context is
+//            // available only on ios7.0 sdk.
+//            let rect: CGRect = frame.annotation!.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes, context: nil)
+//            
+//            height += rect.height + 5
+//        }
+//        
+//        return height + gap
+//    }
+    
+//    func tableView(tableView: UITableView, targetIndexPathForMoveFromRowAtIndexPath sourceIndexPath: NSIndexPath, toProposedIndexPath proposedDestinationIndexPath: NSIndexPath) -> NSIndexPath {
+//        
+//    }
 }

@@ -4,3 +4,4 @@
 
 #import "RACollectionViewTripletLayout.h"
 #import "RACollectionViewReorderableTripletLayout.h"
+#import "LXReorderableCollectionViewFlowLayout.h"

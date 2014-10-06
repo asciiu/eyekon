@@ -124,6 +124,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
             if (self.selectedStory != nil) {
                 destination!.setStoryContent(self.selectedStory!.content)
                 destination!.upperRightButton.title = "Edit"
+                destination!.editable = false
             } else {
                 destination!.storyContent = nil
                 destination!.upperRightButton.title = "Save"

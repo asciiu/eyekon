@@ -32,7 +32,9 @@ class CubeTool: UIView {
     }
 }
 
-class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource {
+let kStoryHashtag = "#untitled"
+
+class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFieldDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource {
 
     //@IBOutlet var upperLeftButton: UIBarButtonItem!
     @IBOutlet var upperRightButton: UIBarButtonItem!
@@ -47,10 +49,12 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
     var storyContent: StoryContent?
     var context: NSManagedObjectContext?
     
+    var titleTextField: UITextField?
     var keyboardToolBar: UIToolbar?
     var keyboardToolBarTextView: HPGrowingTextView?
     
     var textView: UITextView?
+    var selectedIndex: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +64,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
+        
+        self.titleTextField = UITextField(frame: CGRectMake(0, 0, 200, 22))
+        self.titleTextField!.returnKeyType = UIReturnKeyType.Done
+        self.titleTextField!.delegate = self
+        self.titleTextField!.text = kStoryHashtag
+        self.titleTextField!.font = UIFont.boldSystemFontOfSize(19)
+        self.titleTextField!.textColor = UIColor.whiteColor()
+        //self.titleTextField!.textAlignment = NSTextAlignment.Center
+        self.navigationItem.titleView = self.titleTextField!
         
         let toolbarRect = CGRectMake(0, 0, self.view.frame.width, 44)
 
@@ -84,6 +97,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         self.textView!.inputAccessoryView = self.keyboardToolBar
         self.view.addSubview(self.textView!)
         
+        //self.view.addSubview(self.cubeTool)
         //self.tableView.separatorInset = UIEdgeInsets(top: 0, left: 3, bottom: 3, right: 3)
         
         // Do any additional setup after loading the view.
@@ -105,8 +119,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
     
     override func viewWillAppear(animated: Bool) {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
         if(self.storyContent == nil) {
             // create a new story
@@ -115,7 +129,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
             self.collectionView.userInteractionEnabled = true
             
             let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
-            story.title = "Untitled"
+            story.title = kStoryHashtag
             story.summary = "Summary"
             
             let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent", inManagedObjectContext: self.context!) as StoryContent
@@ -124,21 +138,28 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
             content.story = story
             
             self.storyContent = content
+
         } else {
             //self.toolbar.hidden = true
             //let frame = self.toolbar.frame
             self.toolbar.frame.origin.y = self.view.frame.size.height
         }
         
+        self.titleTextField!.userInteractionEnabled = self.editable
+        if (self.editable) {
+            self.showToolbar()
+        }
+       
+        self.titleTextField!.text = self.storyContent!.story.title
+        self.cubeTool.hidden = true
         self.collectionView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        //self.cubeTool.removeFromSuperview()
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -147,6 +168,11 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
     }
     
     func addImageView(image: UIImage) {
+        if (self.cubes.count > 0){
+            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+            view?.highlighted = false
+        }
+        
         let frameWidth = self.collectionView.frame.width
         
         let originalWidth = image.size.width
@@ -156,7 +182,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         let imageView = UIImageView(frame: CGRectMake(0, 0, frameWidth, height))
         imageView.image = image
         
-        self.cubes.addObject(imageView)
+        self.cubes.insertObject(imageView, atIndex: self.selectedIndex.row)
     }
     
     func setStoryContent(content: StoryContent) {
@@ -168,6 +194,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         }
     }
     
+    func showToolbar() {
+        UIView.animateWithDuration(0.25,
+            animations: {
+                self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
+                
+            }, completion: { (value: Bool) in
+        })
+    }
+    
     // MARK: - Actions
     
     @IBAction func returnToPrevious(sender: AnyObject) {
@@ -177,13 +212,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
     
     @IBAction func publish(sender: AnyObject) {
         
-        if (self.upperRightButton.title == "Save") {
+        if (self.upperRightButton.title == "Save" && self.cubes.count > 0) {
+            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+            view?.highlighted = false
+            
             //self.performSegueWithIdentifier("FromPreviewToPublish", sender: self)
             let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
             self.storyContent!.data = data
-            //self.storyContent!.story.title = "Untitled"
-            //self.storyContent!.story.summary = "Empty"
-            //self.story!.title = "Untitled"
+            self.storyContent!.story.title = self.titleTextField!.text
+            self.storyContent!.story.summary = "Empty"
             
             var error: NSError?
             if( !self.storyContent!.managedObjectContext.save(&error)) {
@@ -196,17 +233,14 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
             self.collectionView.userInteractionEnabled = true
             self.upperRightButton.title = "Save"
             
+            self.titleTextField!.userInteractionEnabled = true
+            
             for (var i = 0; i < self.cubes.count; ++i) {
                 let view: UIView = self.cubes.objectAtIndex(i) as UIView
                 view.userInteractionEnabled = false
             }
             
-            UIView.animateWithDuration(0.25,
-                animations: {
-                    self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
-                    
-                }, completion: { (value: Bool) in
-            })
+            self.showToolbar()
         }
     }
 
@@ -217,6 +251,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         self.textView!.text = ""
         
         self.textView!.becomeFirstResponder()
+        self.keyboardToolBarTextView!.text = ""
+        self.keyboardToolBarTextView!.becomeFirstResponder()
     }
     
     @IBAction func addPhotoFromCamera(sender: AnyObject) {
@@ -246,49 +282,71 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
         self.keyboardToolBarTextView?.becomeFirstResponder()
     }
     
-    func keyboardWillHide(notification: NSNotification) {
-        //let imageFrame = self.imageView.frame
-        //SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
-        
-//        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
-//            self.textView.hidden = false
-//        } else if (self.keyboardToolBarTextView!.text == "") {
-//            self.textView.hidden = true
-//        }
-        
-        self.textView!.text = self.keyboardToolBarTextView!.text
-        self.textView!.sizeToFit()
-        let frameWidth = self.collectionView.frame.size.width
-        let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
-        textCube.font = UIFont.systemFontOfSize(16)
-        textCube.text = self.keyboardToolBarTextView!.text
-        textCube.userInteractionEnabled = false
-        
-        self.cubes.insertObject(textCube, atIndex: 0)
-        
-        let index: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-        self.collectionView.insertItemsAtIndexPaths([index])
-        //self.collectionView.reloadItemsAtIndexPaths([index])
-        
+//    func keyboardWillHide(notification: NSNotification) {
+//        //let imageFrame = self.imageView.frame
+//        //SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
+//        
+////        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
+////            self.textView.hidden = false
+////        } else if (self.keyboardToolBarTextView!.text == "") {
+////            self.textView.hidden = true
+////        }
+//        
 //        self.textView!.text = self.keyboardToolBarTextView!.text
 //        self.textView!.sizeToFit()
-//        self.textView!.frame.size.width = self.collectionView.frame.size.width
-        
-        //self.cubes.addObject(self.textView!)
-        
-//        let index: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-//        self.collectionView.reloadItemsAtIndexPaths([index])
-        
-        //self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
-    }
+//        let frameWidth = self.collectionView.frame.size.width
+//        let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
+//        textCube.font = UIFont.systemFontOfSize(16)
+//        textCube.text = self.keyboardToolBarTextView!.text
+//        textCube.userInteractionEnabled = false
+//        
+//       
+//        self.cubes.insertObject(textCube, atIndex: self.selectedIndex.row)
+//        self.collectionView.insertItemsAtIndexPaths([self.selectedIndex])
+//        
+//        //self.collectionView.reloadItemsAtIndexPaths([index])
+//        
+////        self.textView!.text = self.keyboardToolBarTextView!.text
+////        self.textView!.sizeToFit()
+////        self.textView!.frame.size.width = self.collectionView.frame.size.width
+//        
+//        //self.cubes.addObject(self.textView!)
+//        
+////        let index: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+////        self.collectionView.reloadItemsAtIndexPaths([index])
+//        
+//        //self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
+//    }
     
+    // MARK: UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return false
+    }
+
     // MARK: HPGrowingTextViewDelegate
     func growingTextView(growingTextView: HPGrowingTextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
         
         // triggered when done button is touched
         if(text == "\n") {
+            if (self.cubes.count > 0){
+                let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+                view?.highlighted = false
+            }
+            
             self.keyboardToolBarTextView!.resignFirstResponder()
             self.textView!.resignFirstResponder()
+            
+            self.textView!.text = self.keyboardToolBarTextView!.text
+            self.textView!.sizeToFit()
+            let frameWidth = self.collectionView.frame.size.width
+            let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
+            textCube.font = UIFont.systemFontOfSize(16)
+            textCube.text = self.keyboardToolBarTextView!.text
+            textCube.userInteractionEnabled = false
+            
+            self.cubes.insertObject(textCube, atIndex: self.selectedIndex.row)
+            self.collectionView.insertItemsAtIndexPaths([self.selectedIndex])
         }
         
         return true
@@ -356,22 +414,26 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, HPGrowing
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-//        if (!self.editable) {
-//            return
-//        }
-//        
-//        //let cell: UICollectionViewCell? = collectionView.cellForItemAtIndexPath(indexPath)
-//        let attributes: UICollectionViewLayoutAttributes? = collectionView.layoutAttributesForItemAtIndexPath(indexPath)
-//        
-//        if (attributes != nil) {
-//            //let view = cell!.contentView
-//            self.cubeTool.frame = attributes!.frame
-//        }
+        if (!self.editable) {
+            return
+        }
         
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        view.layer.borderWidth = 3.0
+        view.layer.borderColor = UIColor(red: 0.5, green: 0.7, blue: 0.9, alpha: 0.90).CGColor
+        
+        let imageView: UIImageView? = view as? UIImageView
+        imageView?.highlighted = false
+        
+        self.selectedIndex = indexPath
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        view.layer.borderWidth = 0.0
+    
+        self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
     }
     
     func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {

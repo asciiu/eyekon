@@ -22,9 +22,6 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="StX-SX-OOa" id="TLt-fg-3CU">
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="uya-p5-87Y" kind="push" identifier="FromCollectionToPreview" id="vWw-TK-alT"/>
-                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -38,12 +35,13 @@
                     <navigationItem key="navigationItem" title="Collection" id="vSA-Oa-JTh">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
                             <connections>
-                                <segue destination="tH4-5w-EKm" kind="push" identifier="FromCollectionToCapture" id="4xg-G6-Ixf"/>
+                                <action selector="addStory:" destination="QHJ-c1-pPb" id="TZK-9Y-GHW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="7Ui-Lu-1fh" id="zT9-oX-O6e"/>
+                        <segue destination="uya-p5-87Y" kind="push" identifier="FromCollectionToPreview" id="y4d-cO-mkd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -124,7 +122,6 @@
                         <outlet property="scrollView" destination="MyB-6l-M1x" id="ZLx-uZ-isj"/>
                         <outlet property="textView" destination="1tr-9w-jy1" id="dxU-ZO-Fvw"/>
                         <outlet property="toolBar" destination="b5t-YS-EJ5" id="g9a-7K-uz9"/>
-                        <segue destination="uya-p5-87Y" kind="push" identifier="FromAnnotationToPreview" id="Cms-bu-0Ed"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -197,12 +194,12 @@
                     <navigationItem key="navigationItem" title="Capture" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToCollection:" id="mi0-Gb-wZe"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToPreview:" id="hTz-yz-1xR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Preview" id="R2A-gU-lFb">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="R2A-gU-lFb">
                             <connections>
-                                <segue destination="uya-p5-87Y" kind="push" identifier="FromCaptureToPreview" id="lRc-EE-9Kb"/>
+                                <action selector="done:" destination="tH4-5w-EKm" id="U5d-RR-i6Q"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -221,7 +218,7 @@
         <!--Preview-->
         <scene sceneID="wL7-hp-1go">
             <objects>
-                <viewController id="uya-p5-87Y" customClass="PreviewViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uya-p5-87Y" customClass="StoryViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bp4-Hk-zZP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -248,6 +245,26 @@
                                     <outlet property="delegate" destination="uya-p5-87Y" id="wsu-eC-axA"/>
                                 </connections>
                             </collectionView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" id="53a-Fm-bFs">
+                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem width="79" style="plain" systemItem="fixedSpace" id="BCa-ho-JrF"/>
+                                    <barButtonItem systemItem="compose" id="mjT-as-ne7">
+                                        <connections>
+                                            <action selector="addText:" destination="uya-p5-87Y" id="P68-Yw-12h"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="76" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
+                                    <barButtonItem systemItem="camera" id="UmB-Ox-iDQ">
+                                        <connections>
+                                            <action selector="addPhotoFromCamera:" destination="uya-p5-87Y" id="2B1-7E-msX"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="135" style="plain" systemItem="fixedSpace" id="3T4-DH-2Ed"/>
+                                </items>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -260,9 +277,10 @@
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="xMK-cc-4UD" id="dfg-Ms-8hP"/>
+                        <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
                         <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
                         <segue destination="Rux-43-RDk" kind="push" identifier="FromPreviewToPublish" id="POa-vE-3jz"/>
-                        <segue destination="tH4-5w-EKm" kind="push" identifier="FromPreviewToCapture" id="D24-GR-7jr"/>
+                        <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -358,8 +376,4 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
-    <inferredMetricsTieBreakers>
-        <segue reference="D24-GR-7jr"/>
-        <segue reference="Cms-bu-0Ed"/>
-    </inferredMetricsTieBreakers>
 </document>

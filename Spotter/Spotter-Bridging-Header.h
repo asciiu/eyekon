@@ -5,3 +5,8 @@
 #import "RACollectionViewTripletLayout.h"
 #import "RACollectionViewReorderableTripletLayout.h"
 #import "LXReorderableCollectionViewFlowLayout.h"
+#import "UIImage+NSCoding.h"
+#import "UIImage+NSCopying.h"
+#import "HPGrowingTextView.h"
+#import "HPTextViewInternal.h"
+

@@ -12,7 +12,8 @@ import CoreData
 class CollectionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var context: NSManagedObjectContext?
-    var frameSets: [FrameSet] = [FrameSet]()
+    var stories: [Story] = [Story]()
+    var selectedStory: Story?
     
     @IBOutlet var tableView: UITableView!
     
@@ -24,8 +25,12 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
-        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         self.loadManagedCollection()
+        self.tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -36,7 +41,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     
     func loadManagedCollection() {
         
-        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("FrameSet", inManagedObjectContext: self.context!)
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Story", inManagedObjectContext: self.context!)
         
         // create a fetch request with the entity description
         // this works like a SQL SELECT statement
@@ -45,11 +50,16 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         
         var error: NSError?
         
-        self.frameSets = self.context!.executeFetchRequest(request, error: &error) as [FrameSet]
+        self.stories = self.context!.executeFetchRequest(request, error: &error) as [Story]
         
 //        if self.frameSets.count == 0 {
 //            println("Empty List")
 //        }
+    }
+    
+    @IBAction func addStory(sender: AnyObject) {
+        self.selectedStory = nil
+        self.performSegueWithIdentifier("FromCollectionToPreview", sender: self)
     }
 
     // MARK: - UITableViewDelegate
@@ -59,7 +69,10 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
-        SharedDataFrameSet.dataFrameSet = self.frameSets[indexPath.row]
+        //SharedDataFrameSet.dataFrameSet = self.stories[indexPath.row]
+        //SharedStory.story = self.stories[indexPath.row]
+        self.selectedStory = self.stories[indexPath.row]
+        self.performSegueWithIdentifier("FromCollectionToPreview", sender: self)
     }
     
     // MARK: - UITableViewDataSource
@@ -67,19 +80,19 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("CollectionCell", forIndexPath: indexPath) as UITableViewCell
         
-        let frameSet: FrameSet = self.frameSets[indexPath.row]
+        let story: Story = self.stories[indexPath.row]
         
-        cell.textLabel?.text = frameSet.title
+        cell.textLabel?.text = story.title
         
         return cell
     }
     
     func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
         
-        let frameSet: FrameSet = self.frameSets[indexPath.row]
+        let story: Story = self.stories[indexPath.row]
         
-        self.frameSets.removeAtIndex(indexPath.row)
-        self.context!.deleteObject(frameSet)
+        self.stories.removeAtIndex(indexPath.row)
+        self.context!.deleteObject(story)
         
         var error: NSError?
         if (!self.context!.save(&error)) {
@@ -90,7 +103,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.frameSets.count
+        return self.stories.count
     }
     
     // MARK: - Navigation
@@ -100,9 +113,21 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         
         // if storyboard FroCollectinoToCapture segue then we are going to
         // create a new dataFrameSet
-        if (segue.identifier == "FromCollectionToCapture") {
-            // set the shared data frame set to nil
-            SharedDataFrameSet.dataFrameSet = nil
+//        if (segue.identifier == "FromCollectionToCapture") {
+//            // set the shared data frame set to nil
+//            SharedDataFrameSet.dataFrameSet = nil
+//        }
+        
+        let destination: StoryViewController? = segue.destinationViewController as? StoryViewController
+        
+        if (destination != nil) {
+            if (self.selectedStory != nil) {
+                destination!.setStoryContent(self.selectedStory!.content)
+                destination!.upperRightButton.title = "Edit"
+            } else {
+                destination!.storyContent = nil
+                destination!.upperRightButton.title = "Save"
+            }
         }
     }
     

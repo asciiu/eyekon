@@ -71,7 +71,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 @property (assign, nonatomic) CGPoint panTranslationInCollectionView;
 @property (strong, nonatomic) CADisplayLink *displayLink;
 
-//@property (assign, nonatomic) CGPoint currentPoint;
+@property (assign, nonatomic) CGPoint currentPoint;
 @property (assign, nonatomic) CGRect targetRect;
 @property (strong, nonatomic) UIView *shadowView;
 
@@ -165,11 +165,37 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
     CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
     
+    // all cell attributes with cells that are overlapping with our currentView
+//    UICollectionViewLayout * layout = [self.collectionView collectionViewLayout];
+//    NSArray *layoutAttrs = [layout layoutAttributesForElementsInRect:self.currentView.frame];
+//    
+//    // loop through each cell and discover which is overlapping the most
+//    for (int i = 0; i < [layoutAttrs count]; ++i) {
+//        UICollectionViewLayoutAttributes * attr = [layoutAttrs objectAtIndex:i];
+//        
+//        if ([attr.indexPath isEqual:self.selectedItemIndexPath]) continue;
+//        
+//        CGFloat currentViewArea = self.currentView.frame.size.width * self.currentView.frame.size.height;
+//        CGFloat targetViewArea = attr.frame.size.width * attr.frame.size.height;
+//        CGRect interRect = CGRectIntersection(self.currentView.frame, attr.frame);
+//        
+//        CGFloat area = interRect.size.width * interRect.size.height;
+//        CGFloat currentViewOverlap = area / currentViewArea;
+//        CGFloat targetViewOverlap = area / targetViewArea;
+//        
+//        NSString *output = [NSString stringWithFormat:@"overlap t:%f overlap: c:%f", targetViewOverlap, currentViewOverlap];
+//        NSLog(output);
+//
+//        if ( currentViewOverlap > 0.25 || targetViewOverlap > 0.25) {
+//           
+//            newIndexPath = attr.indexPath;
+//            targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+//        }
+//    }
+    
     if ((newIndexPath == nil) || [newIndexPath isEqual:previousIndexPath] || CGRectContainsPoint(self.targetRect, self.currentView.center)) {
         return;
     }
-    
-    
     
     if ([self.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:canMoveToIndexPath:)] &&
         ![self.dataSource collectionView:self.collectionView itemAtIndexPath:previousIndexPath canMoveToIndexPath:newIndexPath]) {
@@ -193,10 +219,14 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         __strong typeof(self) strongSelf = weakSelf;
         if ([strongSelf.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:didMoveToIndexPath:)]) {
             [strongSelf.dataSource collectionView:strongSelf.collectionView itemAtIndexPath:previousIndexPath didMoveToIndexPath:newIndexPath];
-            CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+            
+            // move finished
+            if (!CGRectEqualToRect(self.targetRect, CGRectZero)) {
+                CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
 
-            strongSelf.shadowView.frame = targetRect;
-            strongSelf.shadowView.hidden = false;
+                strongSelf.shadowView.frame = shadowRect;
+                strongSelf.shadowView.hidden = false;
+            }
         }
     }];
 }
@@ -414,33 +444,37 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             self.panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
             
             CGPoint viewCenter = self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
+
+           
+           
             
+
+//            
 //            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 //            CGSize size = self.currentView.frame.size;
 //            CGFloat centerHeight = floorf(size.height/2);
 //            NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
 //            
 //            if(velocity.y < 0) {
-//                // up
-//                
 //                // top center point
 //                CGPoint pt = CGPointMake(viewCenter.x, viewCenter.y - centerHeight);
-//                
+//
 //                // center of cell at point
 //                NSIndexPath *index = [self.collectionView indexPathForItemAtPoint:pt];
 //                
-//                if ( index == nil || [previousIndexPath isEqual:index] ) return;
+//                //if ( index == nil || [previousIndexPath isEqual:index] ) return;
 //
-//                CGRect frameBefore = [self.collectionView cellForItemAtIndexPath:index].frame;
-//                CGRect hitRect = CGRectMake(frameBefore.origin.x, frameBefore.origin.y, frameBefore.size.width, frameBefore.size.height/2);
+//                CGRect frame = [self.collectionView layoutAttributesForItemAtIndexPath:index].frame;
+//                //CGRect hitRect = CGRectMake(frameBefore.origin.x, frameBefore.origin.y, frameBefore.size.width, frameBefore.size.height/2);
 //                
-//                if(CGRectContainsPoint(hitRect, pt)) {
-//                    [self invalidateLayoutIfNecessary];
-//                }
+//                //if(CGRectContainsPoint(hitRect, pt)) {
+//                //    [self invalidateLayoutIfNecessary];
+//                //}
 //            }
+//            
 //            if(velocity.y > 0) {
-//                // down
-//                CGPoint pt = CGPointMake(viewCenter.x, viewCenter.y + centerHeight);
+//                // bottom center point
+//                self.currentPoint = CGPointMake(viewCenter.x, viewCenter.y + centerHeight);
 //            }
             
             [self invalidateLayoutIfNecessary];

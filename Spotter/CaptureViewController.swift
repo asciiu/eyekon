@@ -26,7 +26,6 @@ class CameraFocusSquare: UIView {
         //self.layer.cornerRadius = frame.width/2
         self.layer.borderColor = UIColor.whiteColor().CGColor
         
-        
         let selectionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "borderColor")
         selectionAnimation.toValue = UIColor.yellowColor().CGColor
         selectionAnimation.repeatCount = 8
@@ -43,11 +42,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     var captureManager: CaptureSessionManager?
     var capturedImages: [UIImage] = [UIImage]()
-    var processingCapture: Bool = false
     
-    var context: NSManagedObjectContext?
     var camFocus: CameraFocusSquare?
     let backgroundQueue: dispatch_queue_t = dispatch_queue_create("ImageProcessor", nil)
+    
+    var storyController: StoryViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,19 +57,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
             myAlertView.show()
         }
         
-        // register the custom collection view cell
-        //let cellNib: UINib = UINib(nibName: "ImageCollectionViewCell", bundle: nil)
-        //self.collectionView.registerNib(cellNib, forCellWithReuseIdentifier:"ImageCollectionViewCell")
-        
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
-        
-        // needed so we can save via managed context
-        //let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        //self.context = appDelegate.managedObjectContext
-        self.context = NSManagedObjectContext()
-        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
         
         // setup the camera
         self.captureManager = CaptureSessionManager()
@@ -94,47 +82,13 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager!.captureSession!.startRunning()
         self.capturedImages.removeAll(keepCapacity: false)
         self.title = ""
-        //self.navigationController?.navigationBar.backgroundColor = UIColor.blackColor()
-        //self.navigationController?.navigationBar.alpha = 0.5
-        
 
-        // not creating a new set?
-        if SharedDataFrameSet.dataFrameSet != nil {
+        // test stuff to be removed
+        for(var i = 1; i <= 4; ++i) {
             
-            let sortedFrames = SharedDataFrameSet.sortedDataFrames()
-            
-            for (var i = 0; i < sortedFrames.count; ++i) {
-                let frame: Frame = sortedFrames[i]
-                
-                let photo: UIImage = UIImage(data: frame.imageData)
-                self.capturedImages.append(photo)
-                frame.frameNumber = i
-            }
-        } else {
-            
-            let newFrameSet = NSEntityDescription.insertNewObjectForEntityForName("FrameSet", inManagedObjectContext: self.context!) as FrameSet
-            
-            let set = NSMutableSet()
-            
-            // need to remove this stuff
-            for(var i = 1; i <= 4; ++i) {
-                
-                let photoName: String = "\(i).jpg"
-                let photo: UIImage = UIImage(named: photoName)
-                self.capturedImages.append(photo)
-                
-                let segment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: self.context!) as Frame
-                
-                segment.imageData = NSData.dataWithData(UIImagePNGRepresentation(photo))
-                segment.frameNumber = i-1
-                segment.frameSet = newFrameSet
-                set.addObject(segment)
-            }
-            
-            newFrameSet.title = "Untitled"
-            newFrameSet.detailedDescription = "Empty description"
-            newFrameSet.frames = set
-            SharedDataFrameSet.dataFrameSet = newFrameSet
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
         }
         
         self.collectionView.reloadData()
@@ -156,31 +110,33 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager!.captureStillImage()
     }
     
+    @IBAction func done(sender: AnyObject) {
+        for image in self.capturedImages {
+            self.storyController!.addImageView(image)
+        }
+        
+        // go back to the view that we came from
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
     // MARK: - CaptureSessionManagerDelegate
     
     // invoked when the camera capture has completed
     func processCapture(capturedImage: UIImage) {
         
+        // handle image processing in background so we do not block the main thread
         dispatch_async(self.backgroundQueue, {
+            // fix rotation of image
             let image = scaleAndRotateImage(capturedImage)
             
             self.capturedImages.append(image)
             
-            let index: NSIndexPath = NSIndexPath(forItem: self.capturedImages.count-1, inSection: 0)
-            let context = SharedDataFrameSet.dataFrameSet!.managedObjectContext
             
-            // create a new segment for the captured image
-            let newSegment: Frame = NSEntityDescription.insertNewObjectForEntityForName("Frame", inManagedObjectContext: context) as Frame
-            
-            newSegment.imageData = NSData.dataWithData(UIImagePNGRepresentation(image))
-            newSegment.frameNumber = index.row
-            newSegment.frameSet = SharedDataFrameSet.dataFrameSet!
-            SharedDataFrameSet.dataFrameSet!.frames.addObject(newSegment)
-            
+            // update the view on the main thread
             dispatch_async(dispatch_get_main_queue(), {
+                let index: NSIndexPath = NSIndexPath(forItem: self.capturedImages.count-1, inSection: 0)
                 self.collectionView.insertItemsAtIndexPaths([index])
                 self.collectionView.scrollToItemAtIndexPath(index, atScrollPosition: UICollectionViewScrollPosition.Right, animated: true)
-                self.processingCapture = false
             })
         })
     }
@@ -264,15 +220,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.removeAtIndex(fromIndexPath.item)
         self.capturedImages.insert(image, atIndex: toIndexPath.item)
         
-        let frames = NSMutableArray(array: SharedDataFrameSet.sortedDataFrames())
-        let frame: Frame = frames[fromIndexPath.item] as Frame
-        frames.removeObject(frame)
-        frames.insertObject(frame, atIndex: toIndexPath.item)
-        
-        for(var i = 0; i < frames.count; ++i) {
-            let frm = frames[i] as Frame
-            frm.frameNumber = i
-        }
+//        let frames = NSMutableArray(array: SharedDataFrameSet.sortedDataFrames())
+//        let frame: Frame = frames[fromIndexPath.item] as Frame
+//        frames.removeObject(frame)
+//        frames.insertObject(frame, atIndex: toIndexPath.item)
+//        
+//        for(var i = 0; i < frames.count; ++i) {
+//            let frm = frames[i] as Frame
+//            frm.frameNumber = i
+//        }
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
@@ -284,7 +240,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
         // set the shared dataFrame with the one we selected from the collection view
-        SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
+        //SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
                 
 //        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
 //        let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController

@@ -34,6 +34,13 @@
 		6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30919B83BCD0085FF19 /* Frame.swift */; };
 		6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */; };
 		6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */; };
+		6E60E5B419E0B13A00857FCE /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60E5B319E0B13A00857FCE /* UIImage.swift */; };
+		6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */; };
+		6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */; };
+		6E79658419E0E8C700C23AAC /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658319E0E8C700C23AAC /* Story.swift */; };
+		6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658519E0E8C800C23AAC /* StoryContent.swift */; };
+		6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658819E210C600C23AAC /* HPGrowingTextView.m */; };
+		6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658A19E210C600C23AAC /* HPTextViewInternal.m */; };
 		6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */; };
 		6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8319A66669006CB2E2 /* AppDelegate.swift */; };
 		6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */; };
@@ -41,7 +48,7 @@
 		6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8A19A66669006CB2E2 /* Main.storyboard */; };
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
-		6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* PreviewViewController.swift */; };
+		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
 		6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135619C6407700152F7E /* CaptureSessionManager.swift */; };
@@ -90,6 +97,17 @@
 		6E1CE30919B83BCD0085FF19 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameSet.swift; sourceTree = "<group>"; };
 		6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
+		6E60E5B319E0B13A00857FCE /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		6E79657D19E0C27800C23AAC /* UIImage+NSCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCoding.h"; sourceTree = "<group>"; };
+		6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+NSCoding.m"; sourceTree = "<group>"; };
+		6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCopying.h"; sourceTree = "<group>"; };
+		6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+NSCopying.m"; sourceTree = "<group>"; };
+		6E79658319E0E8C700C23AAC /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
+		6E79658519E0E8C800C23AAC /* StoryContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryContent.swift; sourceTree = "<group>"; };
+		6E79658719E210C600C23AAC /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
+		6E79658819E210C600C23AAC /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
+		6E79658919E210C600C23AAC /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
+		6E79658A19E210C600C23AAC /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
 		6EC03D7E19A66669006CB2E2 /* Spotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,7 +120,7 @@
 		6EC03D9319A6666A006CB2E2 /* SpotterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
-		6EE0135019C2185A00152F7E /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
 		6EE0135619C6407700152F7E /* CaptureSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureSessionManager.swift; sourceTree = "<group>"; };
@@ -146,7 +164,7 @@
 				6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */,
 				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
 				6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */,
-				6EE0135019C2185A00152F7E /* PreviewViewController.swift */,
+				6EE0135019C2185A00152F7E /* StoryViewController.swift */,
 				6EE0135219C27CF900152F7E /* PublishViewController.swift */,
 				6EE0135619C6407700152F7E /* CaptureSessionManager.swift */,
 			);
@@ -159,6 +177,14 @@
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
 				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
 				6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */,
+				6E79658719E210C600C23AAC /* HPGrowingTextView.h */,
+				6E79658819E210C600C23AAC /* HPGrowingTextView.m */,
+				6E79658919E210C600C23AAC /* HPTextViewInternal.h */,
+				6E79658A19E210C600C23AAC /* HPTextViewInternal.m */,
+				6E79657D19E0C27800C23AAC /* UIImage+NSCoding.h */,
+				6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */,
+				6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */,
+				6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -195,7 +221,10 @@
 			children = (
 				6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */,
 				6E1CE30919B83BCD0085FF19 /* Frame.swift */,
+				6E79658319E0E8C700C23AAC /* Story.swift */,
+				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
+				6E60E5B319E0B13A00857FCE /* UIImage.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -398,19 +427,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E60E5B419E0B13A00857FCE /* UIImage.swift in Sources */,
 				6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */,
 				6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */,
+				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
+				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,
+				6E79658419E0E8C700C23AAC /* Story.swift in Sources */,
 				6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */,
+				6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */,
 				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
-				6EE0135119C2185A00152F7E /* PreviewViewController.swift in Sources */,
+				6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */,
 				6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */,
 				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
 				6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */,
 				6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
+				6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
+				6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,
 				6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */,
 				6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */,

@@ -12,8 +12,19 @@
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="frames" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Frame" inverseName="frameSet" inverseEntity="Frame" syncable="YES"/>
     </entity>
+    <entity name="Story" representedClassName="Spotter.Story" syncable="YES">
+        <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="content" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoryContent" inverseName="story" inverseEntity="StoryContent" syncable="YES"/>
+    </entity>
+    <entity name="StoryContent" representedClassName="Spotter.StoryContent" syncable="YES">
+        <attribute name="data" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="story" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Story" inverseName="content" inverseEntity="Story" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Frame" positionX="-146" positionY="-18" width="128" height="103"/>
         <element name="FrameSet" positionX="-441" positionY="-126" width="128" height="103"/>
+        <element name="Story" positionX="-488" positionY="173" width="128" height="88"/>
+        <element name="StoryContent" positionX="-459" positionY="45" width="128" height="73"/>
     </elements>
 </model>

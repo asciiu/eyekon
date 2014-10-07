@@ -48,7 +48,7 @@
             </objects>
             <point key="canvasLocation" x="-663" y="-223"/>
         </scene>
-        <!--Annotations-->
+        <!--Annotate View Controller-->
         <scene sceneID="N8l-OS-Pu6">
             <objects>
                 <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
@@ -63,70 +63,30 @@
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="MyB-6l-M1x">
                                         <rect key="frame" x="8" y="0.0" width="304" height="524"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1.jpg" id="Eif-hD-Sd9">
-                                                <rect key="frame" x="8" y="0.0" width="288" height="323"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            </imageView>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" text="Annotation" id="1tr-9w-jy1">
-                                                <rect key="frame" x="0.0" y="326" width="305" height="29"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                            </textView>
-                                        </subviews>
                                         <connections>
                                             <outlet property="delegate" destination="SiY-lW-Nsg" id="8qZ-MI-ieV"/>
                                         </connections>
                                     </scrollView>
-                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" id="b5t-YS-EJ5">
-                                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                        <items>
-                                            <barButtonItem title="Text Tool" id="3Ks-nd-k3f">
-                                                <connections>
-                                                    <action selector="textTool:" destination="SiY-lW-Nsg" id="9Fk-Ad-1ym"/>
-                                                </connections>
-                                            </barButtonItem>
-                                            <barButtonItem width="200" style="plain" systemItem="fixedSpace" id="xPu-Fb-KVQ"/>
-                                            <barButtonItem systemItem="trash" id="Dfe-e1-rpt">
-                                                <connections>
-                                                    <action selector="deleteImage:" destination="SiY-lW-Nsg" id="Kyt-BG-017"/>
-                                                </connections>
-                                            </barButtonItem>
-                                        </items>
-                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </toolbar>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Annotations" id="cz8-Ro-zXf">
-                        <barButtonItem key="rightBarButtonItem" id="QAv-V6-Zfy">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="LMR-qc-ioJ">
-                                <rect key="frame" x="235" y="87" width="54" height="48"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Preview">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="preview:" destination="SiY-lW-Nsg" eventType="touchUpInside" id="BrM-dX-7F7"/>
-                                </connections>
-                            </button>
+                    <navigationItem key="navigationItem" id="cz8-Ro-zXf">
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="Dfe-e1-rpt">
+                            <connections>
+                                <action selector="deleteImage:" destination="SiY-lW-Nsg" id="Kyt-BG-017"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="imageView" destination="Eif-hD-Sd9" id="Up6-lR-kh8"/>
                         <outlet property="scrollView" destination="MyB-6l-M1x" id="ZLx-uZ-isj"/>
-                        <outlet property="textView" destination="1tr-9w-jy1" id="dxU-ZO-Fvw"/>
-                        <outlet property="toolBar" destination="b5t-YS-EJ5" id="g9a-7K-uz9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-663" y="1216"/>
+            <point key="canvasLocation" x="-175" y="1240"/>
         </scene>
         <!--Capture-->
         <scene sceneID="BcV-bH-nnr">
@@ -183,7 +143,6 @@
                                         <connections>
                                             <outlet property="imageView" destination="DcZ-fI-ar6" id="QQW-PV-11K"/>
                                             <outlet property="numberLabel" destination="p66-9Q-NLD" id="n3E-KG-zdu"/>
-                                            <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToAnnotation" id="R7n-cy-ZF7"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -194,7 +153,7 @@
                     <navigationItem key="navigationItem" title="Capture" id="j94-dq-yeb">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="OZM-LZ-oyX">
                             <connections>
-                                <segue destination="pjG-vN-5Fb" kind="unwind" unwindAction="unwindToPreview:" id="hTz-yz-1xR"/>
+                                <segue destination="pjG-vN-5Fb" kind="unwind" identifier="FromCaptureToStory" unwindAction="unwindToStory:" id="C4R-ux-oyW"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Done" id="R2A-gU-lFb">
@@ -208,12 +167,13 @@
                         <outlet property="cancelBtn" destination="OZM-LZ-oyX" id="sJJ-Oe-Nj9"/>
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
                         <outlet property="previewBtn" destination="R2A-gU-lFb" id="qkZ-Hw-qrl"/>
+                        <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToAnnotation" id="Frq-Uo-veK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pjG-vN-5Fb" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-663" y="490"/>
+            <point key="canvasLocation" x="-175" y="546"/>
         </scene>
         <!--Preview-->
         <scene sceneID="wL7-hp-1go">
@@ -285,7 +245,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-139" y="106"/>
+            <point key="canvasLocation" x="-175" y="-223"/>
         </scene>
         <!--Publish-->
         <scene sceneID="xCC-hv-Kwa">
@@ -368,9 +328,6 @@
             <point key="canvasLocation" x="-1254" y="-223"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="1.jpg" width="450" height="252"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

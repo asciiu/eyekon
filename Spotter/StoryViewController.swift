@@ -220,6 +220,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.calloutView.dismissCalloutAnimated(true)
         self.cubes.removeObjectAtIndex(index)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndex!])
+        self.selectedIndex = nil
     }
     
     func editSelected() {
@@ -338,10 +339,11 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         if (segue.identifier == "FromStoryToCapture") {
             let destination: CaptureViewController = segue.destinationViewController as CaptureViewController
             destination.storyController = self
+            destination.clearFilmRoll()
         }
     }
     
-    @IBAction func unwindToPreview(unwindSegue: UIStoryboardSegue) {
+    @IBAction func unwindToStory(unwindSegue: UIStoryboardSegue) {
     }
     
     // MARK: - Notifications
@@ -539,7 +541,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
-    
     
     func displayEditTools(indexPath: NSIndexPath) {
         let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)

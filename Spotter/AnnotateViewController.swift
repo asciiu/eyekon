@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol AnnotationViewControllerDelegate {
+    func deleteImage(atIndex: Int)
+}
+
 class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollViewDelegate {
 
     @IBOutlet var scrollView: UIScrollView!
@@ -16,10 +20,14 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     @IBOutlet var textView: UITextView!
 
     var frameNum: Int = 0
-    var keyboardToolBar: UIToolbar?
-    var keyboardToolBarTextView: UITextView?
-    var dataFrames: [Frame]?
-    var secondaryImageView: UIImageView?
+    //var keyboardToolBar: UIToolbar?
+    //var keyboardToolBarTextView: UITextView?
+    //var dataFrames: [Frame]?
+    var previews: [UIView] = [UIView]()
+    var images: [UIImage] = [UIImage]()
+    var pageIndex: Int = 0
+    var delegate: AnnotationViewControllerDelegate?
+    //var secondaryImageView: UIImageView?
     
     var alertController: UIAlertController?
     
@@ -30,13 +38,13 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
         let toolbarRect = CGRectMake(0, 0, self.view.frame.width, 44)
         
         // setup a textview on the keyboardToolBar
-        self.keyboardToolBar = UIToolbar(frame: toolbarRect)
-        self.keyboardToolBarTextView = UITextView(frame: toolbarRect)
-        self.keyboardToolBarTextView!.returnKeyType = UIReturnKeyType.Done
-        self.keyboardToolBarTextView!.delegate = self
+//        self.keyboardToolBar = UIToolbar(frame: toolbarRect)
+//        self.keyboardToolBarTextView = UITextView(frame: toolbarRect)
+//        self.keyboardToolBarTextView!.returnKeyType = UIReturnKeyType.Done
+//        self.keyboardToolBarTextView!.delegate = self
 
-        self.keyboardToolBar!.addSubview(self.keyboardToolBarTextView!)
-        self.textView.inputAccessoryView = self.keyboardToolBar
+//        self.keyboardToolBar!.addSubview(self.keyboardToolBarTextView!)
+//        self.textView.inputAccessoryView = self.keyboardToolBar
         
         // setup the swipe gestures so the user can swipe left and right
         self.view.userInteractionEnabled = true
@@ -55,29 +63,32 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
         self.scrollView.minimumZoomScale = 1.0
         self.scrollView.maximumZoomScale = 2.0
         self.scrollView.delegate = self
+        self.scrollView.pagingEnabled = true
         
         // alert controller to caution user during a delete
         self.alertController = UIAlertController(title:"Caution!",
-            message: "Are you sure you want to delete this frame?",
+            message: "Are you sure you want to delete this image?",
             preferredStyle:UIAlertControllerStyle.Alert)
         
         let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
         
         let deleteAction: UIAlertAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: {(alert :UIAlertAction!) in
             
-            self.dataFrames!.removeAtIndex(self.frameNum)
-            SharedDataFrameSet.removeDataFrame(self.frameNum)
             
-            if(self.frameNum <= self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
-                self.displayImageAtIndex(self.frameNum)
-            } else if(self.frameNum > self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
-                self.displayImageAtIndex(self.frameNum-1)
-            }
+            self.deleteSelected()
+            //self.deleteImage()
+            
+//            self.dataFrames!.removeAtIndex(self.frameNum)
+//            SharedDataFrameSet.removeDataFrame(self.frameNum)
+            
+//            if(self.frameNum <= self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
+//                self.displayImageAtIndex(self.frameNum)
+//            } else if(self.frameNum > self.dataFrames!.count-1 && self.dataFrames!.count > 0) {
+//                self.displayImageAtIndex(self.frameNum-1)
+//            }
             
             // no more frames to show close the view
-            if(self.dataFrames!.count == 0) {
-                self.dismissViewControllerAnimated(true, completion: nil)
-            }
+            
         })
         
         self.alertController!.addAction(cancelAction)
@@ -90,10 +101,35 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        self.frameNum = SharedDataFrame.dataFrame!.frameNumber
-        self.dataFrames = SharedDataFrameSet.sortedDataFrames()
-        self.displayImageAtIndex(self.frameNum)
+        //self.frameNum = SharedDataFrame.dataFrame!.frameNumber
+        //self.dataFrames = SharedDataFrameSet.sortedDataFrames()
+        //self.displayImageAtIndex(self.frameNum)
+        for view in self.previews {
+            view.removeFromSuperview()
+        }
+        self.previews.removeAll(keepCapacity: false)
+
+        let origin = self.scrollView.frame.origin
+        let frameWidth = self.scrollView.frame.size.width
+
+        for (var i = 0; i < self.images.count; ++i) {
+            let image = images[i]
+            let originalWidth = image.size.width
+            let originalHeight = image.size.height
+            let frameHeight = frameWidth * originalHeight / originalWidth
+            let x = frameWidth * CGFloat(i)
+            let frame = CGRectMake(x, origin.y, frameWidth, frameHeight)
+
+            let imageView = UIImageView(frame: frame)
+            imageView.image = image
+            self.scrollView.addSubview(imageView)
+            self.previews.append(imageView)
+        }
         
+        let contentWidth = frameWidth * CGFloat(images.count)
+    
+        self.scrollView.contentSize.width = contentWidth
+        self.scrollView.contentOffset = CGPointMake(frameWidth * CGFloat(self.pageIndex), 0)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -108,6 +144,41 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     }
     
     // MARK: - Custom Stuff
+    func setImages(inout images: [UIImage]) {
+        self.images = images
+    }
+    
+    func setPageIndex(index: Int) {
+        self.pageIndex = index
+    }
+    
+    
+    func deleteSelected() {
+        let contentOffset = self.scrollView.contentOffset
+        let pageIndex: Int = Int(contentOffset.x / self.scrollView.frame.size.width)
+        
+        let width = self.scrollView.frame.size.width
+        let imageView = self.previews[pageIndex]
+        imageView.removeFromSuperview()
+        
+        UIView.animateWithDuration(0.15, animations: {
+            for (var i = pageIndex+1; i < self.previews.count; ++i) {
+                let imageView = self.previews[i]
+                imageView.frame.origin.x -= width
+            }
+        })
+        
+        self.scrollView.contentSize.width -= width
+        self.previews.removeAtIndex(pageIndex)
+        self.images.removeAtIndex(pageIndex)
+        self.delegate?.deleteImage(pageIndex)
+        
+        if(self.images.count == 0) {
+            self.navigationController!.popViewControllerAnimated(true)
+            //self.dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+    
     func displayImage(image: UIImage) {
         let origin = self.imageView.frame.origin
         let frameWidth = self.imageView.frame.width
@@ -151,33 +222,19 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     
     func displayImageAtIndex(index: Int) {
         
-        if (index >= self.dataFrames!.count) {
-            return
-        } else if ( index < 0) {
-            return
-        }
-        
-        let dataFrame: Frame = self.dataFrames![index]
-        SharedDataFrame.dataFrame = dataFrame
-
-        let image = UIImage(data: dataFrame.imageData)
-        self.displayImage(image)
-        
-        self.frameNum = index
-
-        // hide next button if last image
-//        if(self.frameNum == self.dataFrames!.count-1) {
-//            self.nextBtn.hidden = true
-//        } else {
-//            self.nextBtn.hidden = false
+//        if (index >= self.dataFrames!.count) {
+//            return
+//        } else if ( index < 0) {
+//            return
 //        }
 //        
-//        // hide prev button if first image
-//        if(self.frameNum == 0) {
-//            self.previousBtn.hidden = true
-//        } else {
-//            self.previousBtn.hidden = false
-//        }
+//        let dataFrame: Frame = self.dataFrames![index]
+//        SharedDataFrame.dataFrame = dataFrame
+//
+//        let image = UIImage(data: dataFrame.imageData)
+//        self.displayImage(image)
+//        
+//        self.frameNum = index
     }
     
     func handleSwipe(swipe: UISwipeGestureRecognizer) {
@@ -238,15 +295,15 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
         self.presentViewController(self.alertController!, animated: true, completion: nil)
     }
     
-    @IBAction func preview(sender: AnyObject) {
-        
-        if(self.keyboardToolBarTextView!.isFirstResponder()) {
-            self.keyboardToolBarTextView!.resignFirstResponder()
-            self.textView.resignFirstResponder()
-        }
-        
-        self.performSegueWithIdentifier("FromAnnotationToPreview", sender: self)
-    }
+//    @IBAction func preview(sender: AnyObject) {
+//        
+//        if(self.keyboardToolBarTextView!.isFirstResponder()) {
+//            self.keyboardToolBarTextView!.resignFirstResponder()
+//            self.textView.resignFirstResponder()
+//        }
+//        
+//        self.performSegueWithIdentifier("FromAnnotationToPreview", sender: self)
+//    }
 //    @IBAction func nextImage(sender: AnyObject) {
 //        self.displayImageAtIndex(self.frameNum+1)
 //    }
@@ -260,28 +317,28 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     }
     
     // MARK: - Notifications
-    func keyboardWillShow(notification: NSNotification) {
-        let text = SharedDataFrame.dataFrame!.annotation
-        
-        self.keyboardToolBarTextView?.text = text
-        self.keyboardToolBarTextView?.becomeFirstResponder()
-    }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        let imageFrame = self.imageView.frame
-        SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
-        
-        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
-            self.textView.hidden = false
-        } else if (self.keyboardToolBarTextView!.text == "") {
-            self.textView.hidden = true
-        }
-        
-        self.textView.text = self.keyboardToolBarTextView!.text
-        self.textView.sizeToFit()
-        
-        self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
-    }
+//    func keyboardWillShow(notification: NSNotification) {
+//        let text = SharedDataFrame.dataFrame!.annotation
+//        
+//        self.keyboardToolBarTextView?.text = text
+//        self.keyboardToolBarTextView?.becomeFirstResponder()
+//    }
+//    
+//    func keyboardWillHide(notification: NSNotification) {
+//        let imageFrame = self.imageView.frame
+//        SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
+//        
+//        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
+//            self.textView.hidden = false
+//        } else if (self.keyboardToolBarTextView!.text == "") {
+//            self.textView.hidden = true
+//        }
+//        
+//        self.textView.text = self.keyboardToolBarTextView!.text
+//        self.textView.sizeToFit()
+//        
+//        self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
+//    }
     
     // MARK: ScrollViewDelegate
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
@@ -289,16 +346,16 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     }
     
     // MARK: TextViewDelegate
-    func textView(textView: UITextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
-        
-        // triggered when done button is touched
-        if(text == "\n") {
-            self.keyboardToolBarTextView!.resignFirstResponder()
-            self.textView.resignFirstResponder()
-        }
-        
-        return true
-    }
+//    func textView(textView: UITextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
+//        
+//        // triggered when done button is touched
+//        if(text == "\n") {
+//            self.keyboardToolBarTextView!.resignFirstResponder()
+//            self.textView.resignFirstResponder()
+//        }
+//        
+//        return true
+//    }
     
     /*
     // MARK: - Navigation

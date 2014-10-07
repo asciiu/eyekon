@@ -33,7 +33,7 @@ class CameraFocusSquare: UIView {
     }
 }
 
-class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate {
+class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate, AnnotationViewControllerDelegate {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var cancelBtn: UIBarButtonItem!
@@ -42,6 +42,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     var captureManager: CaptureSessionManager?
     var capturedImages: [UIImage] = [UIImage]()
+    var selectedImageIndex = 0
     
     var camFocus: CameraFocusSquare?
     let backgroundQueue: dispatch_queue_t = dispatch_queue_create("ImageProcessor", nil)
@@ -80,16 +81,16 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     override func viewWillAppear(animated: Bool) {
         
         self.captureManager!.captureSession!.startRunning()
-        self.capturedImages.removeAll(keepCapacity: false)
+//        self.capturedImages.removeAll(keepCapacity: false)
         self.title = ""
-
-        // test stuff to be removed
-        for(var i = 1; i <= 4; ++i) {
-            
-            let photoName: String = "\(i).jpg"
-            let photo: UIImage = UIImage(named: photoName)
-            self.capturedImages.append(photo)
-        }
+//
+//        // test stuff to be removed
+//        for(var i = 1; i <= 4; ++i) {
+//            
+//            let photoName: String = "\(i).jpg"
+//            let photo: UIImage = UIImage(named: photoName)
+//            self.capturedImages.append(photo)
+//        }
         
         self.collectionView.reloadData()
     }
@@ -102,6 +103,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func clearFilmRoll() {
+        self.capturedImages.removeAll(keepCapacity: false)
     }
     
     // MARK: - Actions
@@ -118,6 +123,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         // go back to the view that we came from
         self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+    // MARK: - AnnotationViewControllerDelegate
+    func deleteImage(atIndex: Int) {
+        self.capturedImages.removeAtIndex(atIndex)
     }
     
     // MARK: - CaptureSessionManagerDelegate
@@ -238,8 +248,11 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     }
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
-        let selectedImage: UIImage = self.capturedImages[indexPath.row]
         
+        self.selectedImageIndex = indexPath.row
+        self.performSegueWithIdentifier("FromCaptureToAnnotation", sender: self)
+        
+        //let selectedImage: UIImage = self.capturedImages[indexPath.row]
         // set the shared dataFrame with the one we selected from the collection view
         //SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
                 
@@ -256,7 +269,13 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     // MARK: - Navigation
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-    
+        
+        if (segue.identifier == "FromCaptureToAnnotation") {
+            let annotation: AnnotateViewController = segue.destinationViewController as AnnotateViewController
+            annotation.setImages(&self.capturedImages)
+            annotation.setPageIndex(self.selectedImageIndex)
+            annotation.delegate = self
+        }
     }
     
     @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {

@@ -24,6 +24,7 @@ class CubeTool: UIView {
         self.layer.borderWidth = 5.0
         //self.layer.cornerRadius = frame.width/2
         self.layer.borderColor = UIColor(red: 0.3, green: 0.6, blue: 0.7, alpha: 1.0).CGColor
+
         
 //        let selectionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "borderColor")
 //        selectionAnimation.toValue = UIColor.yellowColor().CGColor
@@ -34,7 +35,7 @@ class CubeTool: UIView {
 
 let kStoryHashtag = "#untitled"
 
-class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFieldDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource {
+class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout {
 
     //@IBOutlet var upperLeftButton: UIBarButtonItem!
     @IBOutlet var upperRightButton: UIBarButtonItem!
@@ -54,12 +55,19 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     var keyboardToolBarTextView: HPGrowingTextView?
     
     var textView: UITextView?
-    var selectedIndex: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+    //var selectedIndex: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+    var selectedIndex: NSIndexPath?
+    var editingText = false
+    
+    let calloutView: SMCalloutView = SMCalloutView.platformCalloutView()
+    let editBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
+    let deleteBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.collectionView.clipsToBounds = false
+        self.collectionView.delegate = self
         
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
@@ -96,6 +104,21 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
         self.textView!.font = UIFont.systemFontOfSize(16)
         self.textView!.inputAccessoryView = self.keyboardToolBar
         self.view.addSubview(self.textView!)
+        
+        
+        //self.calloutView.frame = CGRectMake(0, 0, 100, 200)
+        //self.calloutView.title = "Tools Here!"
+        //let trashButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
+        self.deleteBtn.setImage(UIImage(named: "trash.png"), forState: UIControlState.Normal)
+        self.deleteBtn.addTarget(self, action: "deleteSelected", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.editBtn.setImage(UIImage(named: "pencil.png"), forState: UIControlState.Normal)
+        self.editBtn.addTarget(self, action: "editSelected", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.calloutView.leftAccessoryView = self.editBtn
+        self.calloutView.rightAccessoryView = self.deleteBtn
+        
+        //self.calloutView.view.backgroundColor = UIColor(red: 0.2, green:0.6, blue: 0.4, alpha: 0.95)
         
         //self.view.addSubview(self.cubeTool)
         //self.tableView.separatorInset = UIEdgeInsets(top: 0, left: 3, bottom: 3, right: 3)
@@ -153,6 +176,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
         self.titleTextField!.text = self.storyContent!.story.title
         self.cubeTool.hidden = true
         self.collectionView.reloadData()
+       
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -168,8 +192,12 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     }
     
     func addImageView(image: UIImage) {
+        if (self.selectedIndex == nil) {
+            self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
+        }
+        
         if (self.cubes.count > 0){
-            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex!.row) as? UIImageView
             view?.highlighted = false
         }
         
@@ -182,7 +210,44 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
         let imageView = UIImageView(frame: CGRectMake(0, 0, frameWidth, height))
         imageView.image = image
         
-        self.cubes.insertObject(imageView, atIndex: self.selectedIndex.row)
+        self.cubes.insertObject(imageView, atIndex: self.selectedIndex!.row)
+        self.collectionView.insertItemsAtIndexPaths([self.selectedIndex!])
+        self.displayEditTools(self.selectedIndex!)
+    }
+    
+    func deleteSelected() {
+        let index = self.selectedIndex!.row
+        self.calloutView.dismissCalloutAnimated(true)
+        self.cubes.removeObjectAtIndex(index)
+        self.collectionView.deleteItemsAtIndexPaths([self.selectedIndex!])
+    }
+    
+    func editSelected() {
+        
+        self.editingText = true
+        let index = self.selectedIndex!.row
+        self.calloutView.dismissCalloutAnimated(false)
+        let textView: UITextView = self.cubes.objectAtIndex(index) as UITextView
+        
+        //self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
+        //self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
+        //self.keyboardToolBarTextView!.text = textView.text
+        //self.textView!.text = ""
+        
+        //self.textView!.becomeFirstResponder()
+        //self.keyboardToolBarTextView!.becomeFirstResponder()
+        //self.keyboardToolBarTextView!.text = textView.text
+        
+        textView.becomeFirstResponder()
+
+        
+//        let diff: CGFloat = CGFloat(height) - growingTextView.frame.size.height
+//        
+//        var r: CGRect = self.keyboardToolBar!.frame
+//        r.size.height = self.keyboardToolBarTextVi
+//        r.origin.y -= diff
+//        self.keyboardToolBar!.frame = r
+        
     }
     
     func setStoryContent(content: StoryContent) {
@@ -212,8 +277,10 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     
     @IBAction func publish(sender: AnyObject) {
         
+        let index = self.selectedIndex?.row ?? 0
+        
         if (self.upperRightButton.title == "Save" && self.cubes.count > 0) {
-            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+            let view: UIImageView? = self.cubes.objectAtIndex(index) as? UIImageView
             view?.highlighted = false
             
             //self.performSegueWithIdentifier("FromPreviewToPublish", sender: self)
@@ -245,14 +312,18 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     }
 
     @IBAction func addText(sender: AnyObject) {
+        
+        self.editingText = false
         self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
         self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
         self.keyboardToolBarTextView!.text = ""
         self.textView!.text = ""
         
         self.textView!.becomeFirstResponder()
+        //self.textView!.frame.size.height = 50
         self.keyboardToolBarTextView!.text = ""
         self.keyboardToolBarTextView!.becomeFirstResponder()
+        self.calloutView.dismissCalloutAnimated(false)
     }
     
     @IBAction func addPhotoFromCamera(sender: AnyObject) {
@@ -319,34 +390,84 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
 //    }
     
     // MARK: UITextFieldDelegate
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        self.calloutView.dismissCalloutAnimated(false)
+        return true
+    }
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }
 
+    // MARK: UITextViewDelegate
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        
+        if(text == "\n") {
+            textView.resignFirstResponder()
+            self.displayEditTools(self.selectedIndex!)
+        } else {
+            let frameWidth = self.collectionView.frame.size.width
+            let cellHeight = textView.frame.size.height
+            
+            textView.sizeToFit()
+            textView.frame.size.width = frameWidth
+            
+            if (textView.frame.size.height != cellHeight) {
+                self.collectionView.collectionViewLayout.invalidateLayout()
+                //self.collectionView.reloadItemsAtIndexPaths([self.selectedIndex!])
+                //textView.becomeFirstResponder()
+            }
+
+        }
+        return true
+    }
+    
+    
     // MARK: HPGrowingTextViewDelegate
     func growingTextView(growingTextView: HPGrowingTextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
         
         // triggered when done button is touched
         if(text == "\n") {
+            let index = self.selectedIndex?.row ?? 0
+            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+            
             if (self.cubes.count > 0){
-                let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex.row) as? UIImageView
+                let view: UIImageView? = self.cubes.objectAtIndex(index) as? UIImageView
                 view?.highlighted = false
             }
-            
+    
             self.keyboardToolBarTextView!.resignFirstResponder()
             self.textView!.resignFirstResponder()
             
             self.textView!.text = self.keyboardToolBarTextView!.text
             self.textView!.sizeToFit()
             let frameWidth = self.collectionView.frame.size.width
-            let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
-            textCube.font = UIFont.systemFontOfSize(16)
-            textCube.text = self.keyboardToolBarTextView!.text
-            textCube.userInteractionEnabled = false
             
-            self.cubes.insertObject(textCube, atIndex: self.selectedIndex.row)
-            self.collectionView.insertItemsAtIndexPaths([self.selectedIndex])
+            self.selectedIndex = indexPath
+            
+            // if not editing existing text
+            if (!self.editingText) {
+                // create a new text view
+                let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
+                textCube.font = UIFont.systemFontOfSize(16)
+                textCube.text = self.keyboardToolBarTextView!.text
+                textCube.sizeToFit()
+                textCube.frame.size.width = frameWidth
+                textCube.userInteractionEnabled = false
+                textCube.delegate = self
+                textCube.returnKeyType = UIReturnKeyType.Done
+                
+                self.cubes.insertObject(textCube, atIndex: index)
+                self.calloutView.dismissCalloutAnimated(false)
+                self.collectionView.insertItemsAtIndexPaths([indexPath])
+            } else {
+                let textCube = self.cubes.objectAtIndex(index) as UITextView
+                textCube.text = self.keyboardToolBarTextView!.text
+                textCube.sizeToFit()
+                self.collectionView.reloadItemsAtIndexPaths([self.selectedIndex!])
+            }
+            self.displayEditTools(self.selectedIndex!)
         }
         
         return true
@@ -362,6 +483,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
         
     }
     
+    // MARK: - LXReorderableCollectionViewDelegateFlowLayout
+
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath!) {
+        
+        if (self.selectedIndex != nil) {
+            self.collectionView.selectItemAtIndexPath(self.selectedIndex!, animated: true, scrollPosition: UICollectionViewScrollPosition.None)
+            self.displayEditTools(self.selectedIndex!)
+        }
+    }
     
     // MARK: - LXReorderableCollectionViewDataSource
     func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
@@ -373,6 +503,12 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
         var cell: UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("EmptyCell", forIndexPath: indexPath) as UICollectionViewCell
         
         let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        
+        if (view is UITextView) {
+            let textView = view as UITextView
+            textView.delegate = self
+        }
+        
         //let frame = self.dataFrames![indexPath.row]
         //let image = UIImage(data: frame.imageData)
         //let imageView = UIImageView(image: image)
@@ -383,12 +519,16 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
+        
+        self.selectedIndex = toIndexPath
+        //self.displayEditTools(toIndexPath)
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         let view: UIView = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
         self.cubes.removeObject(view)
-        self.cubes.insertObject(view, atIndex: toIndexPath.row)        
+        self.cubes.insertObject(view, atIndex: toIndexPath.row)
+        self.calloutView.dismissCalloutAnimated(true)
     }
     
     
@@ -398,6 +538,53 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
+    }
+    
+    
+    func displayEditTools(indexPath: NSIndexPath) {
+        let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)
+        
+        let btn: UIButton = self.calloutView.leftAccessoryView as UIButton
+        let view: UIView = self.cubes[indexPath.row] as UIView
+        
+        if (view is UIImageView) {
+            btn.enabled = false
+        } else {
+            btn.enabled = true
+        }
+        
+        var direction = self.calloutView.currentArrowDirection
+        if (self.collectionView.contentOffset.y < 0 && attributes!.frame.origin.y == 0) {
+            self.calloutView.permittedArrowDirection = SMCalloutArrowDirection.Up
+        } else if (self.collectionView.contentOffset.y > (attributes!.frame.origin.y - self.calloutView.frame.size.height)) {
+            self.calloutView.permittedArrowDirection = SMCalloutArrowDirection.Up
+        } else {
+            self.calloutView.permittedArrowDirection = SMCalloutArrowDirection.Down
+        }
+        
+        //self.calloutView.presentCalloutFromRect(attributes!.frame, inLayer: self.collectionView.layer, constrainedToLayer: self.view.layer, animated: true)
+        self.calloutView.presentCalloutFromRect(attributes!.frame, inView: self.collectionView, constrainedToView: self.view, animated: true)
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if(self.selectedIndex == nil) {
+            return
+        }
+        
+        displayEditTools(self.selectedIndex!)
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        //println("hey")
+
+        if(self.selectedIndex == nil) {
+            return
+        }
+        
+        displayEditTools(self.selectedIndex!)
+
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
@@ -418,22 +605,28 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UITextFie
             return
         }
         
-        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-        view.layer.borderWidth = 3.0
-        view.layer.borderColor = UIColor(red: 0.5, green: 0.7, blue: 0.9, alpha: 0.90).CGColor
-        
-        let imageView: UIImageView? = view as? UIImageView
+        // remove highlighted flag because it causes
+        // -[NSKeyedUnarchiver decodeBoolForKey:]: value for key (UIHighlighted) is not a boolean
+        let imageView: UIImageView? = self.cubes[indexPath.row] as? UIImageView
         imageView?.highlighted = false
         
+        //let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        //view.layer.borderWidth = 3.0
+        //view.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.90).CGColor
+        //view.layer.borderColor = UIColor(red: 0.2, green:0.6, blue: 0.4, alpha: 0.95).CGColor
+
         self.selectedIndex = indexPath
+        self.displayEditTools(indexPath)
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-        view.layer.borderWidth = 0.0
+        //let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        //view.layer.borderWidth = 0.0
     
-        self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
+        //self.calloutView.dismissCalloutAnimated(true)
+        
+        //self.selectedIndex = nil
     }
     
     func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {

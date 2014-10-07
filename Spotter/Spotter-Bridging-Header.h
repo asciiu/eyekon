@@ -9,4 +9,6 @@
 #import "UIImage+NSCopying.h"
 #import "HPGrowingTextView.h"
 #import "HPTextViewInternal.h"
+#import "SMCalloutView.h"
+
 

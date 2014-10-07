@@ -83,15 +83,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.removeAll(keepCapacity: false)
         self.title = ""
 
-//        // test stuff to be removed
-//        for(var i = 1; i <= 4; ++i) {
-//            
-//            let photoName: String = "\(i).jpg"
-//            let photo: UIImage = UIImage(named: photoName)
-//            self.capturedImages.append(photo)
-//        }
-//        
-//        self.collectionView.reloadData()
+        // test stuff to be removed
+        for(var i = 1; i <= 4; ++i) {
+            
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
+        }
+        
+        self.collectionView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {

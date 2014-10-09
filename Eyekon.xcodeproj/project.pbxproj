@@ -31,13 +31,10 @@
 		6E1CE30519B525A00085FF19 /* 19.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2F119B525A00085FF19 /* 19.jpg */; };
 		6E1CE30619B525A00085FF19 /* 20.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2F219B525A00085FF19 /* 20.jpg */; };
 		6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */; };
-		6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30919B83BCD0085FF19 /* Frame.swift */; };
-		6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */; };
 		6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2423CA19E359D500966445 /* SMCalloutView.m */; };
 		6E2423CD19E3645700966445 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CC19E3645700966445 /* trash.png */; };
 		6E2423CF19E39B1500966445 /* pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CE19E39B1500966445 /* pencil.png */; };
 		6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */; };
-		6E60E5B419E0B13A00857FCE /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60E5B319E0B13A00857FCE /* UIImage.swift */; };
 		6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */; };
 		6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */; };
 		6E79658419E0E8C700C23AAC /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658319E0E8C700C23AAC /* Story.swift */; };
@@ -97,14 +94,11 @@
 		6E1CE2F119B525A00085FF19 /* 19.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 19.jpg; sourceTree = "<group>"; };
 		6E1CE2F219B525A00085FF19 /* 20.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 20.jpg; sourceTree = "<group>"; };
 		6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotateViewController.swift; sourceTree = "<group>"; };
-		6E1CE30919B83BCD0085FF19 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
-		6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameSet.swift; sourceTree = "<group>"; };
 		6E2423C919E359D500966445 /* SMCalloutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCalloutView.h; sourceTree = "<group>"; };
 		6E2423CA19E359D500966445 /* SMCalloutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCalloutView.m; sourceTree = "<group>"; };
 		6E2423CC19E3645700966445 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
 		6E2423CE19E39B1500966445 /* pencil.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pencil.png; sourceTree = "<group>"; };
 		6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
-		6E60E5B319E0B13A00857FCE /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		6E79657D19E0C27800C23AAC /* UIImage+NSCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCoding.h"; sourceTree = "<group>"; };
 		6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+NSCoding.m"; sourceTree = "<group>"; };
 		6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCopying.h"; sourceTree = "<group>"; };
@@ -117,14 +111,14 @@
 		6E79658A19E210C600C23AAC /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
-		6EC03D7E19A66669006CB2E2 /* Spotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EC03D7E19A66669006CB2E2 /* Eyekon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Eyekon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D8219A66669006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D8319A66669006CB2E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6EC03D8619A66669006CB2E2 /* Spotter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spotter.xcdatamodel; sourceTree = "<group>"; };
 		6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureViewController.swift; sourceTree = "<group>"; };
 		6EC03D8B19A66669006CB2E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6EC03D8D19A66669006CB2E2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6EC03D9319A6666A006CB2E2 /* SpotterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EC03D9319A6666A006CB2E2 /* EyekonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyekonTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
@@ -230,12 +224,9 @@
 		6E1CE30D19B83CA30085FF19 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6E1CE30B19B83BCE0085FF19 /* FrameSet.swift */,
-				6E1CE30919B83BCD0085FF19 /* Frame.swift */,
 				6E79658319E0E8C700C23AAC /* Story.swift */,
 				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
-				6E60E5B319E0B13A00857FCE /* UIImage.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -262,8 +253,8 @@
 		6EC03D7F19A66669006CB2E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6EC03D7E19A66669006CB2E2 /* Spotter.app */,
-				6EC03D9319A6666A006CB2E2 /* SpotterTests.xctest */,
+				6EC03D7E19A66669006CB2E2 /* Eyekon.app */,
+				6EC03D9319A6666A006CB2E2 /* EyekonTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -322,9 +313,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6EC03D7D19A66669006CB2E2 /* Spotter */ = {
+		6EC03D7D19A66669006CB2E2 /* Eyekon */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6EC03D9D19A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "Spotter" */;
+			buildConfigurationList = 6EC03D9D19A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "Eyekon" */;
 			buildPhases = (
 				6EC03D7A19A66669006CB2E2 /* Sources */,
 				6EC03D7B19A66669006CB2E2 /* Frameworks */,
@@ -334,14 +325,14 @@
 			);
 			dependencies = (
 			);
-			name = Spotter;
+			name = Eyekon;
 			productName = Spotter;
-			productReference = 6EC03D7E19A66669006CB2E2 /* Spotter.app */;
+			productReference = 6EC03D7E19A66669006CB2E2 /* Eyekon.app */;
 			productType = "com.apple.product-type.application";
 		};
-		6EC03D9219A6666A006CB2E2 /* SpotterTests */ = {
+		6EC03D9219A6666A006CB2E2 /* EyekonTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6EC03DA019A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "SpotterTests" */;
+			buildConfigurationList = 6EC03DA019A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "EyekonTests" */;
 			buildPhases = (
 				6EC03D8F19A6666A006CB2E2 /* Sources */,
 				6EC03D9019A6666A006CB2E2 /* Frameworks */,
@@ -352,9 +343,9 @@
 			dependencies = (
 				6EC03D9519A6666A006CB2E2 /* PBXTargetDependency */,
 			);
-			name = SpotterTests;
+			name = EyekonTests;
 			productName = SpotterTests;
-			productReference = 6EC03D9319A6666A006CB2E2 /* SpotterTests.xctest */;
+			productReference = 6EC03D9319A6666A006CB2E2 /* EyekonTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -375,7 +366,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6EC03D7919A66669006CB2E2 /* Build configuration list for PBXProject "Spotter" */;
+			buildConfigurationList = 6EC03D7919A66669006CB2E2 /* Build configuration list for PBXProject "Eyekon" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -388,8 +379,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6EC03D7D19A66669006CB2E2 /* Spotter */,
-				6EC03D9219A6666A006CB2E2 /* SpotterTests */,
+				6EC03D7D19A66669006CB2E2 /* Eyekon */,
+				6EC03D9219A6666A006CB2E2 /* EyekonTests */,
 			);
 		};
 /* End PBXProject section */
@@ -440,9 +431,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E60E5B419E0B13A00857FCE /* UIImage.swift in Sources */,
 				6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */,
-				6E1CE30A19B83BCD0085FF19 /* Frame.swift in Sources */,
 				6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
@@ -452,7 +441,6 @@
 				6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */,
 				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
 				6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */,
-				6E1CE30C19B83BCE0085FF19 /* FrameSet.swift in Sources */,
 				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
 				6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */,
@@ -480,7 +468,7 @@
 /* Begin PBXTargetDependency section */
 		6EC03D9519A6666A006CB2E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6EC03D7D19A66669006CB2E2 /* Spotter */;
+			target = 6EC03D7D19A66669006CB2E2 /* Eyekon */;
 			targetProxy = 6EC03D9419A6666A006CB2E2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -582,7 +570,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Eyekon;
 				SWIFT_OBJC_BRIDGING_HEADER = "Spotter/Spotter-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -596,7 +584,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Eyekon;
 				SWIFT_OBJC_BRIDGING_HEADER = "Spotter/Spotter-Bridging-Header.h";
 			};
 			name = Release;
@@ -615,8 +603,8 @@
 				);
 				INFOPLIST_FILE = SpotterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spotter.app/Spotter";
+				PRODUCT_NAME = EyekonTests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Eyekon.app/Eyekon";
 			};
 			name = Debug;
 		};
@@ -630,15 +618,15 @@
 				);
 				INFOPLIST_FILE = SpotterTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spotter.app/Spotter";
+				PRODUCT_NAME = EyekonTests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Eyekon.app/Eyekon";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6EC03D7919A66669006CB2E2 /* Build configuration list for PBXProject "Spotter" */ = {
+		6EC03D7919A66669006CB2E2 /* Build configuration list for PBXProject "Eyekon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6EC03D9B19A6666A006CB2E2 /* Debug */,
@@ -647,7 +635,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6EC03D9D19A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "Spotter" */ = {
+		6EC03D9D19A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "Eyekon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6EC03D9E19A6666A006CB2E2 /* Debug */,
@@ -656,7 +644,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6EC03DA019A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "SpotterTests" */ = {
+		6EC03DA019A6666A006CB2E2 /* Build configuration list for PBXNativeTarget "EyekonTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6EC03DA119A6666A006CB2E2 /* Debug */,

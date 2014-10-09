@@ -81,8 +81,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     override func viewWillAppear(animated: Bool) {
         
         self.captureManager!.captureSession!.startRunning()
-//        self.capturedImages.removeAll(keepCapacity: false)
         self.title = ""
+
+//        self.capturedImages.removeAll(keepCapacity: false)
 //
 //        // test stuff to be removed
 //        for(var i = 1; i <= 4; ++i) {
@@ -142,7 +143,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
             
             self.capturedImages.append(image)
             
-            
             // update the view on the main thread
             dispatch_async(dispatch_get_main_queue(), {
                 let index: NSIndexPath = NSIndexPath(forItem: self.capturedImages.count-1, inSection: 0)
@@ -162,7 +162,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
 
         let image = self.capturedImages[indexPath.row]
 
-        //cell.imageView.frame = cell.bounds
         cell.numberLabel.text = String(indexPath.item + 1)
         cell.imageView.image = self.capturedImages[indexPath.item]
         
@@ -230,16 +229,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         self.capturedImages.removeAtIndex(fromIndexPath.item)
         self.capturedImages.insert(image, atIndex: toIndexPath.item)
-        
-//        let frames = NSMutableArray(array: SharedDataFrameSet.sortedDataFrames())
-//        let frame: Frame = frames[fromIndexPath.item] as Frame
-//        frames.removeObject(frame)
-//        frames.insertObject(frame, atIndex: toIndexPath.item)
-//        
-//        for(var i = 0; i < frames.count; ++i) {
-//            let frm = frames[i] as Frame
-//            frm.frameNumber = i
-//        }
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
@@ -251,15 +240,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         self.selectedImageIndex = indexPath.row
         self.performSegueWithIdentifier("FromCaptureToAnnotation", sender: self)
-        
-        //let selectedImage: UIImage = self.capturedImages[indexPath.row]
-        // set the shared dataFrame with the one we selected from the collection view
-        //SharedDataFrame.dataFrame = SharedDataFrameSet.findFrameNumber(indexPath.row)
-                
-//        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//        let annotateViewController: AnnotateViewController = storyboard.instantiateViewControllerWithIdentifier("AnnotateViewController") as AnnotateViewController
-//        
-//        self.presentViewController(annotateViewController, animated: true, completion: nil)
     }
     
     func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
@@ -289,7 +269,6 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         let touch: UITouch = touches.anyObject() as UITouch
         let touchPoint: CGPoint = touch.locationInView(touch.view)
         
-        //self.focus(touchPoint)
         self.camFocus?.removeFromSuperview()
         
         if (self.cameraView === touch.view) {

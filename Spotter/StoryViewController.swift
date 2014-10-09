@@ -37,28 +37,33 @@ let kStoryHashtag = "#untitled"
 
 class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout {
 
-    //@IBOutlet var upperLeftButton: UIBarButtonItem!
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var toolbar: UIToolbar!
-    
-    var dataFrames: [Frame]?
+
+    // ordered collection of UIViews
     var cubes: NSMutableArray = NSMutableArray()
+    // flag used to determine if parent view is editable
     var editable: Bool = false
-    var cubeTool: CubeTool = CubeTool(frame: CGRectZero)
+    
+    //var cubeTool: CubeTool = CubeTool(frame: CGRectZero)
     
     var storyContent: StoryContent?
     var context: NSManagedObjectContext?
-    
+
     var titleTextField: UITextField?
+    
+    // dummy text view used during text cube insertion
+    var textView: UITextView?
     var keyboardToolBar: UIToolbar?
     var keyboardToolBarTextView: HPGrowingTextView?
     
-    var textView: UITextView?
-    //var selectedIndex: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-    var selectedIndex: NSIndexPath?
+    // editing existing text cube
     var editingText = false
-    
+    // index of selected cube/UIView
+    var selectedIndex: NSIndexPath?
+
+    // callout used for editing tools
     let calloutView: SMCalloutView = SMCalloutView.platformCalloutView()
     let editBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
     let deleteBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
@@ -73,17 +78,17 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
         
+        // create an editable text field on the navigation bar
         self.titleTextField = UITextField(frame: CGRectMake(0, 0, 200, 22))
         self.titleTextField!.returnKeyType = UIReturnKeyType.Done
         self.titleTextField!.delegate = self
         self.titleTextField!.text = kStoryHashtag
         self.titleTextField!.font = UIFont.boldSystemFontOfSize(19)
         self.titleTextField!.textColor = UIColor.whiteColor()
-        //self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
+        // toolbar for text view accessory view
         let toolbarRect = CGRectMake(0, 0, self.view.frame.width, 44)
-
         
         // setup a textview on the keyboardToolBar
         self.keyboardToolBar = UIToolbar(frame: toolbarRect)
@@ -97,7 +102,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         
         // setup offscreen text view
         self.textView = UITextView(frame: CGRectMake(0, self.collectionView.frame.size.height, self.collectionView.frame.size.width, 50))
-        
         self.textView!.returnKeyType = UIReturnKeyType.Done
         self.textView!.inputAccessoryView = self.keyboardToolBar
         self.textView!.userInteractionEnabled = false
@@ -105,45 +109,19 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.textView!.inputAccessoryView = self.keyboardToolBar
         self.view.addSubview(self.textView!)
         
-        
-        //self.calloutView.frame = CGRectMake(0, 0, 100, 200)
-        //self.calloutView.title = "Tools Here!"
-        //let trashButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
+        // delete button for callout view
         self.deleteBtn.setImage(UIImage(named: "trash.png"), forState: UIControlState.Normal)
         self.deleteBtn.addTarget(self, action: "deleteSelected", forControlEvents: UIControlEvents.TouchUpInside)
         
+        // edit button for callout view
         self.editBtn.setImage(UIImage(named: "pencil.png"), forState: UIControlState.Normal)
         self.editBtn.addTarget(self, action: "editSelected", forControlEvents: UIControlEvents.TouchUpInside)
         
         self.calloutView.leftAccessoryView = self.editBtn
         self.calloutView.rightAccessoryView = self.deleteBtn
-        
-        //self.calloutView.view.backgroundColor = UIColor(red: 0.2, green:0.6, blue: 0.4, alpha: 0.95)
-        
-        //self.view.addSubview(self.cubeTool)
-        //self.tableView.separatorInset = UIEdgeInsets(top: 0, left: 3, bottom: 3, right: 3)
-        
-        // Do any additional setup after loading the view.
-//        self.view.userInteractionEnabled = true
-//        
-//        let swipeLeft: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-//        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-//       
-//         // Setting the swipe direction.
-//        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
-//        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
-//        
-//        // Adding the swipe gesture on image view
-//        self.view.addGestureRecognizer(swipeLeft)
-//        self.view.addGestureRecognizer(swipeRight)
-//        
-//        self.view.clipsToBounds = true
     }
     
     override func viewWillAppear(animated: Bool) {
-        
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
         if(self.storyContent == nil) {
             // create a new story
@@ -174,16 +152,13 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         }
        
         self.titleTextField!.text = self.storyContent!.story.title
-        self.cubeTool.hidden = true
+        //self.cubeTool.hidden = true
         self.collectionView.reloadData()
        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
-//        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-//        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -191,6 +166,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - Custom stuff
     func addImageView(image: UIImage) {
         if (self.selectedIndex == nil) {
             self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
@@ -223,6 +199,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.selectedIndex = nil
     }
     
+    // edit selected text
     func editSelected() {
         
         self.editingText = true
@@ -230,25 +207,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.calloutView.dismissCalloutAnimated(false)
         let textView: UITextView = self.cubes.objectAtIndex(index) as UITextView
         
-        //self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-        //self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-        //self.keyboardToolBarTextView!.text = textView.text
-        //self.textView!.text = ""
-        
-        //self.textView!.becomeFirstResponder()
-        //self.keyboardToolBarTextView!.becomeFirstResponder()
-        //self.keyboardToolBarTextView!.text = textView.text
-        
         textView.becomeFirstResponder()
-
-        
-//        let diff: CGFloat = CGFloat(height) - growingTextView.frame.size.height
-//        
-//        var r: CGRect = self.keyboardToolBar!.frame
-//        r.size.height = self.keyboardToolBarTextVi
-//        r.origin.y -= diff
-//        self.keyboardToolBar!.frame = r
-        
     }
     
     func setStoryContent(content: StoryContent) {
@@ -256,6 +215,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.storyContent = content
         
         if( content.data != nil) {
+            // unarchive the story content as a ordered array of UIViews
             self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(content.data!) as NSMutableArray
         }
     }
@@ -354,42 +314,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.keyboardToolBarTextView?.text = text
         self.keyboardToolBarTextView?.becomeFirstResponder()
     }
-    
-//    func keyboardWillHide(notification: NSNotification) {
-//        //let imageFrame = self.imageView.frame
-//        //SharedDataFrame.dataFrame?.annotation = self.keyboardToolBarTextView!.text
-//        
-////        if (self.textView.hidden && self.keyboardToolBarTextView!.text != "") {
-////            self.textView.hidden = false
-////        } else if (self.keyboardToolBarTextView!.text == "") {
-////            self.textView.hidden = true
-////        }
-//        
-//        self.textView!.text = self.keyboardToolBarTextView!.text
-//        self.textView!.sizeToFit()
-//        let frameWidth = self.collectionView.frame.size.width
-//        let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
-//        textCube.font = UIFont.systemFontOfSize(16)
-//        textCube.text = self.keyboardToolBarTextView!.text
-//        textCube.userInteractionEnabled = false
-//        
-//       
-//        self.cubes.insertObject(textCube, atIndex: self.selectedIndex.row)
-//        self.collectionView.insertItemsAtIndexPaths([self.selectedIndex])
-//        
-//        //self.collectionView.reloadItemsAtIndexPaths([index])
-//        
-////        self.textView!.text = self.keyboardToolBarTextView!.text
-////        self.textView!.sizeToFit()
-////        self.textView!.frame.size.width = self.collectionView.frame.size.width
-//        
-//        //self.cubes.addObject(self.textView!)
-//        
-////        let index: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
-////        self.collectionView.reloadItemsAtIndexPaths([index])
-//        
-//        //self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.width, self.imageView.frame.height+self.textView.frame.height)
-//    }
     
     // MARK: UITextFieldDelegate
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {

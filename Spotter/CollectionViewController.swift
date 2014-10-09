@@ -51,10 +51,6 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         var error: NSError?
         
         self.stories = self.context!.executeFetchRequest(request, error: &error) as [Story]
-        
-//        if self.frameSets.count == 0 {
-//            println("Empty List")
-//        }
     }
     
     @IBAction func addStory(sender: AnyObject) {
@@ -69,8 +65,6 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
-        //SharedDataFrameSet.dataFrameSet = self.stories[indexPath.row]
-        //SharedStory.story = self.stories[indexPath.row]
         self.selectedStory = self.stories[indexPath.row]
         self.performSegueWithIdentifier("FromCollectionToPreview", sender: self)
     }
@@ -110,14 +104,6 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        
-        // if storyboard FroCollectinoToCapture segue then we are going to
-        // create a new dataFrameSet
-//        if (segue.identifier == "FromCollectionToCapture") {
-//            // set the shared data frame set to nil
-//            SharedDataFrameSet.dataFrameSet = nil
-//        }
-        
         let destination: StoryViewController? = segue.destinationViewController as? StoryViewController
         
         if (destination != nil) {

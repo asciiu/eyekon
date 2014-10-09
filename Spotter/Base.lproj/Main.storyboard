@@ -7,7 +7,7 @@
         <!--Collection-->
         <scene sceneID="cSa-05-lOE">
             <objects>
-                <viewController id="QHJ-c1-pPb" customClass="CollectionViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QHJ-c1-pPb" customClass="CollectionViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cY8-PV-uXl">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -51,7 +51,7 @@
         <!--Annotate View Controller-->
         <scene sceneID="N8l-OS-Pu6">
             <objects>
-                <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="RGA-sS-Dqi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -91,7 +91,7 @@
         <!--Capture-->
         <scene sceneID="BcV-bH-nnr">
             <objects>
-                <viewController storyboardIdentifier="CaptureViewController" id="tH4-5w-EKm" customClass="CaptureViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CaptureViewController" id="tH4-5w-EKm" customClass="CaptureViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rWE-lk-NJD">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -118,7 +118,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <collectionViewLayout key="collectionViewLayout" id="iK9-Wb-55s" customClass="RACollectionViewReorderableTripletLayout"/>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCollectionViewCell" id="qIz-kW-Squ" customClass="ImageCollectionViewCell" customModule="Spotter" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCollectionViewCell" id="qIz-kW-Squ" customClass="ImageCollectionViewCell" customModule="Eyekon" customModuleProvider="target">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="63" height="59"/>
@@ -178,7 +178,7 @@
         <!--Preview-->
         <scene sceneID="wL7-hp-1go">
             <objects>
-                <viewController id="uya-p5-87Y" customClass="StoryViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uya-p5-87Y" customClass="StoryViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bp4-Hk-zZP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -250,7 +250,7 @@
         <!--Publish-->
         <scene sceneID="xCC-hv-Kwa">
             <objects>
-                <viewController id="Rux-43-RDk" customClass="PublishViewController" customModule="Spotter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Rux-43-RDk" customClass="PublishViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fTD-KV-ddo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -30,7 +30,7 @@
 		6E1CE30419B525A00085FF19 /* 18.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2F019B525A00085FF19 /* 18.jpg */; };
 		6E1CE30519B525A00085FF19 /* 19.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2F119B525A00085FF19 /* 19.jpg */; };
 		6E1CE30619B525A00085FF19 /* 20.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E1CE2F219B525A00085FF19 /* 20.jpg */; };
-		6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */; };
+		6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CE30719B6ADED0085FF19 /* CapturePreviewController.swift */; };
 		6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2423CA19E359D500966445 /* SMCalloutView.m */; };
 		6E2423CD19E3645700966445 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CC19E3645700966445 /* trash.png */; };
 		6E2423CF19E39B1500966445 /* pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CE19E39B1500966445 /* pencil.png */; };
@@ -93,7 +93,7 @@
 		6E1CE2F019B525A00085FF19 /* 18.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 18.jpg; sourceTree = "<group>"; };
 		6E1CE2F119B525A00085FF19 /* 19.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 19.jpg; sourceTree = "<group>"; };
 		6E1CE2F219B525A00085FF19 /* 20.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 20.jpg; sourceTree = "<group>"; };
-		6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotateViewController.swift; sourceTree = "<group>"; };
+		6E1CE30719B6ADED0085FF19 /* CapturePreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapturePreviewController.swift; sourceTree = "<group>"; };
 		6E2423C919E359D500966445 /* SMCalloutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCalloutView.h; sourceTree = "<group>"; };
 		6E2423CA19E359D500966445 /* SMCalloutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCalloutView.m; sourceTree = "<group>"; };
 		6E2423CC19E3645700966445 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
@@ -164,7 +164,7 @@
 			children = (
 				6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */,
 				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
-				6E1CE30719B6ADED0085FF19 /* AnnotateViewController.swift */,
+				6E1CE30719B6ADED0085FF19 /* CapturePreviewController.swift */,
 				6EE0135019C2185A00152F7E /* StoryViewController.swift */,
 				6EE0135219C27CF900152F7E /* PublishViewController.swift */,
 				6EE0135619C6407700152F7E /* CaptureSessionManager.swift */,
@@ -432,7 +432,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */,
-				6E1CE30819B6ADED0085FF19 /* AnnotateViewController.swift in Sources */,
+				6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,

@@ -53,9 +53,10 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         self.stories = self.context!.executeFetchRequest(request, error: &error) as [Story]
     }
     
+    // MARK: - Actions
     @IBAction func addStory(sender: AnyObject) {
         self.selectedStory = nil
-        self.performSegueWithIdentifier("FromCollectionToPreview", sender: self)
+        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
     }
 
     // MARK: - UITableViewDelegate
@@ -66,7 +67,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     
     func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
         self.selectedStory = self.stories[indexPath.row]
-        self.performSegueWithIdentifier("FromCollectionToPreview", sender: self)
+        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
     }
     
     // MARK: - UITableViewDataSource
@@ -90,7 +91,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         
         var error: NSError?
         if (!self.context!.save(&error)) {
-                println("HowToViewController: could not remove item from store")
+                println("CollectionViewController: could not remove item from store")
         }
         
         self.tableView.reloadData()

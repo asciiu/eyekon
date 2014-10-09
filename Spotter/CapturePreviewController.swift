@@ -8,19 +8,18 @@
 
 import UIKit
 
-protocol AnnotationViewControllerDelegate {
+protocol CapturePreviewControllerDelegate {
     func deleteImage(atIndex: Int)
 }
 
-class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollViewDelegate {
+class CapturePreviewController: UIViewController, UITextViewDelegate, UIScrollViewDelegate {
 
     @IBOutlet var scrollView: UIScrollView!
 
-    //var frameNum: Int = 0
     var imageViews: [UIImageView] = [UIImageView]()
     var images: [UIImage] = [UIImage]()
     var pageIndex: Int = 0
-    var delegate: AnnotationViewControllerDelegate?
+    var delegate: CapturePreviewControllerDelegate?
     
     var alertController: UIAlertController = UIAlertController(title:"Caution!",
         message: "Are you sure you want to delete this image?",
@@ -35,9 +34,9 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
         // setup the swipe gestures so the user can swipe left and right
         self.view.userInteractionEnabled = true
         
-//        self.scrollView.minimumZoomScale = 1.0
-//        self.scrollView.maximumZoomScale = 2.0
-//        self.scrollView.delegate = self
+        //self.scrollView.minimumZoomScale = 1.0
+        //self.scrollView.maximumZoomScale = 2.0
+        //self.scrollView.delegate = self
         self.scrollView.pagingEnabled = true
         
         // alert actions
@@ -55,12 +54,6 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        // remove all subviews from the scroll view
-        for view in self.imageViews {
-            view.removeFromSuperview()
-        }
-        self.imageViews.removeAll(keepCapacity: false)
-
         let origin = self.scrollView.frame.origin
         let frameWidth = self.scrollView.frame.size.width
 
@@ -92,6 +85,13 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        // remove all subviews from the scroll view
+        for view in self.imageViews {
+            view.removeFromSuperview()
+        }
+        self.imageViews.removeAll(keepCapacity: false)
+        self.images.removeAll(keepCapacity: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,7 +100,7 @@ class AnnotateViewController: UIViewController, UITextViewDelegate, UIScrollView
     }
     
     // MARK: - Custom Stuff
-    func setImages(inout images: [UIImage]) {
+    func setImages(images: [UIImage]) {
         self.images = images
     }
     

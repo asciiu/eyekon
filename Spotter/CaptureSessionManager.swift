@@ -60,9 +60,14 @@ class CaptureSessionManager: NSObject {
         //self.captureSession!.startRunning()
     }
     
-    func addVideoPreviewLayer() {
+    func addVideoPreviewLayer(toView: UIView) {
         self.previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession!)
         self.previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
+        
+        let rect = toView.layer.bounds
+        self.previewLayer!.bounds = rect
+        self.previewLayer!.position = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
+        toView.layer.addSublayer(self.previewLayer!)
     }
     
     func addVideoInput() {
@@ -162,5 +167,12 @@ class CaptureSessionManager: NSObject {
             }
         }
     }
+    
+    func startSession() {
+        self.captureSession?.startRunning()
+    }
 
+    func stopSession() {
+        self.captureSession!.stopRunning()
+    }
 }

@@ -23,7 +23,6 @@ class CameraFocusSquare: UIView {
         self.backgroundColor = UIColor.clearColor()
         
         self.layer.borderWidth = 1.0
-        //self.layer.cornerRadius = frame.width/2
         self.layer.borderColor = UIColor.whiteColor().CGColor
         
         let selectionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "borderColor")
@@ -33,14 +32,12 @@ class CameraFocusSquare: UIView {
     }
 }
 
-class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate, AnnotationViewControllerDelegate {
+class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate, CapturePreviewControllerDelegate {
     
     @IBOutlet var collectionView: UICollectionView!
-    @IBOutlet var cancelBtn: UIBarButtonItem!
-    @IBOutlet var previewBtn: UIBarButtonItem!
     @IBOutlet var cameraView: UIView!
     
-    var captureManager: CaptureSessionManager?
+    var captureManager: CaptureSessionManager = CaptureSessionManager()
     var capturedImages: [UIImage] = [UIImage]()
     var selectedImageIndex = 0
     
@@ -62,25 +59,17 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.collectionView.dataSource = self
         
         // setup the camera
-        self.captureManager = CaptureSessionManager()
-        self.captureManager!.delegate = self
-        self.captureManager!.addVideoInput()
-        self.captureManager!.addVideoPreviewLayer()
-        self.captureManager!.addStillImageOutput()
-        
-        let cameraLayer = self.cameraView.layer
-        cameraLayer.masksToBounds = true
-        
-        // position the custom camera onto the cameraView layer
-        let rect = self.cameraView.layer.bounds
-        self.captureManager!.previewLayer!.bounds = rect
-        self.captureManager!.previewLayer!.position = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
-        self.cameraView.layer.addSublayer(self.captureManager!.previewLayer!)
+        self.captureManager.delegate = self
+        self.captureManager.addVideoInput()
+        self.captureManager.addVideoPreviewLayer(self.cameraView)
+        self.captureManager.addStillImageOutput()
     }
     
     override func viewWillAppear(animated: Bool) {
         
-        self.captureManager!.captureSession!.startRunning()
+        self.captureManager.startSession()
+        
+        // remove title on navigation bar
         self.title = ""
 
 //        self.capturedImages.removeAll(keepCapacity: false)
@@ -98,7 +87,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.captureManager!.captureSession!.stopRunning()
+        self.captureManager.stopSession()
     }
     
     override func didReceiveMemoryWarning() {
@@ -106,28 +95,32 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // Dispose of any resources that can be recreated.
     }
     
-    func clearFilmRoll() {
-        self.capturedImages.removeAll(keepCapacity: false)
-    }
-    
     // MARK: - Actions
     
     @IBAction func takePhoto(sender: AnyObject) {
-        self.captureManager!.captureStillImage()
+        self.captureManager.captureStillImage()
     }
     
     @IBAction func done(sender: AnyObject) {
+        // send all captured images to story controller
         for (var i = self.capturedImages.count-1; i >= 0; --i) {
             let image = self.capturedImages[i]
             self.storyController!.addImageView(image)
         }
         
+        self.capturedImages.removeAll(keepCapacity: false)
+        
         // go back to the view that we came from
         self.navigationController?.popViewControllerAnimated(true)
     }
     
-    // MARK: - AnnotationViewControllerDelegate
+    // MARK: - CapturePreviewControllerDelegate
+    
     func deleteImage(atIndex: Int) {
+        if (atIndex >= self.capturedImages.count) {
+            return
+        }
+        
         self.capturedImages.removeAtIndex(atIndex)
     }
     
@@ -152,8 +145,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         })
     }
     
-    // MARK: - UICollectionViewDataSource
-
+    // MARK: - RACollectionViewReorderableTripletLayoutDataSource
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         let identifier: NSString = "ImageCollectionViewCell"
@@ -168,59 +161,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         return cell;
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.capturedImages.count
-    }
-    
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
-        return 1
-    }
-    
-    // MARK: - RACollectionViewDelegateReorderableTripletLayout
-    
-    func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
-        return 5.0
-    }
-
-    func minimumInteritemSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
-        return 5.0
-    }
-    
-    func minimumLineSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
-        return 5.0
-    }
-    
-    func insetsForCollectionView(collectionView: UICollectionView!) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(5.0, 0, 5.0, 0)
-        //return UIEdgeInsetsMake(0, 5.0, 0, 5.0)
-    }
-    
-    func collectionView(collectionView: UICollectionView!, sizeForLargeItemsInSection section: Int) -> CGSize {
-        //if (section == 0) {
-        //    return CGSizeMake(320, 200)
-        //}
-        return CGSizeZero
-    }
-    
-    func autoScrollTrigerEdgeInsets(collectionView: UICollectionView!) -> UIEdgeInsets {
-        //return UIEdgeInsetsMake(50.0, 0, 50.0, 0)
-        return UIEdgeInsetsMake(0, 25.0, 0, 25.0)
-    }
-    
-    func autoScrollTrigerPadding(collectionView: UICollectionView!) -> UIEdgeInsets {
-        //return UIEdgeInsetsMake(64.0, 0, 0, 0)
-        return UIEdgeInsetsMake(0, 64.0, 0, 0.0)
-
-    }
-    
-    func reorderingItemAlpha(collectionview: UICollectionView!) -> CGFloat {
-        return 0.3
-    }
-    
-    
-    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
         
-        self.collectionView.reloadData()
+        return true
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
@@ -231,35 +174,71 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.insert(image, atIndex: toIndexPath.item)
     }
     
-    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
-        
-        return true
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.capturedImages.count
     }
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
+        return 1
+    }
+    
+    // MARK: - RACollectionViewDelegateReorderableTripletLayout
+    
+    func autoScrollTrigerEdgeInsets(collectionView: UICollectionView!) -> UIEdgeInsets {
+        //return UIEdgeInsetsMake(50.0, 0, 50.0, 0)
+        return UIEdgeInsetsMake(0, 25.0, 0, 25.0)
+    }
+    
+    func autoScrollTrigerPadding(collectionView: UICollectionView!) -> UIEdgeInsets {
+        //return UIEdgeInsetsMake(64.0, 0, 0, 0)
+        return UIEdgeInsetsMake(0, 64.0, 0, 0.0)
+        
+    }
+    
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
+        
+        self.collectionView.reloadData()
+    }
+
+    func insetsForCollectionView(collectionView: UICollectionView!) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(5.0, 0, 5.0, 0)
+        //return UIEdgeInsetsMake(0, 5.0, 0, 5.0)
+    }
+    
+    func minimumInteritemSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+    
+    func minimumLineSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+    
+    func reorderingItemAlpha(collectionview: UICollectionView!) -> CGFloat {
+        return 0.3
+    }
+    
+    func sectionSpacingForCollectionView(collectionView: UICollectionView!) -> CGFloat {
+        return 5.0
+    }
+    
+    // MARK: - UICollectionViewDelegate
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
         
         self.selectedImageIndex = indexPath.row
-        self.performSegueWithIdentifier("FromCaptureToAnnotation", sender: self)
-    }
-    
-    func collectionView(collectionView: UICollectionView!, shouldHighlightItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
-        return true
+        self.performSegueWithIdentifier("FromCaptureToPreview", sender: self)
     }
     
     // MARK: - Navigation
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         
-        if (segue.identifier == "FromCaptureToAnnotation") {
-            let annotation: AnnotateViewController = segue.destinationViewController as AnnotateViewController
-            annotation.setImages(&self.capturedImages)
-            annotation.setPageIndex(self.selectedImageIndex)
-            annotation.delegate = self
+        if (segue.identifier == "FromCaptureToPreview") {
+            let preview: CapturePreviewController = segue.destinationViewController as CapturePreviewController
+            preview.setImages(self.capturedImages)
+            preview.setPageIndex(self.selectedImageIndex)
+            preview.delegate = self
         }
-    }
-    
-    @IBAction func unwindToCapture(unwindSegue: UIStoryboardSegue) {
-        
     }
     
     // MARK: - Touch Events
@@ -287,7 +266,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
             let focusPt = CGPointMake(focus_x, focus_y)
             
             // set focus point for capture manager
-            self.captureManager?.focusOnPoint(focusPt)
+            self.captureManager.focusOnPoint(focusPt)
             
             UIView.animateWithDuration(1.5, animations: {
                 self.camFocus!.alpha = 0

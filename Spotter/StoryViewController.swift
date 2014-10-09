@@ -299,7 +299,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         if (segue.identifier == "FromStoryToCapture") {
             let destination: CaptureViewController = segue.destinationViewController as CaptureViewController
             destination.storyController = self
-            destination.clearFilmRoll()
         }
     }
     

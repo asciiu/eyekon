@@ -41,17 +41,17 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="7Ui-Lu-1fh" id="zT9-oX-O6e"/>
-                        <segue destination="uya-p5-87Y" kind="push" identifier="FromCollectionToPreview" id="y4d-cO-mkd"/>
+                        <segue destination="uya-p5-87Y" kind="push" identifier="FromCollectionToStory" id="y4d-cO-mkd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-663" y="-223"/>
         </scene>
-        <!--Annotate View Controller-->
+        <!--Capture Preview Controller-->
         <scene sceneID="N8l-OS-Pu6">
             <objects>
-                <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="AnnotateViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AnnotateViewController" id="SiY-lW-Nsg" customClass="CapturePreviewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="RGA-sS-Dqi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -164,10 +164,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cameraView" destination="P1Y-BW-yG7" id="4bV-Ij-zWx"/>
-                        <outlet property="cancelBtn" destination="OZM-LZ-oyX" id="sJJ-Oe-Nj9"/>
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
-                        <outlet property="previewBtn" destination="R2A-gU-lFb" id="qkZ-Hw-qrl"/>
-                        <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToAnnotation" id="Frq-Uo-veK"/>
+                        <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToPreview" id="Frq-Uo-veK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>

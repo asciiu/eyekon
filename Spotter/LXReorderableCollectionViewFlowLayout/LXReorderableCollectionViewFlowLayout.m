@@ -363,6 +363,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             [self.currentView addSubview:highlightedImageView];
             [self.collectionView addSubview:self.currentView];
             
+            CGPoint coords = [gestureRecognizer locationInView:gestureRecognizer.view];
             self.currentViewCenter = self.currentView.center;
             
             __weak typeof(self) weakSelf = self;
@@ -376,6 +377,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                      CGFloat scale = 75 / strongSelf.currentView.frame.size.width;
                      //strongSelf.currentView.transform = CGAffineTransformMakeScale(1.05f, 1.05f);
                      strongSelf.currentView.transform = CGAffineTransformMakeScale(scale, scale);
+                     strongSelf.currentView.center = coords;
                      highlightedImageView.alpha = 0.0f;
                      imageView.alpha = 1.0f;
                  }
@@ -383,6 +385,9 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
              completion:^(BOOL finished) {
                  __strong typeof(self) strongSelf = weakSelf;
                  if (strongSelf) {
+                     
+                     strongSelf.currentViewCenter = strongSelf.currentView.center;
+
                      [highlightedImageView removeFromSuperview];
                      
                      if ([strongSelf.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
@@ -406,7 +411,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                 self.targetRect = CGRectZero;
                 self.shadowView.hidden = true;
                 
-                UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForItemAtIndexPath:currentIndexPath];
+                //UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForItemAtIndexPath:currentIndexPath];
                 
                 __weak typeof(self) weakSelf = self;
                 [UIView
@@ -446,38 +451,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             self.panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
             
             CGPoint viewCenter = self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
-
-           
-           
-            
-
-//            
-//            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
-//            CGSize size = self.currentView.frame.size;
-//            CGFloat centerHeight = floorf(size.height/2);
-//            NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
-//            
-//            if(velocity.y < 0) {
-//                // top center point
-//                CGPoint pt = CGPointMake(viewCenter.x, viewCenter.y - centerHeight);
-//
-//                // center of cell at point
-//                NSIndexPath *index = [self.collectionView indexPathForItemAtPoint:pt];
-//                
-//                //if ( index == nil || [previousIndexPath isEqual:index] ) return;
-//
-//                CGRect frame = [self.collectionView layoutAttributesForItemAtIndexPath:index].frame;
-//                //CGRect hitRect = CGRectMake(frameBefore.origin.x, frameBefore.origin.y, frameBefore.size.width, frameBefore.size.height/2);
-//                
-//                //if(CGRectContainsPoint(hitRect, pt)) {
-//                //    [self invalidateLayoutIfNecessary];
-//                //}
-//            }
-//            
-//            if(velocity.y > 0) {
-//                // bottom center point
-//                self.currentPoint = CGPointMake(viewCenter.x, viewCenter.y + centerHeight);
-//            }
             
             [self invalidateLayoutIfNecessary];
 

@@ -434,8 +434,12 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
             self.titleTextField!.userInteractionEnabled = true
             
             for (var i = 0; i < self.cubes.count; ++i) {
-                let view: UIView = self.cubes.objectAtIndex(i) as UIView
-                view.userInteractionEnabled = false
+                let section = self.cubes.objectAtIndex(i) as NSMutableArray
+                
+                for (var j = 0; j < section.count; ++j) {
+                    let view: UIView = section.objectAtIndex(j) as UIView
+                    view.userInteractionEnabled = false
+                }
             }
             
             self.showToolbar()
@@ -611,9 +615,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
         
-        let section = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
+        let fromSection = self.cubes.objectAtIndex(fromIndexPath.section) as NSMutableArray
+        let toSection = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
         
-        if (fromIndexPath.section != toIndexPath.section && section.count >= 3 ) {
+        if (fromIndexPath.section != toIndexPath.section && toSection.count >= 3 ) {
+            //self.cubes.removeObject(fromSection)
+            //self.cubes.insertObject(fromSection, atIndex: toIndexPath.section)
+            
+            //self.collectionView.moveSection(fromIndexPath.section, toSection: toIndexPath.section)
+            
             return false
         }
         return true

@@ -72,15 +72,15 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // remove title on navigation bar
         self.title = ""
 
-//        self.capturedImages.removeAll(keepCapacity: false)
-//
-//        // test stuff to be removed
-//        for(var i = 1; i <= 4; ++i) {
-//            
-//            let photoName: String = "\(i).jpg"
-//            let photo: UIImage = UIImage(named: photoName)
-//            self.capturedImages.append(photo)
-//        }
+        self.capturedImages.removeAll(keepCapacity: false)
+
+        // test stuff to be removed
+        for(var i = 1; i <= 4; ++i) {
+            
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
+        }
         
         self.collectionView.reloadData()
     }
@@ -102,12 +102,12 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     }
     
     @IBAction func done(sender: AnyObject) {
-        // send all captured images to story controller
-        for (var i = self.capturedImages.count-1; i >= 0; --i) {
-            let image = self.capturedImages[i]
-            self.storyController!.addImageView(image)
-        }
-        
+//        // send all captured images to story controller
+//        for (var i = self.capturedImages.count-1; i >= 0; --i) {
+//            let image = self.capturedImages[i]
+//            self.storyController!.addImageView(image)
+//        }
+        self.storyController!.addImages(self.capturedImages)
         self.capturedImages.removeAll(keepCapacity: false)
         
         // go back to the view that we came from

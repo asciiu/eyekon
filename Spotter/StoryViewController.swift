@@ -343,9 +343,11 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     func editSelected() {
         
         self.editingText = true
-        let index = self.selectedIndex!.row
+        let section = self.selectedIndex!.section
         self.calloutView.dismissCalloutAnimated(false)
-        let textView: UITextView = self.cubes.objectAtIndex(index) as UITextView
+        
+        let cube = self.cubes.objectAtIndex(section) as NSMutableArray
+        let textView: UITextView = cube.objectAtIndex(0) as UITextView
         
         textView.becomeFirstResponder()
     }
@@ -529,11 +531,14 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         
         // triggered when done button is touched
         if(text == "\n") {
-            let index = self.selectedIndex?.row ?? 0
-            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+            let section = self.selectedIndex?.section ?? 0
+            let indexPath = NSIndexPath(forRow: 0, inSection: section)
             
-            if (self.cubes.count > 0){
-                let view: UIImageView? = self.cubes.objectAtIndex(index) as? UIImageView
+            if (self.selectedIndex != nil) {
+                
+                // removed highlighted since it causes the system to crash when deserialized
+                let cube = self.cubes.objectAtIndex(self.selectedIndex!.section) as NSMutableArray
+                let view: UIImageView? = cube.objectAtIndex(self.selectedIndex!.row) as? UIImageView
                 view?.highlighted = false
             }
     
@@ -558,11 +563,17 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
                 textCube.delegate = self
                 textCube.returnKeyType = UIReturnKeyType.Done
                 
-                self.cubes.insertObject(textCube, atIndex: index)
+                // wrap text around NSMutableArray
+                let cube = NSMutableArray()
+                cube.addObject(textCube)
+                
+                self.cubes.insertObject(cube, atIndex: section)
                 self.calloutView.dismissCalloutAnimated(false)
-                self.collectionView.insertItemsAtIndexPaths([indexPath])
+                //self.collectionView.insertItemsAtIndexPaths([indexPath])
+                self.collectionView.insertSections(NSIndexSet(index: section))
             } else {
-                let textCube = self.cubes.objectAtIndex(index) as UITextView
+                let cube = self.cubes.objectAtIndex(section) as NSMutableArray
+                let textCube = cube.objectAtIndex(0) as UITextView
                 textCube.text = self.keyboardToolBarTextView!.text
                 textCube.sizeToFit()
                 self.collectionView.reloadItemsAtIndexPaths([self.selectedIndex!])

@@ -355,6 +355,12 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             highlightedImageView.alpha = 1.0f;
             
             collectionViewCell.highlighted = NO;
+            
+            // display the shadowView to indicate previous location
+            UICollectionViewLayoutAttributes *attr = [self.collectionView layoutAttributesForItemAtIndexPath:self.selectedItemIndexPath];
+            self.shadowView.frame = attr.frame;
+            self.shadowView.hidden = false;
+            
             UIView *imageView = [collectionViewCell LX_snapshotView];
             imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             imageView.alpha = 0.0f;

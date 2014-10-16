@@ -207,32 +207,70 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         return rects
     }
 
+    func addImageSection(forImages: [UIImage]) {
+        let rects = self.computeRects(forImages)
+        var imageViews: NSMutableArray = NSMutableArray()
+        
+        for (var i = 0; i < rects.count; ++i) {
+            let rect = rects[i]
+            let image = forImages[i]
+            
+            let imageView = UIImageView(frame: rect)
+            imageView.image = image
+            imageViews.addObject(imageView)
+        }
+        
+        self.cubes.addObject(imageViews)
+        let sections = NSIndexSet(index: self.cubes.count - 1)
+        self.collectionView.insertSections(sections)
+    }
+    
     func addImages(images: [UIImage]) {
         var rows: [[UIImage]] = [[UIImage]]()
         var rowImages: [UIImage] = [UIImage]()
-
-        for (var i = images.count-1; i >= 0; --i) {
-    
-            let image = images[i]
-            rowImages.append(image)
-            
-            // up to 2 images per line
-            if (i > 0 && i % 3 == 0) {
-                rows.append(rowImages)
-                rowImages = [UIImage]()
-            } else if(i == 0) {
-                rows.append(rowImages)
+        
+        var imgs: [UIImage] = [UIImage]()
+        
+        for (var i = 0; i < images.count; ++i) {
+            imgs.append(images[i])
+            if (imgs.count == 3) {
+                self.addImageSection(imgs)
+                imgs.removeAll(keepCapacity: false)
+            } else if (i == images.count - 1) {
+                self.addImageSection(imgs)
             }
         }
         
-        for (var j = 0; j < rows.count; ++j) {
-            let imgs = rows[j]
-            let rects = self.computeRects(imgs)
-            for (var k = 0; k < imgs.count; ++k) {
-                //let img = imgs[k]
-                self.addImageView(imgs[k], withRect: rects[k])
-            }
-        }
+//        let miFrame = CGRectMake(0, 0, self.collectionView.frame.size.width, 50)
+//        
+//        var miViews: [MIView] = [MIView]()
+//        var miView = MIView(frame: miFrame)
+//        miView.cellSpacing = self.cellSpacing
+//        
+//        for (var i = 0; i < images.count; ++i) {
+//            let imageView = UIImageView(image: images[i])
+//            
+//            miView.addImageView(imageView)
+//            
+//            // each MIView should be limited to 3 image views
+//            if (miView.subviewCount() == 3) {
+//                miViews.append(miView)
+//                miView = MIView(frame: miFrame)
+//                miView.cellSpacing = self.cellSpacing
+//            } else if (i == images.count - 1) {
+//                miViews.append(miView)
+//            }
+//        }
+//        
+//        if (self.selectedIndex == nil) {
+//            self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
+//        }
+//        
+//        for (var j = miViews.count-1; j >= 0; --j) {
+//            self.cubes.insertObject(miViews[j], atIndex: self.selectedIndex!.row)
+//            self.collectionView.insertItemsAtIndexPaths([self.selectedIndex!])
+//            self.displayEditTools(self.selectedIndex!)
+//        }
     }
     
     func addImageView(image: UIImage, withRect: CGRect) {
@@ -254,10 +292,23 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     }
     
     func deleteSelected() {
-        let index = self.selectedIndex!.row
         self.calloutView.dismissCalloutAnimated(true)
-        self.cubes.removeObjectAtIndex(index)
+        
+        let set = NSIndexSet(index: self.selectedIndex!.section)
+        let section = self.cubes.objectAtIndex(self.selectedIndex!.section) as NSMutableArray
+        section.removeObjectAtIndex(self.selectedIndex!.row)
+        
+        //self.cubes.removeObjectAtIndex(index)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndex!])
+        
+        if (section.count > 0) {
+            self.resizeSection(section)
+            self.collectionView.reloadSections(set)
+        } else {
+            self.cubes.removeObjectAtIndex(self.selectedIndex!.section)
+            self.collectionView.deleteSections(set)
+        }
+        
         self.selectedIndex = nil
     }
     
@@ -266,7 +317,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         //let center = attributes!.center
         //let rect = CGRectMake(center.x - 1.5, center.y - 1.5, 3, 3)
         let btn: UIButton = self.calloutView.leftAccessoryView as UIButton
-        let view: UIView = self.cubes[indexPath.row] as UIView
+        let section = self.cubes.objectAtIndex(indexPath.section) as NSMutableArray
+        let view: UIView = section.objectAtIndex(indexPath.row) as UIView
         
         if (view is UIImageView) {
             btn.enabled = false
@@ -296,6 +348,24 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         let textView: UITextView = self.cubes.objectAtIndex(index) as UITextView
         
         textView.becomeFirstResponder()
+    }
+    
+    func resizeSection(section: NSMutableArray) {
+        var images: [UIImage] = [UIImage]()
+        
+        // gather all images so we can compute the rectangles
+        for(var i = 0; i < section.count; ++i) {
+            let imageView = section.objectAtIndex(i) as UIImageView
+            images.append(imageView.image!)
+        }
+        
+        var rects = self.computeRects(images)
+        
+        // resize the frames
+        for(var j = 0; j < images.count; ++j) {
+            let imageView = section.objectAtIndex(j) as UIImageView
+            imageView.frame = rects[j]
+        }
     }
     
     func resizeImageViews(imageViews: [UIImageView]) {
@@ -513,33 +583,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
 
     func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath!) {
         
-//        var viewRow: [UIImageView] = [UIImageView]()
-//        var attr = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: self.i1, inSection: 0))
-//        var y = attr!.frame.origin.y
-//        
-//        for(var i = self.i1; i <= self.i2; ++i) {
-//            let attr1 = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i, inSection: 0))
-//            let imageView = self.cubes[i] as? UIImageView
-//            
-//            if(y == attr1!.frame.origin.y && imageView != nil) {
-//                viewRow.append(imageView!)
-//            }
-//            
-//            if(y != attr1!.frame.origin.y) {
-//                self.resizeImageViews(viewRow)
-//                y = attr1!.frame.origin.y
-//                viewRow.removeAll(keepCapacity: false)
-//                viewRow.append(imageView!)
-//            }
-//            
-//            if(i == self.i2) {
-//                //UIView.animateWithDuration(0.25, animations: {
-//                self.resizeImageViews(viewRow)
-//                //})
-//            }
-//        }
-//        self.collectionView.reloadData()
-        
         if (self.selectedIndex != nil) {
             self.collectionView.selectItemAtIndexPath(self.selectedIndex!, animated: true, scrollPosition: UICollectionViewScrollPosition.None)
             self.displayEditTools(self.selectedIndex!)
@@ -556,28 +599,32 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         return self.cellSpacing
     }
     
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+//        
+//        return CGSizeMake(self.collectionView.frame.size.width, self.cellSpacing)
+//    }
+    
     // MARK: - LXReorderableCollectionViewDataSource
     func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
-        
-//        if (self.editable) {
-//            // if editable even cells cannot be moved
-//            if (indexPath.row % 2 == 0) {
-//                return false
-//            } else {
-//                return true
-//            }
-//        } else {
-//            return false
-//        }
-        
         return self.editable
+    }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
+        
+        let section = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
+        
+        if (fromIndexPath.section != toIndexPath.section && section.count >= 3 ) {
+            return false
+        }
+        return true
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         var cell: UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("EmptyCell", forIndexPath: indexPath) as UICollectionViewCell
 
-        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        let section: NSMutableArray = self.cubes.objectAtIndex(indexPath.section) as NSMutableArray
+        let view: UIView = section.objectAtIndex(indexPath.row) as UIView
         
         if (view is UITextView) {
             let textView = view as UITextView
@@ -586,219 +633,45 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
         cell.addSubview(view)
         
-        //let viewCenter = view.center
-        //let viewWidth = view.frame.size.width
-        //let viewHeight = view.frame.size.height
-        
-//        // if editable every odd cell is an empty placeholder
-//        if (self.editable) {
-//            
-//            // even cell is a cube cell
-//            if (indexPath.row % 2 == 1) {
-//                let div = Int(floorf(Float(indexPath.row) / 2.0))
-//                let index = indexPath.row - (div + 1)
-//                let view: UIView = self.cubes.objectAtIndex(index) as UIView
-//                
-//                if (view is UITextView) {
-//                    let textView = view as UITextView
-//                    textView.delegate = self
-//                }
-//                
-//                cell.addSubview(view)
-//            }
-//        } else {
-//        
-//            let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-//            
-//            if (view is UITextView) {
-//                let textView = view as UITextView
-//                textView.delegate = self
-//            }
-//            
-//            cell.addSubview(view)
-//        }
-        
         return cell
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
-        
+
         self.selectedIndex = toIndexPath
-        
-        //self.displayEditTools(toIndexPath)
-        let index1 = min(fromIndexPath.row, toIndexPath.row)
-        let index2 = max(fromIndexPath.row, toIndexPath.row)
-        
-        let attr1 = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: index1, inSection: 0))
-        let attr2 = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: index2, inSection: 0))
-        //let cube1 = self.cubes.objectAtIndex(index1) as UIView
-        //let cube2 = self.cubes.objectAtIndex(index2) as UIView
-        
-        //let y1 = cube1.frame.origin.y
-        //let y2 = cube2.frame.origin.y
-        var i1 = index1
-        //var y = cube1.frame.origin.y
-        
-        while(i1 > 0) {
-            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i1-1, inSection: 0))
-            if (attr!.frame.origin.y < attr1!.frame.origin.y) {
-                break
-            } else {
-                i1 -= 1
-            }
-        }
-        
-        var i2 = index2
-        while(i2 < self.cubes.count - 1) {
-            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i2+1, inSection: 0))
-            if (attr!.frame.origin.y > attr2!.frame.origin.y ) {
-                break
-            } else {
-                i2 += 1
-            }
-        }
-        
-        self.i1 = i1
-        self.i2 = i2
-        
-//        var viewRow: [UIImageView] = [UIImageView]()
-//        var attr = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: self.i1, inSection: 0))
-//        var y = attr!.frame.origin.y
-//        
-//        for(var i = self.i1; i <= self.i2; ++i) {
-//            let attr1 = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i, inSection: 0))
-//            let imageView = self.cubes[i] as? UIImageView
-//            
-//            if(y == attr1!.frame.origin.y && imageView != nil) {
-//                viewRow.append(imageView!)
-//            }
-//            
-//            if(y != attr1!.frame.origin.y) {
-//                self.resizeImageViews(viewRow)
-//                y = attr1!.frame.origin.y
-//                viewRow.removeAll(keepCapacity: false)
-//                viewRow.append(imageView!)
-//            }
-//            
-//            if(i == self.i2) {
-//                UIView.animateWithDuration(0.25, animations: {
-//                    self.resizeImageViews(viewRow)
-//                })
-//            }
-//        }
-//        
-//        self.collectionView.reloadData()
-        //println("i1: \(i1) i2: \(i2)")
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
-        var view1: UIView = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
-        //let view2: UIView = self.cubes.objectAtIndex(toIndexPath.row) as UIView
-        //let frame2 = view2.frame
-        //view1.frame = view2.frame
-        let startY = self.collectionView.layoutAttributesForItemAtIndexPath(fromIndexPath)!.frame.origin.y
-        let endY = self.collectionView.layoutAttributesForItemAtIndexPath(toIndexPath)!.frame.origin.y
+        let section1 = self.cubes.objectAtIndex(fromIndexPath.section) as NSMutableArray
+        let section2 = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
         
-        self.cubes.removeObject(view1)
-        self.cubes.insertObject(view1, atIndex: toIndexPath.row)
+        var view = section1.objectAtIndex(fromIndexPath.row) as UIView
+        section1.removeObject(view)
+        section2.insertObject(view, atIndex: toIndexPath.row)
+        
         self.calloutView.dismissCalloutAnimated(true)
         
-        // same line so nothing to resize
-        if (startY == endY) {
+        // same section no resize
+        if (fromIndexPath.section == toIndexPath.section) {
             return
         }
         
-        let index1 = min(fromIndexPath.row, toIndexPath.row)
-        let index2 = max(fromIndexPath.row, toIndexPath.row)
-        
-        var attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: index1, inSection: 0))
-        var y = attrb!.frame.origin.y
-        var indexStart = index1
-        var indexEnd = index2
-        
-        // loop backward in the cube order to find the first cube on 
-        // the same line as the index1
-        for (var i = index1; i >= 0; --i) {
-            attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i, inSection: 0))
-            if (attrb!.frame.origin.y < y) {
-                indexStart = i+1
-                break;
-            }
-            indexStart = i
+        if (section1.count > 0) {
+            self.resizeSection(section1)
         }
         
-        attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: index2, inSection: 0))
-        y = attrb!.frame.origin.y
-        
-        for (var j = index2; j < self.cubes.count; ++j) {
-            attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: j, inSection: 0))
-            if (attrb!.frame.origin.y > y) {
-                indexEnd = j-1
-                break;
-            }
-            indexEnd = j
-        }
-        
-        println("indexStart: \(indexStart) indexEnd: \(indexEnd)")
-        
-        attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: indexStart, inSection: 0))
-        y = attrb!.frame.origin.y
-        var rowViews: [UIImageView] = [UIImageView]()
-
-        for (var i = indexStart; i <= indexEnd; ++i) {
-            
-            attrb = self.collectionView.layoutAttributesForItemAtIndexPath(NSIndexPath(forRow: i, inSection: 0))
-            
-//            if (attrb!.frame.origin.y > y) {
-//                // resize the image views on previous line
-//                self.resizeImageViews(rowViews)
-//                rowViews.removeAll(keepCapacity: false)
-//            }
-            
-            let imageView: UIImageView? = self.cubes[i] as? UIImageView
-                
-            if (imageView != nil) {
-                rowViews.append(imageView!)
-            }
-            
-            if (i == indexEnd || imageView == nil || rowViews.count == 3) {
-                self.resizeImageViews(rowViews)
-                rowViews.removeAll(keepCapacity: false)
-            }
-        }
-        
-        /*
-        if (toIndexPath.row < fromIndexPath.row) {
-            for(var i = index1; i < index2; ++i) {
-                var cube1: UIView = self.cubes.objectAtIndex(i) as UIView
-                var cube2: UIView = self.cubes.objectAtIndex(i+1) as UIView
-                
-                cube1.frame = cube2.frame
-            }
-        } else {
-            for(var i = index2; i > index1; --i) {
-                var cube1: UIView = self.cubes.objectAtIndex(i) as UIView
-                var cube2: UIView = self.cubes.objectAtIndex(i-1) as UIView
-                
-                cube1.frame = cube2.frame
-            }
-        }*/
-        
-        //view1.frame = frame2
-            }
+        self.resizeSection(section2)
+    }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        if (self.editable) {
-//            return (self.cubes.count * 2) + 1
-//        } else {
-//            return self.cubes.count
-//        }
-        return self.cubes.count
+        //return self.cubes.count
+        
+        return self.cubes.objectAtIndex(section).count
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 1
+        return self.cubes.count
     }
     
     // MARK: - UIScrollViewDelegate
@@ -826,24 +699,10 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
-        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-        let size = view.frame.size
-        
-//        var size = CGSizeMake(self.collectionView.frame.size.width, 3.0)
-//        
-//        if (self.editable) {
-//            if (indexPath.row % 2 == 1) {
-//                let div = Int(floorf(Float(indexPath.row) / 2.0))
-//                let index = indexPath.row - (div + 1)
-//                let view: UIView = self.cubes.objectAtIndex(index) as UIView
-//                size = view.frame.size
-//            }
-//        } else {
-//            let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-//            size = view.frame.size
-//        }
+        let section: NSMutableArray = self.cubes.objectAtIndex(indexPath.section) as NSMutableArray
+        let view: UIView = section.objectAtIndex(indexPath.row) as UIView
     
-        return size
+        return view.frame.size
     }
     
     // MARK: - UICollectionViewDelegate
@@ -856,7 +715,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         
         // remove highlighted flag because it causes
         // -[NSKeyedUnarchiver decodeBoolForKey:]: value for key (UIHighlighted) is not a boolean
-        let imageView: UIImageView? = self.cubes[indexPath.row] as? UIImageView
+        let section = self.cubes.objectAtIndex(indexPath.section) as NSMutableArray
+        let imageView: UIImageView? = section.objectAtIndex(indexPath.row) as? UIImageView
         imageView?.highlighted = false
         
         //let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
@@ -881,16 +741,4 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
-    
-//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, didBeginDraggingItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        self.selectedView = self.cubes.objectAtIndex(indexPath.row) as? UIView
-//        self.cubes.removeObject(self.selectedView!)
-//    }
-//    
-//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, didEndDraggingItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        //self.selectedView = nil
-//        self.isDraggingView = false
-//    }
 }

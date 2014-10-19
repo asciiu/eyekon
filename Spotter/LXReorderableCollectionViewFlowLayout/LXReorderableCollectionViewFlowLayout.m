@@ -169,7 +169,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         newIndexPath = [self.delegate collectionView:self.collectionView layout:self indexPathForItemAtPoint:self.currentView.center];
     }
     
-    //NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentPoint];
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
     CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
     
@@ -196,18 +195,20 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             [strongSelf.collectionView moveItemAtIndexPath:previousIndexPath toIndexPath:newIndexPath];
         }
     } completion:^(BOOL finished) {
+        // move finished
+        if (!CGRectEqualToRect(self.targetRect, CGRectZero)) {
+            CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+            
+            self.shadowView.frame = shadowRect;
+            self.shadowView.hidden = false;
+        }
+        
         __strong typeof(self) strongSelf = weakSelf;
         if ([strongSelf.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:didMoveToIndexPath:)]) {
             [strongSelf.dataSource collectionView:strongSelf.collectionView itemAtIndexPath:previousIndexPath didMoveToIndexPath:newIndexPath];
-            
-            // move finished
-            if (!CGRectEqualToRect(self.targetRect, CGRectZero)) {
-                CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
-
-                strongSelf.shadowView.frame = shadowRect;
-                strongSelf.shadowView.hidden = false;
-            }
         }
+        
+       
     }];
 }
 

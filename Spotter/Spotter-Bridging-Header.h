@@ -10,5 +10,7 @@
 #import "HPGrowingTextView.h"
 #import "HPTextViewInternal.h"
 #import "SMCalloutView.h"
+#import "CTAssetsPickerController.h"
+
 
 

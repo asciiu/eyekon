@@ -207,13 +207,19 @@
                                 <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem width="79" style="plain" systemItem="fixedSpace" id="BCa-ho-JrF"/>
+                                    <barButtonItem width="46" style="plain" systemItem="fixedSpace" id="BCa-ho-JrF"/>
                                     <barButtonItem systemItem="compose" id="mjT-as-ne7">
                                         <connections>
                                             <action selector="addText:" destination="uya-p5-87Y" id="P68-Yw-12h"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem width="76" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
+                                    <barButtonItem width="54" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
+                                    <barButtonItem systemItem="bookmarks" id="bdo-EL-BfU">
+                                        <connections>
+                                            <action selector="addPhotoFromLibrary:" destination="uya-p5-87Y" id="0El-x0-8Uk"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="48" style="plain" systemItem="fixedSpace" id="14s-Rf-GhM"/>
                                     <barButtonItem systemItem="camera" id="UmB-Ox-iDQ">
                                         <connections>
                                             <action selector="addPhotoFromCamera:" destination="uya-p5-87Y" id="2B1-7E-msX"/>

@@ -160,38 +160,18 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 }
 
 - (void)invalidateLayoutIfNecessary {
+
+    // default new index path comes from the collection view
     NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentView.center];
+
+    // if the delegate implements this method ask for the new index path
+    if ([self.delegate respondsToSelector:@selector(collectionView:layout:indexPathForItemAtPoint:)]) {
+        newIndexPath = [self.delegate collectionView:self.collectionView layout:self indexPathForItemAtPoint:self.currentView.center];
+    }
+    
     //NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentPoint];
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
     CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
-    
-    // all cell attributes with cells that are overlapping with our currentView
-//    UICollectionViewLayout * layout = [self.collectionView collectionViewLayout];
-//    NSArray *layoutAttrs = [layout layoutAttributesForElementsInRect:self.currentView.frame];
-//    
-//    // loop through each cell and discover which is overlapping the most
-//    for (int i = 0; i < [layoutAttrs count]; ++i) {
-//        UICollectionViewLayoutAttributes * attr = [layoutAttrs objectAtIndex:i];
-//        
-//        if ([attr.indexPath isEqual:self.selectedItemIndexPath]) continue;
-//        
-//        CGFloat currentViewArea = self.currentView.frame.size.width * self.currentView.frame.size.height;
-//        CGFloat targetViewArea = attr.frame.size.width * attr.frame.size.height;
-//        CGRect interRect = CGRectIntersection(self.currentView.frame, attr.frame);
-//        
-//        CGFloat area = interRect.size.width * interRect.size.height;
-//        CGFloat currentViewOverlap = area / currentViewArea;
-//        CGFloat targetViewOverlap = area / targetViewArea;
-//        
-//        NSString *output = [NSString stringWithFormat:@"overlap t:%f overlap: c:%f", targetViewOverlap, currentViewOverlap];
-//        NSLog(output);
-//
-//        if ( currentViewOverlap > 0.25 || targetViewOverlap > 0.25) {
-//           
-//            newIndexPath = attr.indexPath;
-//            targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
-//        }
-//    }
     
     if ((newIndexPath == nil) || [newIndexPath isEqual:previousIndexPath] || CGRectContainsPoint(self.targetRect, self.currentView.center)) {
         return;
@@ -214,7 +194,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         __strong typeof(self) strongSelf = weakSelf;
         if (strongSelf) {
             [strongSelf.collectionView moveItemAtIndexPath:previousIndexPath toIndexPath:newIndexPath];
-                    }
+        }
     } completion:^(BOOL finished) {
         __strong typeof(self) strongSelf = weakSelf;
         if ([strongSelf.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:didMoveToIndexPath:)]) {
@@ -327,13 +307,16 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     switch(gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
             NSIndexPath *currentIndexPath = [self.collectionView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.collectionView]];
+            self.selectedItemIndexPath = currentIndexPath;
+            
+            if ([self.delegate respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
+                [self.delegate collectionView:self.collectionView didSelectItemAtIndexPath:currentIndexPath];
+            }
             
             if ([self.dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)] &&
                ![self.dataSource collectionView:self.collectionView canMoveItemAtIndexPath:currentIndexPath]) {
                 return;
             }
-            
-            self.selectedItemIndexPath = currentIndexPath;
             
             if ([self.delegate respondsToSelector:@selector(collectionView:layout:willBeginDraggingItemAtIndexPath:)]) {
                 [self.delegate collectionView:self.collectionView layout:self willBeginDraggingItemAtIndexPath:self.selectedItemIndexPath];

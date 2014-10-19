@@ -71,18 +71,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         
         // remove title on navigation bar
         self.title = ""
-
-        self.capturedImages.removeAll(keepCapacity: false)
-
-        // test stuff to be removed
-        for(var i = 1; i <= 4; ++i) {
-            
-            let photoName: String = "\(i).jpg"
-            let photo: UIImage = UIImage(named: photoName)
-            self.capturedImages.append(photo)
-        }
-        
-        self.collectionView.reloadData()
+        //self.collectionView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -93,6 +82,18 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func loadTestImages() {
+        self.capturedImages.removeAll(keepCapacity: false)
+        
+        // test stuff to be removed
+        for(var i = 1; i <= 4; ++i) {
+
+            let photoName: String = "\(i).jpg"
+            let photo: UIImage = UIImage(named: photoName)
+            self.capturedImages.append(photo)
+        }
     }
     
     // MARK: - Actions
@@ -122,6 +123,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         }
         
         self.capturedImages.removeAtIndex(atIndex)
+        self.collectionView.deleteItemsAtIndexPaths([NSIndexPath(forRow: atIndex, inSection: 0)])
     }
     
     // MARK: - CaptureSessionManagerDelegate

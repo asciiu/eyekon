@@ -1,0 +1,10 @@
+PODS:
+  - CTAssetsPickerController (2.6.0)
+
+DEPENDENCIES:
+  - CTAssetsPickerController (~> 2.6.0)
+
+SPEC CHECKSUMS:
+  CTAssetsPickerController: 1dadc633ca90bcd7797222199fcd7f9047b93386
+
+COCOAPODS: 0.34.4

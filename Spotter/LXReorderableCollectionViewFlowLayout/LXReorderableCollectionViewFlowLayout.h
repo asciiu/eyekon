@@ -38,4 +38,6 @@
 - (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout willEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout didEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath;
 
+- (NSIndexPath *)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout indexPathForItemAtPoint:(CGPoint)point;
+
 @end

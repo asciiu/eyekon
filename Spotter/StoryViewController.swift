@@ -34,7 +34,7 @@ class CubeTool: UIView {
 
 let kStoryHashtag = "#untitled"
 
-class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout {
+class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UINavigationControllerDelegate, CTAssetsPickerControllerDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
@@ -87,6 +87,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.collectionView.delegate = self
         //self.collectionView.backgroundView = UIView()
         //self.collectionView.backgroundView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "handleTap:"))
+        
         
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
@@ -273,38 +274,42 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
 //        }
     }
     
-    func addImageView(image: UIImage, withRect: CGRect) {
-        if (self.selectedIndex == nil) {
-            self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
-        }
-        
-        if (self.cubes.count > 0){
-            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex!.row) as? UIImageView
-            view?.highlighted = false
-        }
-        
-        let imageView = UIImageView(frame: withRect)
-        imageView.image = image
-        
-        self.cubes.insertObject(imageView, atIndex: self.selectedIndex!.row)
-        self.collectionView.insertItemsAtIndexPaths([self.selectedIndex!])
-        self.displayEditTools(self.selectedIndex!)
-    }
+//    func addImageView(image: UIImage, withRect: CGRect) {
+//        if (self.selectedIndex == nil) {
+//            self.selectedIndex = NSIndexPath(forRow: 0, inSection: 0)
+//        }
+//        
+//        if (self.cubes.count > 0){
+//            let view: UIImageView? = self.cubes.objectAtIndex(self.selectedIndex!.row) as? UIImageView
+//            view?.highlighted = false
+//        }
+//        
+//        let imageView = UIImageView(frame: withRect)
+//        imageView.image = image
+//        
+//        self.cubes.insertObject(imageView, atIndex: self.selectedIndex!.row)
+//        self.collectionView.insertItemsAtIndexPaths([self.selectedIndex!])
+//        self.displayEditTools(self.selectedIndex!)
+//    }
     
     func deleteSelected() {
         self.calloutView.dismissCalloutAnimated(true)
         
         let set = NSIndexSet(index: self.selectedIndex!.section)
         let section = self.cubes.objectAtIndex(self.selectedIndex!.section) as NSMutableArray
+        let view = section.objectAtIndex(self.selectedIndex!.row) as UIView
         section.removeObjectAtIndex(self.selectedIndex!.row)
         
         //self.cubes.removeObjectAtIndex(index)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndex!])
         
         if (section.count > 0) {
-            self.resizeSection(section)
-            self.collectionView.reloadSections(set)
+            if (view is UIImageView) {
+                self.resizeSection(section)
+                self.collectionView.reloadSections(set)
+            }
         } else {
+            // remove the section because it is empty
             self.cubes.removeObjectAtIndex(self.selectedIndex!.section)
             self.collectionView.deleteSections(set)
         }
@@ -468,6 +473,26 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.performSegueWithIdentifier("FromStoryToCapture", sender: self)
     }
     
+    @IBAction func addPhotoFromLibrary(sender: AnyObject) {
+        let picker: CTAssetsPickerController = CTAssetsPickerController()
+        picker.delegate = self
+        self.presentViewController(picker, animated: true, completion: nil)
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func assetsPickerController(picker: CTAssetsPickerController!, didFinishPickingAssets assets: [AnyObject]!) {
+        
+        let images: [UIImage] = assets.map({ (var asset) -> UIImage in
+            let a = asset as ALAsset
+            
+            return UIImage(CGImage: a.defaultRepresentation().fullResolutionImage().takeRetainedValue())
+        })
+        
+        self.addImages(images)
+        picker.dismissViewControllerAnimated(true, completion: nil)
+        
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -476,6 +501,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         if (segue.identifier == "FromStoryToCapture") {
             let destination: CaptureViewController = segue.destinationViewController as CaptureViewController
             destination.storyController = self
+            destination.loadTestImages()
         }
     }
     
@@ -596,15 +622,67 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
     // MARK: - LXReorderableCollectionViewDelegateFlowLayout
 
-    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath!) {
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, willBeginDraggingItemAtIndexPath indexPath: NSIndexPath!) {
         
-        if (self.selectedIndex != nil) {
-            self.collectionView.selectItemAtIndexPath(self.selectedIndex!, animated: true, scrollPosition: UICollectionViewScrollPosition.None)
-            self.displayEditTools(self.selectedIndex!)
-        }
+        self.calloutView.dismissCalloutAnimated(true)
+        //self.selectedIndex = indexPath
     }
     
-
+//    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath!) {
+//        // drag ends on touch up
+//    }
+    
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, indexPathForItemAtPoint point: CGPoint) -> NSIndexPath? {
+        
+        var newIndex: NSIndexPath? = self.collectionView.indexPathForItemAtPoint(point)
+        
+//        if (newIndex == nil) {
+//            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(self.selectedIndex!)
+//            let y = attr!.frame.origin.y
+//            let h = attr!.frame.size.height
+//            
+//            let cube = self.cubes.objectAtIndex(self.selectedIndex!.section) as NSMutableArray
+//            let view = cube.objectAtIndex(self.selectedIndex!.row) as UIView
+//            //cube.removeObject(view)
+//            
+//            //newIndex = NSIndexPath(forRow: 0, inSection: 0)
+//            
+//            if (point.y < y) {
+//                let nCube = NSMutableArray()
+//                nCube.addObject(view)
+//                    
+//                let section = self.selectedIndex!.section
+//                
+//                self.cubes.insertObject(nCube, atIndex: section)
+//                self.collectionView.insertSections(NSIndexSet(index: section))
+//                self.resizeSection(nCube)
+//                
+//                //newIndex = NSIndexPath(forRow: 0, inSection: section)
+//                
+//                // use the selectedIndex path that is set here in the will move and can move methods
+//                self.selectedIndex = NSIndexPath(forRow: self.selectedIndex!.row, inSection: section+1)
+//                
+//            } else if (point.y > y + h) {
+//                let cube = NSMutableArray()
+//                let section = self.selectedIndex!.section + 1
+//
+//                self.cubes.insertObject(cube, atIndex: section)
+//                self.collectionView.insertSections(NSIndexSet(index: section))
+//                
+//                //newIndex = NSIndexPath(forRow: 0, inSection: section)
+//            }
+//            
+//        } else {
+//            println("section: \(newIndex?.section) index: \(newIndex?.row)")
+//        }
+        
+        return newIndex
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,  insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        
+        return UIEdgeInsets(top: 0, left: 0, bottom: self.cellSpacing, right: 0)
+    }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
         return self.cellSpacing
@@ -629,13 +707,23 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         let fromSection = self.cubes.objectAtIndex(fromIndexPath.section) as NSMutableArray
         let toSection = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
         
-        if (fromIndexPath.section != toIndexPath.section && toSection.count >= 3 ) {
-            //self.cubes.removeObject(fromSection)
-            //self.cubes.insertObject(fromSection, atIndex: toIndexPath.section)
+        // if moving to different sections
+        if (fromIndexPath.section != toIndexPath.section) {
+            let toView = toSection.objectAtIndex(0) as UIView
+            let fromView = fromSection.objectAtIndex(0) as UIView
             
-            //self.collectionView.moveSection(fromIndexPath.section, toSection: toIndexPath.section)
+            // if section is an UIImageView section with 3 or more items
+            if ( toView is UIImageView && toSection.count >= 3 ) {
+                return false
+            }
             
-            return false
+            if ( toView is UIImageView && fromView is UITextView) {
+                return false
+            }
+            
+            if ( fromView is UIImageView && toView is UITextView) {
+                return false
+            }
         }
         return true
     }
@@ -657,10 +745,9 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
-
-        self.selectedIndex = toIndexPath
-    }
+//    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, didMoveToIndexPath toIndexPath: NSIndexPath!) {
+//        //self.selectedIndex = toIndexPath
+//    }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
@@ -671,10 +758,18 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         section1.removeObject(view)
         section2.insertObject(view, atIndex: toIndexPath.row)
         
-        self.calloutView.dismissCalloutAnimated(true)
+        //self.calloutView.dismissCalloutAnimated(true)
         
         // same section no resize
         if (fromIndexPath.section == toIndexPath.section) {
+            return
+        }
+        
+        if (section2.count == 1) {
+            self.collectionView.reloadSections(NSIndexSet(index: toIndexPath.section))
+        }
+        
+        if (view is UITextView) {
             return
         }
         
@@ -749,17 +844,16 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.displayEditTools(indexPath)
     }
     
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        //let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-        //view.layer.borderWidth = 0.0
+//    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        //let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+//        //view.layer.borderWidth = 0.0
+//    
+//        //self.calloutView.dismissCalloutAnimated(true)
+//        //self.selectedIndex = nil
+//    }
     
-        //self.calloutView.dismissCalloutAnimated(true)
-        
-        //self.selectedIndex = nil
-    }
-    
-    func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
+//    func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        return true
+//    }
 }

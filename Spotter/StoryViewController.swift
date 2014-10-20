@@ -34,7 +34,7 @@ class CubeTool: UIView {
 
 let kStoryHashtag = "#untitled"
 
-class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,CTAssetsPickerControllerDelegate {
+class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,CTAssetsPickerControllerDelegate, AwesomeMenuDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
@@ -73,9 +73,23 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     let editBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
     let deleteBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
     
-    func handleTap(gesture: UITapGestureRecognizer) {
-        let touchPoint: CGPoint = gesture.locationInView(self.collectionView.backgroundView!)
-        println("tap: \(touchPoint.x) \(touchPoint.y)")
+    // main tool to add new content
+    var mainTool: AwesomeMenu?
+    var mainToolPosition: CGPoint = CGPointMake(0, 0)
+    
+//    func handleTap(gesture: UITapGestureRecognizer) {
+//        let touchPoint: CGPoint = gesture.locationInView(self.collectionView.backgroundView!)
+//        println("tap: \(touchPoint.x) \(touchPoint.y)")
+//    }
+    func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
+        
+        if (idx == 0) {
+            self.addText(self)
+        } else if (idx == 1) {
+            self.addPhotoFromLibrary(self)
+        } else if (idx == 2) {
+            self.addPhotoFromCamera(self)
+        }
     }
     
     override func viewDidLoad() {
@@ -83,8 +97,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
 
         self.collectionView.clipsToBounds = false
         self.collectionView.delegate = self
-        self.collectionView.backgroundView = UIView()
-        self.collectionView.backgroundView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "handleTap:"))
+//        self.collectionView.backgroundView = UIView()
+//        self.collectionView.backgroundView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "handleTap:"))
         
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
@@ -131,6 +145,29 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         
         self.calloutView.leftAccessoryView = self.editBtn
         self.calloutView.rightAccessoryView = self.deleteBtn
+        
+        let addImage = UIImage(named: "add.png")
+        let txtImage = UIImage(named: "txtTool.png")
+        let libImage = UIImage(named: "libTool.png")
+        let camImage = UIImage(named: "camTool.png")
+        
+        let txtBtn = AwesomeMenuItem(image: txtImage, highlightedImage: txtImage, contentImage: txtImage, highlightedContentImage: nil)
+        let camBtn = AwesomeMenuItem(image: camImage, highlightedImage: camImage, contentImage: camImage, highlightedContentImage: nil)
+        let libBtn = AwesomeMenuItem(image: libImage, highlightedImage: libImage, contentImage: libImage, highlightedContentImage: nil)
+        let addBtn = AwesomeMenuItem(image: addImage, highlightedImage: addImage, contentImage: addImage, highlightedContentImage: addImage)
+        
+        self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
+        //self.mainTool = AwesomeMenu(frame: self.view.frame, menus: [txtBtn, libBtn, camBtn])
+        //self.mainTool!.image = addImage
+        self.mainTool!.delegate = self
+
+        //self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus:[txtBtn, libBtn, camBtn])
+        self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width - addImage.size.width,
+                                                self.view.frame.size.height - addImage.size.height)
+        
+        //self.mainTool!.startPoint = CGPointMake(200, 300)
+        self.mainTool!.menuWholeAngle = CGFloat(-M_PI/2)
+        self.view.addSubview(self.mainTool!)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -151,12 +188,21 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
             content.story = story
             
             self.storyContent = content
+            self.showToolbar()
             //self.masterTool.center = self.view.center
 
         } else {
             // hide toolbar
-            self.toolbar.frame.origin.y = self.view.frame.size.height
+            //self.toolbar.frame.origin.y = self.view.frame.size.height
+            //self.mainTool!.userInteractionEnabled = false
+
+            //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width,
+            //    self.view.frame.size.height)
         }
+        
+        self.toolbar.frame.origin.y = self.view.frame.size.height
+
+        //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2, 300)
         
         // defaults as the end of the data source
         self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 0)
@@ -164,6 +210,9 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.titleTextField!.userInteractionEnabled = self.editable
         if (self.editable) {
             self.showToolbar()
+        } else {
+            self.mainTool!.userInteractionEnabled = false
+            self.mainTool!.alpha = 0.0
         }
        
         self.titleTextField!.text = self.storyContent!.story.title
@@ -296,9 +345,13 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     func showToolbar() {
         UIView.animateWithDuration(0.25,
             animations: {
-                self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
+                self.mainTool!.alpha = 1.0
+                //self.mainTool!.startPoint = self.mainToolPosition
+
+                //self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
                 
             }, completion: { (value: Bool) in
+                self.mainTool!.userInteractionEnabled = true
         })
     }
     
@@ -370,6 +423,11 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         picker.delegate = self
         self.presentViewController(picker, animated: true, completion: nil)
     }
+    
+    // MARK: - AwesomeMenuDelegate
+    /*func AwesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
+        println("hey")
+    }*/
     
     // MARK: - UIImagePickerControllerDelegate
     func assetsPickerController(picker: CTAssetsPickerController!, didFinishPickingAssets assets: [AnyObject]!) {

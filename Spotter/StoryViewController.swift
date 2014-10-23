@@ -34,7 +34,7 @@ class CubeTool: UIView {
 
 let kStoryHashtag = "#untitled"
 
-class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,CTAssetsPickerControllerDelegate, AwesomeMenuDelegate {
+class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, SPUserResizableViewDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
@@ -76,6 +76,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     // main tool to add new content
     var mainTool: AwesomeMenu?
     var mainToolPosition: CGPoint = CGPointMake(0, 0)
+    
+    let resizeTool = SPUserResizableView(frame: CGRectMake(-10, -10, 10, 10))
     
 //    func handleTap(gesture: UITapGestureRecognizer) {
 //        let touchPoint: CGPoint = gesture.locationInView(self.collectionView.backgroundView!)
@@ -168,6 +170,23 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         //self.mainTool!.startPoint = CGPointMake(200, 300)
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/2)
         self.view.addSubview(self.mainTool!)
+        self.resizeTool.delegate = self        
+        self.collectionView.addSubview(self.resizeTool)
+    }
+    
+    func userResizableViewDidResize(size: CGSize) {
+        
+        //let view = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
+        //if (view is UIImageView) {
+            //let origin = view.frame.origin
+            //let width = view.frame.size.width + size.width
+            //let height = view.frame.size.height + size.height
+            
+            //view.frame = CGRectMake(0, 0, width, height)
+            self.collectionView.reloadItemsAtIndexPaths([self.selectedIndexPath!])
+            // update size of view
+            //println("update")
+        //}
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -450,7 +469,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         if (segue.identifier == "FromStoryToCapture") {
             let destination: CaptureViewController = segue.destinationViewController as CaptureViewController
             destination.storyController = self
-            destination.loadTestImages()
+            //destination.loadTestImages()
         }
     }
     
@@ -710,5 +729,16 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.currentIndexPath = indexPath
         self.selectedIndexPath = indexPath
         self.displayEditTools(indexPath)
+        
+        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        if (view is UIImageView) {
+            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)
+            //self.resizeTool.contentView = view
+            //self.resizeTool.contentFrame = attr!.frame
+            //self.resizeTool.showEditingHandles()
+            //self.resizeTool.frame = attr!.frame
+            //self.resizeTool.showEditingHandles()
+            //self.resizeTool.contentView = view
+        }
     }
 }

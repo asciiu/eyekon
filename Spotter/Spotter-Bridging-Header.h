@@ -13,6 +13,8 @@
 #import "CTAssetsPickerController.h"
 #import "AwesomeMenu.h"
 #import "AwesomeMenuItem.h"
+#import "SPUserResizableView.h"
+
 
 
 

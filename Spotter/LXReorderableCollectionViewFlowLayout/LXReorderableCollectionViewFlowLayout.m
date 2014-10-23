@@ -310,9 +310,9 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             NSIndexPath *currentIndexPath = [self.collectionView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.collectionView]];
             self.selectedItemIndexPath = currentIndexPath;
             
-            if ([self.delegate respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
-                [self.delegate collectionView:self.collectionView didSelectItemAtIndexPath:currentIndexPath];
-            }
+//            if ([self.delegate respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
+//                [self.delegate collectionView:self.collectionView didSelectItemAtIndexPath:currentIndexPath];
+//            }
             
             if ([self.dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)] &&
                ![self.dataSource collectionView:self.collectionView canMoveItemAtIndexPath:currentIndexPath]) {

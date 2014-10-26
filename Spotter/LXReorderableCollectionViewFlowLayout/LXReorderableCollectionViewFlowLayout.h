@@ -6,8 +6,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UICollectionViewLeftAlignedLayout.h"
 
-@interface LXReorderableCollectionViewFlowLayout : UICollectionViewFlowLayout <UIGestureRecognizerDelegate>
+@interface LXReorderableCollectionViewFlowLayout : UICollectionViewLeftAlignedLayout <UIGestureRecognizerDelegate>
 
 @property (assign, nonatomic) CGFloat scrollingSpeed;
 @property (assign, nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;

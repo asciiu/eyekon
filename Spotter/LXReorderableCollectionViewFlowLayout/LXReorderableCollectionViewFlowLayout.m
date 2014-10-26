@@ -310,15 +310,18 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             NSIndexPath *currentIndexPath = [self.collectionView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.collectionView]];
             self.selectedItemIndexPath = currentIndexPath;
             
-//            if ([self.delegate respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
-//                [self.delegate collectionView:self.collectionView didSelectItemAtIndexPath:currentIndexPath];
-//            }
+            // selected item will be nil if there is no cell at touch point
+            if (self.selectedItemIndexPath == nil) {
+                return;
+            }
             
+            // can the item at the selected index be moved
             if ([self.dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)] &&
                ![self.dataSource collectionView:self.collectionView canMoveItemAtIndexPath:currentIndexPath]) {
                 return;
             }
             
+            // inform delegate of drag
             if ([self.delegate respondsToSelector:@selector(collectionView:layout:willBeginDraggingItemAtIndexPath:)]) {
                 [self.delegate collectionView:self.collectionView layout:self willBeginDraggingItemAtIndexPath:self.selectedItemIndexPath];
             }
@@ -327,7 +330,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             
             self.currentView = [[UIView alloc] initWithFrame:collectionViewCell.frame];
             
-            // drop shadow
+            // add drop shadow
             self.currentView.layer.shadowColor = [UIColor blackColor].CGColor;
             self.currentView.layer.shadowOpacity = 0.8;
             self.currentView.layer.shadowRadius = 3.0;

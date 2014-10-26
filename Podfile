@@ -6,6 +6,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 target "Eyekon" do
 
 pod 'CTAssetsPickerController',  '~> 2.6.0'
+pod 'UICollectionViewLeftAlignedLayout'
 
 end
 

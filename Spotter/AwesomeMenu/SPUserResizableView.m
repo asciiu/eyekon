@@ -29,6 +29,16 @@ static SPUserResizableViewAnchorPoint SPUserResizableViewLowerMiddleAnchorPoint 
 @interface SPGripViewBorderView : UIView
 @end
 
+@interface UIScrollView(Custom)
+@end
+@implementation UIScrollView(Custom)
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesMoved:touches withEvent:event];
+}
+@end
+
 @implementation SPGripViewBorderView
 
 - (id)initWithFrame:(CGRect)frame {
@@ -75,7 +85,7 @@ static SPUserResizableViewAnchorPoint SPUserResizableViewLowerMiddleAnchorPoint 
     
     // (5) Fill each anchor point using the gradient, then stroke the border.
     //CGRect allPoints[8] = { upperLeft, upperRight, lowerRight, lowerLeft, upperMiddle, lowerMiddle, middleLeft, middleRight };
-    CGRect allPoints[8] = {lowerRight, lowerMiddle, middleRight };
+    CGRect allPoints[3] = {lowerRight, lowerMiddle, middleRight };
     for (NSInteger i = 0; i < 3; i++) {
         CGRect currPoint = allPoints[i];
         CGContextSaveGState(context);
@@ -112,10 +122,10 @@ static SPUserResizableViewAnchorPoint SPUserResizableViewLowerMiddleAnchorPoint 
     if ((self = [super initWithFrame:frm])) {
         [self setupDefaultAttributes];
         
-        _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                        action:@selector(handleTapGesture:)];
-        _tapGestureRecognizer.delegate = self;
-        [self addGestureRecognizer:_tapGestureRecognizer];
+        //_tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+        //                                                                action:@selector(handleTapGesture:)];
+        //_tapGestureRecognizer.delegate = self;
+        //[self addGestureRecognizer:_tapGestureRecognizer];
         
         _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
                                                                         action:@selector(handlePanGesture:)];
@@ -189,6 +199,7 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
 }
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+//    
 //    // Notify the delegate we've begun our editing session.
 //    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidBeginEditing:)]) {
 //        [self.delegate userResizableViewDidBeginEditing:self];
@@ -206,40 +217,40 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
 //    //    }
 //}
 
-- (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
-    // Notify the delegate we've begun our editing session.
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidBeginEditing:)]) {
-        [self.delegate userResizableViewDidBeginEditing:self];
-    }
-    
-    [borderView setHidden:NO];
-    
-    //UITouch *touch = [touches anyObject];
-    //anchorPoint = [self anchorPointForTouchLocation:[touch locationInView:self]];
-    
-    // When resizing, all calculations are done in the superview's coordinate space.
-    touchStart = [gestureRecognizer locationInView:self.superview];
+//- (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
+//    // Notify the delegate we've begun our editing session.
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidBeginEditing:)]) {
+//        [self.delegate userResizableViewDidBeginEditing:self];
+//    }
+//    
+//    [borderView setHidden:NO];
+//    
+//    // When resizing, all calculations are done in the superview's coordinate space.
+//    touchStart = [gestureRecognizer locationInView:self.superview];
+//
+//    //UITouch *touch = [touches anyObject];
+//    anchorPoint = [self anchorPointForTouchLocation:touchStart];
+//
+//    //touchStart = [touch locationInView:self.superview];
+//    //    if (![self isResizing]) {
+//    //        // When translating, all calculations are done in the view's coordinate space.
+//    //        touchStart = [touch locationInView:self];
+//    //    }
+//}
 
-    //touchStart = [touch locationInView:self.superview];
-    //    if (![self isResizing]) {
-    //        // When translating, all calculations are done in the view's coordinate space.
-    //        touchStart = [touch locationInView:self];
-    //    }
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    // Notify the delegate we've ended our editing session.
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidEndEditing:)]) {
-        [self.delegate userResizableViewDidEndEditing:self];
-    }
-}
-
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-    // Notify the delegate we've ended our editing session.
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidEndEditing:)]) {
-        [self.delegate userResizableViewDidEndEditing:self];
-    }
-}
+//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+//    // Notify the delegate we've ended our editing session.
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidEndEditing:)]) {
+//        [self.delegate userResizableViewDidEndEditing:self];
+//    }
+//}
+//
+//- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+//    // Notify the delegate we've ended our editing session.
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidEndEditing:)]) {
+//        [self.delegate userResizableViewDidEndEditing:self];
+//    }
+//}
 
 - (void)showEditingHandles {
     [borderView setHidden:NO];
@@ -274,8 +285,10 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
     
     // (2) Calculate the deltas using the current anchor point.
     CGFloat deltaW = anchorPoint.adjustsW * (touchStart.x - touchPoint.x);
+    //CGFloat deltaW = touchPoint.x - touchStart.x;
     CGFloat deltaX = anchorPoint.adjustsX * (-1.0 * deltaW);
     CGFloat deltaH = anchorPoint.adjustsH * (touchPoint.y - touchStart.y);
+    //CGFloat deltaH = touchPoint.y - touchStart.y;
     CGFloat deltaY = anchorPoint.adjustsY * (-1.0 * deltaH);
     
     // (3) Calculate the new frame.
@@ -318,9 +331,7 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
     //        }
     //    }
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidResize:)]) {
-        [self.delegate userResizableViewDidResize:CGSizeMake(deltaW, deltaH)];
-    }
+    
     
     CGPoint origin = self.contentView.frame.origin;
     CGFloat cnWidth = self.contentView.frame.size.width + deltaW;
@@ -329,6 +340,10 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
     self.contentView.frame = CGRectMake(origin.x, origin.y, cnWidth, cnHeight);
     self.frame = CGRectMake(newX, newY, newWidth, newHeight);
     touchStart = touchPoint;
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidResize:)]) {
+        [self.delegate userResizableViewDidResize:CGSizeMake(deltaW, deltaH)];
+    }
 }
 
 //- (void)translateUsingTouchLocation:(CGPoint)touchPoint {
@@ -354,17 +369,48 @@ typedef struct CGPointSPUserResizableViewAnchorPointPair {
 //}
 
 //- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+//    
+//    CGPoint pt = [[touches anyObject] locationInView:self.superview];
+//    
+//    NSLog([NSString stringWithFormat:@"x:%f y:%f", pt.x, pt.y]);
+//
 //    //if ([self isResizing]) {
-//    [self resizeUsingTouchLocation:[[touches anyObject] locationInView:self.superview]];
+//    //[self resizeUsingTouchLocation:[[touches anyObject] locationInView:self.superview]];
 //    //}
 //}
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-    
-    CGPoint pt = [gestureRecognizer locationInView:self.superview];
-    
-    NSLog([NSString stringWithFormat:@"x:%f y:%f", pt.x, pt.y]);
-    [self resizeUsingTouchLocation:[gestureRecognizer locationInView:self.superview]];
+    switch (gestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan: {
+            // Notify the delegate we've begun our editing session.
+            if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidBeginEditing:)]) {
+                [self.delegate userResizableViewDidBeginEditing:self];
+            }
+            
+            [borderView setHidden:NO];
+            
+            // When resizing, all calculations are done in the superview's coordinate space.
+            touchStart = [gestureRecognizer locationInView:self.superview];
+            
+            anchorPoint = [self anchorPointForTouchLocation:touchStart];
+
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            [self resizeUsingTouchLocation:[gestureRecognizer locationInView:self.superview]];
+            break;
+        }
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded: {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(userResizableViewDidEndEditing:)]) {
+                [self.delegate userResizableViewDidEndEditing:self];
+            }
+            break;
+        }
+        default: {
+            // Do nothing...
+        } break;
+    }
 }
 
 

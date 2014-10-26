@@ -77,7 +77,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     var mainTool: AwesomeMenu?
     var mainToolPosition: CGPoint = CGPointMake(0, 0)
     
-    let resizeTool = SPUserResizableView(frame: CGRectMake(-10, -10, 10, 10))
+    let resizeTool = SPUserResizableView(frame: CGRectMake(-10, -10, 5, 5))
     
 //    func handleTap(gesture: UITapGestureRecognizer) {
 //        let touchPoint: CGPoint = gesture.locationInView(self.collectionView.backgroundView!)
@@ -172,21 +172,19 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.view.addSubview(self.mainTool!)
         self.resizeTool.delegate = self        
         self.collectionView.addSubview(self.resizeTool)
+        //self.resizeTool.showEditingHandles()
     }
     
     func userResizableViewDidResize(size: CGSize) {
         
-        //let view = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
-        //if (view is UIImageView) {
-            //let origin = view.frame.origin
-            //let width = view.frame.size.width + size.width
-            //let height = view.frame.size.height + size.height
-            
-            //view.frame = CGRectMake(0, 0, width, height)
+        if (self.selectedIndexPath == nil) {
+            return;
+        }
+        
+        let view = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
+        if (view is UIImageView) {
             self.collectionView.reloadItemsAtIndexPaths([self.selectedIndexPath!])
-            // update size of view
-            //println("update")
-        //}
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -573,7 +571,6 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         r.size.height += diff
         r.origin.y -= diff
         self.keyboardToolBar!.frame = r
-        
     }
     
     // MARK: - LXReorderableCollectionViewDelegateFlowLayout
@@ -733,9 +730,9 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         let view = self.cubes.objectAtIndex(indexPath.row) as UIView
         if (view is UIImageView) {
             let attr = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)
-            //self.resizeTool.contentView = view
-            //self.resizeTool.contentFrame = attr!.frame
-            //self.resizeTool.showEditingHandles()
+            self.resizeTool.contentView = view
+            self.resizeTool.contentFrame = attr!.frame
+            self.resizeTool.showEditingHandles()
             //self.resizeTool.frame = attr!.frame
             //self.resizeTool.showEditingHandles()
             //self.resizeTool.contentView = view

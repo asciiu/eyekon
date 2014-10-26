@@ -12,3 +12,9 @@
 #define COCOAPODS_VERSION_MINOR_CTAssetsPickerController 6
 #define COCOAPODS_VERSION_PATCH_CTAssetsPickerController 0
 
+// UICollectionViewLeftAlignedLayout
+#define COCOAPODS_POD_AVAILABLE_UICollectionViewLeftAlignedLayout
+#define COCOAPODS_VERSION_MAJOR_UICollectionViewLeftAlignedLayout 0
+#define COCOAPODS_VERSION_MINOR_UICollectionViewLeftAlignedLayout 0
+#define COCOAPODS_VERSION_PATCH_UICollectionViewLeftAlignedLayout 3
+

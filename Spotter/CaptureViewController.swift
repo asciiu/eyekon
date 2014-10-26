@@ -88,7 +88,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.capturedImages.removeAll(keepCapacity: false)
         
         // test stuff to be removed
-        for(var i = 1; i <= 4; ++i) {
+        for(var i = 1; i <= 10; ++i) {
 
             let photoName: String = "\(i).jpg"
             let photo: UIImage = UIImage(named: photoName)

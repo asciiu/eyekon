@@ -77,7 +77,7 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         
         let story: Story = self.stories[indexPath.row]
         
-        cell.textLabel?.text = story.title
+        cell.textLabel.text = story.title
         
         return cell
     }

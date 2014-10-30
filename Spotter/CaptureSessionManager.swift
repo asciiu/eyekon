@@ -121,7 +121,7 @@ class CaptureSessionManager: NSObject {
 
                 let image = UIImage(data: imageData)
                 
-                self.delegate?.processCapture(image)
+                self.delegate?.processCapture(image!)
             }
         })
     }
@@ -150,7 +150,7 @@ class CaptureSessionManager: NSObject {
         self.videoDevice!.unlockForConfiguration()
     }
     
-    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         
         if (keyPath == "adjustingExposure") {            
             let device = object as AVCaptureDevice

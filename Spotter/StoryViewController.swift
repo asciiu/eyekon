@@ -9,29 +9,6 @@
 import UIKit
 import CoreData
 
-class CubeTool: UIView {
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override init(frame: CGRect) {
-        
-        super.init(frame: frame)
-        
-        self.backgroundColor = UIColor.clearColor()
-        
-        self.layer.borderWidth = 5.0
-        //self.layer.cornerRadius = frame.width/2
-        self.layer.borderColor = UIColor(red: 0.3, green: 0.6, blue: 0.7, alpha: 1.0).CGColor
-
-//        let selectionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "borderColor")
-//        selectionAnimation.toValue = UIColor.yellowColor().CGColor
-//        selectionAnimation.repeatCount = 8
-//        self.layer.addAnimation(selectionAnimation, forKey: "selectionAnimation")
-    }
-}
-
 let kStoryHashtag = "#untitled"
 
 class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout,CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, SPUserResizableViewDelegate {
@@ -40,7 +17,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var toolbar: UIToolbar!
 
-    var cellSpacing: CGFloat = 5.0
+    var cellSpacing: CGFloat = 3.0
 
     // ordered collection of UIViews
     var cubes: NSMutableArray = NSMutableArray()
@@ -48,9 +25,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
     // flag used to determine if parent view is editable
     var editable: Bool = false
-    
-    //var cubeTool: CubeTool = CubeTool(frame: CGRectZero)
-    
+        
     var storyContent: StoryContent?
     var context: NSManagedObjectContext?
 
@@ -164,8 +139,8 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.mainTool!.delegate = self
 
         //self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus:[txtBtn, libBtn, camBtn])
-        self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width - addImage.size.width,
-                                                self.view.frame.size.height - addImage.size.height)
+        self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width - addImage!.size.width,
+                                                self.view.frame.size.height - addImage!.size.height)
         
         //self.mainTool!.startPoint = CGPointMake(200, 300)
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/2)
@@ -267,11 +242,31 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
             let imageHeight = image.size.height
             let width = height * imageWidth / imageHeight
             let rect = CGRectMake(0, 0, width, height)
+
             rects.append(rect)
         }
         
+        
         return rects
     }
+    
+//    func addImageSection(forImages: [UIImage]) {
+//        let rects = self.computeRects(forImages)
+//        var imageViews: NSMutableArray = NSMutableArray()
+//        
+//        for (var i = 0; i < rects.count; ++i) {
+//            let rect = rects[i]
+//            let image = forImages[i]
+//            
+//            let imageView = UIImageView(frame: rect)
+//            imageView.image = image
+//            imageViews.addObject(imageView)
+//        }
+//        
+//        self.cubes.addObject(imageViews)
+//        let sections = NSIndexSet(index: self.cubes.count - 1)
+//        self.collectionView.insertSections(sections)
+//    }
     
     func addImages(images: [UIImage]) {
         var imageGroups: [[UIImage]] = [[UIImage]]()
@@ -397,7 +392,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
             self.storyContent!.story.summary = "Empty"
             
             var error: NSError?
-            if( !self.storyContent!.managedObjectContext.save(&error)) {
+            if( !self.storyContent!.managedObjectContext!.save(&error)) {
                 println("could not save FrameSet: \(error?.localizedDescription)")
             }
         } else {
@@ -452,9 +447,9 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         let images: [UIImage] = assets.map({ (var asset) -> UIImage in
             let a = asset as ALAsset
             
-            return UIImage(CGImage: a.defaultRepresentation().fullResolutionImage().takeRetainedValue())
+            return UIImage(CGImage: a.defaultRepresentation().fullResolutionImage().takeUnretainedValue())!
         })
-        
+
         self.addImages(images)
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -581,6 +576,10 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         //self.selectedIndex = indexPath
     }
     
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: self.cellSpacing, right: 0)
+    }
+    
 //    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, didEndDraggingItemAtIndexPath indexPath: NSIndexPath!) {
 //        // drag ends on touch up
 //    }
@@ -640,10 +639,93 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         return self.cellSpacing
     }
     
+    
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, resizeItemFromIndexPath: NSIndexPath, toPoint: CGPoint) -> NSIndexPath! {
+        
+        var newIndexPath = self.collectionView.indexPathForItemAtPoint(toPoint)
+        
+        // if y is beyond the content bounds
+        if (toPoint.y > self.collectionView.contentSize.height) {
+            let view = self.cubes.objectAtIndex(resizeItemFromIndexPath.row) as UIView
+        
+            if (view is UIImageView) {
+                let imageView = view as UIImageView
+                let image = imageView.image!
+                let rect = self.computeRects([image])[0]
+                imageView.frame = rect
+                self.collectionView.reloadItemsAtIndexPaths([resizeItemFromIndexPath])
+            }
+            
+            // indexPath is the last item
+            newIndexPath = NSIndexPath(forRow: self.cubes.count-1, inSection: 0)
+        }
+        
+        return newIndexPath
+    }
+    
+ 
+    
     // MARK: - LXReorderableCollectionViewDataSource
+    
     func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
         return self.editable
     }
+    
+    func itemAtIndexPath(indexPath: NSIndexPath!, didResize newSize: CGSize) {
+        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        view.frame = CGRectMake(0, 0, newSize.width, newSize.height);
+        self.collectionView.reloadItemsAtIndexPaths([indexPath])
+    }
+    
+    func itemSizeAtIndexPath(indexPath: NSIndexPath!) -> CGRect {
+        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        var rect = view.frame
+        
+        if (view is UIImageView) {
+            let image = (view as UIImageView).image
+            
+            if( image != nil) {
+                rect.size.width = image!.size.width
+                rect.size.height = image!.size.height                
+            }
+        }
+        
+        return rect
+    }
+    
+    func collectionView(collectionView: UICollectionView!, updateItemAtIndexPath indexPath: NSIndexPath!) {
+        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        
+        if (view is UIImageView) {
+            let imageView = view as UIImageView
+            let image = imageView.image!
+            let rect = self.computeRects([image])[0]
+            imageView.frame = rect
+            self.collectionView.reloadItemsAtIndexPaths([indexPath])
+        }
+    }
+    
+//    func collectionView(collectionView: UICollectionView!, relocateItemAtIndexPath fromIndexPath: NSIndexPath!, toPoint pt: CGPoint) {
+//        if (pt.y > self.collectionView.contentSize.height) {
+//            
+//            let section = self.cubes.objectAtIndex(fromIndexPath.section) as NSMutableArray
+//            let view = section.objectAtIndex(fromIndexPath.row) as UIView
+//            
+//            section.removeObject(view)
+//            //self.collectionView.deleteItemsAtIndexPaths([fromIndexPath])
+//            //self.resizeSection(section)
+//            
+//            //let contentY = self.collectionView.contentSize.height
+//            //self.collectionView.contentOffset.y = contentY
+//            
+//            let newSection = NSMutableArray()
+//            newSection.addObject(view)
+//            self.resizeSection(newSection)
+//            self.cubes.addObject(newSection)
+//            //self.collectionView.reloadSections(NSIndexSet(index: self.cubes.count-1))
+//            self.collectionView.insertSections(NSIndexSet(index: self.cubes.count-1))
+//        }
+//    }
     
 //    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
 //        return true
@@ -654,13 +736,16 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         var cell: UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("EmptyCell", forIndexPath: indexPath) as UICollectionViewCell
 
         let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        view.autoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth
         
         if (view is UITextView) {
             let textView = view as UITextView
             textView.delegate = self
         }
     
-        cell.addSubview(view)
+        cell.contentView.autoresizesSubviews = false
+        cell.contentView.autoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth
+        cell.contentView.addSubview(view)
         
         return cell
     }
@@ -669,6 +754,21 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
 //        //self.selectedIndex = toIndexPath
 //    }
     
+//    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
+//        
+//        if (toIndexPath.section == fromIndexPath.section) {
+//            return true
+//        }
+//        
+//        let destinationSection = self.cubes.objectAtIndex(toIndexPath.section) as NSMutableArray
+//        if (destinationSection.count == 3) {
+//            return false
+//        }
+//        
+//        return true
+//    }
+    
+
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
         var view = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
@@ -727,15 +827,15 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         self.selectedIndexPath = indexPath
         self.displayEditTools(indexPath)
         
-        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
-        if (view is UIImageView) {
-            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)
-            self.resizeTool.contentView = view
-            self.resizeTool.contentFrame = attr!.frame
-            self.resizeTool.showEditingHandles()
-            //self.resizeTool.frame = attr!.frame
-            //self.resizeTool.showEditingHandles()
-            //self.resizeTool.contentView = view
-        }
+//        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+//        if (view is UIImageView) {
+//            let attr = self.collectionView.layoutAttributesForItemAtIndexPath(indexPath)
+//            self.resizeTool.contentView = view
+//            self.resizeTool.contentFrame = attr!.frame
+//            self.resizeTool.showEditingHandles()
+//            //self.resizeTool.frame = attr!.frame
+//            //self.resizeTool.showEditingHandles()
+//            //self.resizeTool.contentView = view
+//        }
     }
 }

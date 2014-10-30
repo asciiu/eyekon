@@ -91,8 +91,8 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         for(var i = 1; i <= 10; ++i) {
 
             let photoName: String = "\(i).jpg"
-            let photo: UIImage = UIImage(named: photoName)
-            self.capturedImages.append(photo)
+            let photo: UIImage? = UIImage(named: photoName)
+            self.capturedImages.append(photo!)
         }
     }
     

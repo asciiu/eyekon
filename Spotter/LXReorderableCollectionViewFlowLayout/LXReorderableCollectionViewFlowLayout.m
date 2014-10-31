@@ -314,7 +314,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:currentPoint];
 
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
-    CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+    //CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
     BOOL flag = false;
     
     // if the delegate implements this method ask for the new index path
@@ -343,7 +343,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         }
     }
     
-    if ((newIndexPath == nil) || [newIndexPath isEqual:previousIndexPath]) {
+    if ((newIndexPath == nil) || [newIndexPath isEqual:previousIndexPath] || CGRectContainsPoint(self.targetRect, currentPoint)) {
         return;
     }
     
@@ -358,6 +358,8 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     
     // if we are not in the original rect
     if (!CGRectContainsPoint(self.parentRect, currentPoint) && !flag) {
+        
+        // get all paths in the section that we are leaving
         NSMutableArray *previousPaths = [self indexPathsInRect:self.parentRect].mutableCopy;
         for (int i = 0; i < previousPaths.count; ++i) {
             NSIndexPath *path = previousPaths[i];
@@ -366,51 +368,59 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             }
         }
         
-        if (newIndexPath.row > previousIndexPath.row) {
-            scroll = YES;
-        }
-        
         // get paths in new section rect
         CGRect sectionRect = [self sectionRectForIndexPath:newIndexPath];
         paths = [self indexPathsInRect:sectionRect].mutableCopy;
-        [paths addObject:self.selectedItemIndexPath];
-        newRects = [self resizePathRectsToFitWidth:paths].mutableCopy;
         
-        // resize the remaining items
+        // resize the remaining items in the section that we are leaving
         if (previousPaths.count > 0) {
-            [self invalidateLayoutAtIndexPaths:previousPaths withScroll:scroll];
-        }
-     
-        // resize the new paths items in the new rect
-        for( int i = 0; i < paths.count-1; ++i) {
-            NSIndexPath *path = paths[i];
             
-            // we only want to scroll the first item
-            if (i == 0 && !scroll) {
-                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:YES];
+            if (newIndexPath.row > previousIndexPath.row) {
+                scroll = YES;
+            }
+            
+            [paths addObject:self.selectedItemIndexPath];
+            newRects = [self resizePathRectsToFitWidth:paths].mutableCopy;
+            
+            [self invalidateLayoutAtIndexPaths:previousPaths withScroll:scroll];
+            
+            // resize the new paths items in the new rect
+            for( int i = 0; i < paths.count-1; ++i) {
+                NSIndexPath *path = paths[i];
+                
+                // we only want to scroll the first item
+                if (i == 0 && !scroll) {
+                    [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:YES];
+                } else {
+                    [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:NO];
+                }
+            }
+            
+            CGSize selectedSize = [newRects.lastObject CGRectValue].size;
+            [self.dataSource itemAtIndexPath:self.selectedItemIndexPath didResize:selectedSize];
+        } else {
+            // we are attempting to move a single item that spans the width, do not resize it!
+            if (newIndexPath.row > previousIndexPath.row) {
+                newIndexPath = paths.lastObject;
             } else {
-                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:NO];
+                newIndexPath = paths.firstObject;
             }
         }
-        CGSize selectedSize = [newRects.lastObject CGRectValue].size;
-        [self.dataSource itemAtIndexPath:self.selectedItemIndexPath didResize:selectedSize];
     }
-    
-    self.selectedItemIndexPath = newIndexPath;
-    self.targetRect = targetRect;
     
     if ([self.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:willMoveToIndexPath:)]) {
         [self.dataSource collectionView:self.collectionView itemAtIndexPath:previousIndexPath willMoveToIndexPath:newIndexPath];
     }
     
+    self.selectedItemIndexPath = newIndexPath;
+    self.targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+    self.resizing = YES;
+    
     __weak typeof(self) weakSelf = self;
     [self.collectionView performBatchUpdates:^{
         __strong typeof(self) strongSelf = weakSelf;
         if (strongSelf) {
-//            for( int i = 0; i < paths.count-1; ++i) {
-//                NSIndexPath *path = paths[i];
-//                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:!scroll];
-//            }
+            self.shadowView.hidden = YES;
             [strongSelf.collectionView moveItemAtIndexPath:previousIndexPath toIndexPath:newIndexPath];
         }
     } completion:^(BOOL finished) {
@@ -424,13 +434,15 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
             
             self.shadowView.frame = shadowRect;
-            self.shadowView.hidden = false;
+            self.shadowView.hidden = NO;
         }
         
         __strong typeof(self) strongSelf = weakSelf;
         if ([strongSelf.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:didMoveToIndexPath:)]) {
             [strongSelf.dataSource collectionView:strongSelf.collectionView itemAtIndexPath:previousIndexPath didMoveToIndexPath:newIndexPath];
         }
+        
+        _resizing = NO;
     }];
 }
 

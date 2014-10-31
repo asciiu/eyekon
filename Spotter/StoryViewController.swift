@@ -163,7 +163,7 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     }
     
     override func viewWillAppear(animated: Bool) {
-        
+                
         if(self.storyContent == nil) {
             // create a new story
             self.cubes.removeAllObjects()

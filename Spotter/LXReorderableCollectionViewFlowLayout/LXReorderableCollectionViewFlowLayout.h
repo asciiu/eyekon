@@ -8,15 +8,14 @@
 #import <UIKit/UIKit.h>
 #import "UICollectionViewLeftAlignedLayout.h"
 
-@interface LXReorderableCollectionViewFlowLayout : UICollectionViewLeftAlignedLayout <UIGestureRecognizerDelegate>
+@interface LXReorderableCollectionViewFlowLayout : UICollectionViewFlowLayout <UIGestureRecognizerDelegate>
 
 @property (assign, nonatomic) CGFloat scrollingSpeed;
 @property (assign, nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;
 @property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
-@property (assign, nonatomic) CGRect originRect;
-@property (assign, nonatomic) CGRect previousRect;
+
 
 - (void)setUpGestureRecognizersOnCollectionView __attribute__((deprecated("Calls to setUpGestureRecognizersOnCollectionView method are not longer needed as setup are done automatically through KVO.")));
 

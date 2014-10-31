@@ -75,6 +75,13 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 @property (assign, nonatomic) CGRect targetRect;
 @property (strong, nonatomic) UIView *shadowView;
 
+@property (assign, nonatomic) CGRect parentRect;
+@property (assign, nonatomic) CGRect previousRect;
+@property (assign, nonatomic) NSArray *sectionPaths;
+@property (assign, nonatomic) BOOL scrolling;
+@property (assign, nonatomic) BOOL resizing;
+@property (assign, nonatomic) CGSize previousSize;
+
 @property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDataSource> dataSource;
 @property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDelegateFlowLayout> delegate;
 
@@ -173,7 +180,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         r += rect.size.width / rect.size.height;
     }
 
-    float height = floorf((float)totalWidth / r);
+    float height = floorf(totalWidth / r);
     float x = 0;
     float y = [[rects objectAtIndex:0] CGRectValue].origin.y;
     
@@ -182,7 +189,14 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         
         float imageWidth = rect.size.width;
         float imageHeight = rect.size.height;
-        float width = height * imageWidth / imageHeight;
+        float width = floorf(height * imageWidth / imageHeight);
+
+        if (j != rects.count - 1) {
+            totalWidth -= width;
+        } else {
+            // last rect should fill the width
+            width = totalWidth;
+        }
         
         newRects[j] = [NSValue valueWithCGRect:CGRectMake(x, y, width, height)];
         x += width + self.minimumInteritemSpacing;
@@ -210,20 +224,36 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     return [self reduceRectsToFitWidth:imageRects];
 }
 
-- (void)resizeIndexPath:(NSIndexPath *)indexPath rect:(CGRect)newRect {
+- (void)resizeIndexPath:(NSIndexPath *)indexPath rect:(CGRect)newRect withScroll:(BOOL)scroll {
     UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
     
+    CGSize newSize = newRect.size;
+    CGSize oldSize = cell.frame.size;
+    CGFloat diff = oldSize.height - newSize.height;
+    
+    if (diff == 0) {
+        return;
+    }
+    
+    //_scrolling = YES;
+    _resizing = YES;
+    CGPoint offset = self.collectionView.contentOffset;
+    
+    CGSize contentSize = self.collectionView.contentSize;
+    self.collectionView.contentSize = CGSizeMake(contentSize.width, contentSize.height - diff);
+    
     cell.contentView.autoresizesSubviews = YES;
-    [UIView transitionWithView:self.collectionView
-                      duration:0.3
-                       options:UIViewAnimationOptionCurveLinear
-                    animations:^{
-                        cell.frame = newRect;
-                    }
-                    completion:^(BOOL finished) {
-                        cell.contentView.autoresizesSubviews = NO;
-                        //[self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-                    }];
+    
+    [self.collectionView performBatchUpdates:^{
+        [UIView animateWithDuration:0.3 animations:^{
+            cell.frame = newRect;
+            
+            if (scroll)
+                self.collectionView.contentOffset = CGPointMake(offset.x, offset.y-diff);
+        }];
+    } completion:^(BOOL finished) {
+        _resizing = NO;
+    }];
 }
 
 - (CGRect)sectionRectForIndexPath:(NSIndexPath *)indexPath {
@@ -245,37 +275,43 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     return paths;
 }
 
-- (void)invalidateLayoutAtIndexPaths:(NSArray *)indexPaths {
+- (void)invalidateLayoutAtIndexPaths:(NSArray *)indexPaths withScroll:(BOOL)scroll {
 
     NSArray *newRects = [self resizePathRectsToFitWidth:indexPaths];
-    CGRect firstRect = [newRects[0] CGRectValue];
-    CGRect oldRect = [self layoutAttributesForItemAtIndexPath:indexPaths[0]].frame;
-    CGFloat diff = oldRect.size.height - firstRect.size.height;
-    
-    if (diff == 0) {
-        return;
-    }
-    
-    NSLog([NSString stringWithFormat:@"diff: %f", diff]);
-    
-    //CGFloat y = [self layoutAttributesForItemAtIndexPath:indexPaths[0]].frame.origin.y;
     
     for (int j = 0; j < indexPaths.count; ++j) {
         NSIndexPath *path = indexPaths[j];
         CGRect reducedRect = [newRects[j] CGRectValue];
+        
+        // only scroll the first item
+        if (j != 0 && scroll) {
+            scroll = NO;
+        }
 
-        [self resizeIndexPath:path rect:reducedRect];
+        [self resizeIndexPath:path rect:reducedRect withScroll:scroll];
     }
     
-    //CGPoint offset = self.collectionView.contentOffset;
-    //self.currentView.center = CGPointMake(self.currentView.center.x, self.currentView.center.y + diff);
-    //self.collectionView.contentOffset = CGPointMake(offset.x, offset.y - diff);
+//    CGPoint offset = self.collectionView.contentOffset;
+//    _scrolling = YES;
+//    
+//    [UIView animateWithDuration:0.3 animations:^{
+//        self.collectionView.contentOffset = CGPointMake(offset.x, offset.y - diff);
+//    }
+//    completion:^(BOOL finished) {
+//        _scrolling = NO;
+//    }];
 }
 
 - (void)invalidateLayoutIfNecessary {
 
+    if (_resizing) {
+        return;
+    }
+    
     // default new index path comes from the collection view
-    NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentView.center];
+    CGPoint currentPoint = [self.collectionView.superview convertPoint:self.currentView.center
+                                                         toView:self.collectionView];
+    NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:currentPoint];
 
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
     CGRect targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
@@ -286,7 +322,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         flag = true;
         
         // if we are beyond the content bounds expand to full width
-        if (self.currentView.center.y >= self.collectionViewContentSize.height) {
+        if (currentPoint.y >= self.collectionViewContentSize.height) {
             NSInteger section = self.collectionView.numberOfSections;
             NSInteger items = [self.collectionView numberOfItemsInSection:section-1];
             
@@ -295,21 +331,15 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             NSArray *rects = [self resizePathRectsToFitWidth:@[previousIndexPath]];
             [self.dataSource itemAtIndexPath:previousIndexPath didResize:[rects[0] CGRectValue].size];
             
+            _sectionPaths = [self indexPathsInRect:self.parentRect];
+            [self invalidateLayoutAtIndexPaths:_sectionPaths withScroll:YES];
+            
             if ([newIndexPath isEqual:previousIndexPath]) {
                 CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:previousIndexPath].frame;
                 
                 self.shadowView.frame = shadowRect;
                 self.shadowView.hidden = false;
             }
-            
-        } else if (CGRectContainsPoint(self.originRect, self.currentView.center)) {
-            
-            // we are going back to the empty space that we previously occupied
-            [self.dataSource itemAtIndexPath:previousIndexPath didResize:self.previousRect.size];
-            CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:previousIndexPath].frame;
-            
-            self.shadowView.frame = shadowRect;
-            self.shadowView.hidden = false;
         }
     }
     
@@ -317,43 +347,57 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         return;
     }
     
-    // if we are not in the original rect
-    if (!CGRectContainsPoint(self.originRect, self.currentView.center) && !flag) {
-        CGRect sectionRect = [self sectionRectForIndexPath:newIndexPath];
-        NSMutableArray *paths = [self indexPathsInRect:sectionRect].mutableCopy;
-        [paths addObject:self.selectedItemIndexPath];
-    
-        // resize the selected item to fit our target section
-        NSMutableArray *newRects = [self resizePathRectsToFitWidth:paths].mutableCopy;
-        CGSize selectedSize = [newRects.lastObject CGRectValue].size;
-        [self.dataSource itemAtIndexPath:self.selectedItemIndexPath didResize:selectedSize];
-
-        /*
-        for(int i = 0; i < newRects.count -1; ++i) {
-            [self resizeIndexPath:paths[i] rect:[newRects[i] CGRectValue]];
-        }*/
-        
-        [self invalidateLayoutAtIndexPaths:paths];
-    } else {
-        // back in original rect restore original size
-        [self.dataSource itemAtIndexPath:previousIndexPath didResize:self.previousRect.size];
-    }
-    
-    
-    
-//    if (CGRectContainsPoint(self.originRect, self.currentView.center)) {
-//        [self.delegate shouldResizeItemAtIndexPath:previousIndexPath rect:CGRectMake(0, 0, self.previousRect.size.width, self.previousRect.size.height)];
-//    }
-    
     if ([self.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:canMoveToIndexPath:)] &&
         ![self.dataSource collectionView:self.collectionView itemAtIndexPath:previousIndexPath canMoveToIndexPath:newIndexPath]) {
         return;
     }
     
+    NSMutableArray *paths;
+    BOOL scroll = NO;
+    NSMutableArray *newRects;
+    
+    // if we are not in the original rect
+    if (!CGRectContainsPoint(self.parentRect, currentPoint) && !flag) {
+        NSMutableArray *previousPaths = [self indexPathsInRect:self.parentRect].mutableCopy;
+        for (int i = 0; i < previousPaths.count; ++i) {
+            NSIndexPath *path = previousPaths[i];
+            if([path compare:self.selectedItemIndexPath] == NSOrderedSame) {
+                [previousPaths removeObject:path];
+            }
+        }
+        
+        if (newIndexPath.row > previousIndexPath.row) {
+            scroll = YES;
+        }
+        
+        // get paths in new section rect
+        CGRect sectionRect = [self sectionRectForIndexPath:newIndexPath];
+        paths = [self indexPathsInRect:sectionRect].mutableCopy;
+        [paths addObject:self.selectedItemIndexPath];
+        newRects = [self resizePathRectsToFitWidth:paths].mutableCopy;
+        
+        // resize the remaining items
+        if (previousPaths.count > 0) {
+            [self invalidateLayoutAtIndexPaths:previousPaths withScroll:scroll];
+        }
+     
+        // resize the new paths items in the new rect
+        for( int i = 0; i < paths.count-1; ++i) {
+            NSIndexPath *path = paths[i];
+            
+            // we only want to scroll the first item
+            if (i == 0 && !scroll) {
+                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:YES];
+            } else {
+                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:NO];
+            }
+        }
+        CGSize selectedSize = [newRects.lastObject CGRectValue].size;
+        [self.dataSource itemAtIndexPath:self.selectedItemIndexPath didResize:selectedSize];
+    }
+    
     self.selectedItemIndexPath = newIndexPath;
     self.targetRect = targetRect;
-    
-    //[self invalidateLayoutAtIndexPaths:@[newIndexPath, previousIndexPath]];
     
     if ([self.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:willMoveToIndexPath:)]) {
         [self.dataSource collectionView:self.collectionView itemAtIndexPath:previousIndexPath willMoveToIndexPath:newIndexPath];
@@ -363,9 +407,18 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     [self.collectionView performBatchUpdates:^{
         __strong typeof(self) strongSelf = weakSelf;
         if (strongSelf) {
+//            for( int i = 0; i < paths.count-1; ++i) {
+//                NSIndexPath *path = paths[i];
+//                [self resizeIndexPath:path rect:[newRects[i] CGRectValue] withScroll:!scroll];
+//            }
             [strongSelf.collectionView moveItemAtIndexPath:previousIndexPath toIndexPath:newIndexPath];
         }
     } completion:^(BOOL finished) {
+
+        // new index path rect has changed update it
+        CGRect sectionRect = [self sectionRectForIndexPath:newIndexPath];
+        _parentRect = sectionRect;
+        
         // move finished
         if (!CGRectEqualToRect(self.targetRect, CGRectZero)) {
             CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
@@ -378,8 +431,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         if ([strongSelf.dataSource respondsToSelector:@selector(collectionView:itemAtIndexPath:didMoveToIndexPath:)]) {
             [strongSelf.dataSource collectionView:strongSelf.collectionView itemAtIndexPath:previousIndexPath didMoveToIndexPath:newIndexPath];
         }
-        
-       
     }];
 }
 
@@ -469,8 +520,8 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         } break;
     }
     
-    self.currentViewCenter = LXS_CGPointAdd(self.currentViewCenter, translation);
-    self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
+    //self.currentViewCenter = LXS_CGPointAdd(self.currentViewCenter, translation);
+    //self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
     self.collectionView.contentOffset = LXS_CGPointAdd(contentOffset, translation);
 }
 
@@ -498,11 +549,16 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                 [self.delegate collectionView:self.collectionView layout:self willBeginDraggingItemAtIndexPath:self.selectedItemIndexPath];
             }
             
+            _previousSize = self.collectionViewContentSize;
             UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
             
-            self.currentView = [[UIView alloc] initWithFrame:collectionViewCell.frame];
+            // the cell frame must be translated to the parent coordinate system
+            CGRect cellFrame = [self.collectionView.superview convertRect:collectionViewCell.frame
+                                                                 fromView:self.collectionView];
+            
+            self.currentView = [[UIView alloc] initWithFrame:cellFrame];
             self.previousRect = collectionViewCell.frame;
-            self.originRect = CGRectMake(0, self.previousRect.origin.y, self.collectionViewContentSize.width, self.previousRect.size.height);
+            self.parentRect = CGRectMake(0, self.previousRect.origin.y, self.collectionViewContentSize.width, self.previousRect.size.height);
             
             // add drop shadow
             self.currentView.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -528,10 +584,11 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             
             [self.currentView addSubview:imageView];
             [self.currentView addSubview:highlightedImageView];
-            //[[self.collectionView superview] addSubview:self.currentView];
-            [self.collectionView addSubview:self.currentView];
+            // the current view belongs in the parent view of the collection view
+            [[self.collectionView superview] addSubview:self.currentView];
+            //[self.collectionView addSubview:self.currentView];
             
-            CGPoint coords = [gestureRecognizer locationInView:gestureRecognizer.view];
+            CGPoint coords = [gestureRecognizer locationInView:gestureRecognizer.view.superview];
             self.currentViewCenter = self.currentView.center;
             
             __weak typeof(self) weakSelf = self;
@@ -574,22 +631,24 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                     [self.delegate collectionView:self.collectionView layout:self willEndDraggingItemAtIndexPath:currentIndexPath];
                 }
                 
+                self.previousSize = CGSizeZero;
                 self.selectedItemIndexPath = nil;
                 self.currentViewCenter = CGPointZero;
                 self.targetRect = CGRectZero;
                 self.shadowView.hidden = true;
                 
-                NSArray *attributes = [self layoutAttributesForElementsInRect:self.originRect];
-                NSMutableArray *paths = [NSMutableArray arrayWithCapacity:attributes.count];
-
-                for (UICollectionViewLayoutAttributes *attrs in attributes) {
-                    [paths addObject:attrs.indexPath];
-                }
-                
-                // if release point of currentView is not in the original rect
-                if (!CGRectContainsPoint(self.originRect, self.currentView.center)) {
-                    [self invalidateLayoutAtIndexPaths:paths];
-                }
+//                NSArray *attributes = [self layoutAttributesForElementsInRect:self.originRect];
+//                NSMutableArray *paths = [NSMutableArray arrayWithCapacity:attributes.count];
+//
+//                for (UICollectionViewLayoutAttributes *attrs in attributes) {
+//                    [paths addObject:attrs.indexPath];
+//                }
+//                
+//                // if release point of currentView is not in the original rect
+//                CGPoint point = [self.collectionView convertPoint:self.currentView.center fromView:self.collectionView.superview];
+//                if (!CGRectContainsPoint(self.originRect, point) && paths.count > 0) {
+//                    [self invalidateLayoutAtIndexPaths:paths];
+//                }
                 
                 __weak typeof(self) weakSelf = self;
                 [UIView
@@ -632,7 +691,10 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         case UIGestureRecognizerStateChanged: {
             self.panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
             
-            CGPoint viewCenter = self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
+            self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
+
+            CGPoint viewCenter = [self.collectionView convertPoint:self.currentView.center
+                                                          fromView:self.collectionView.superview];
             
             [self invalidateLayoutIfNecessary];
 
@@ -672,6 +734,19 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 }
 
 #pragma mark - UICollectionViewLayout overridden methods
+
+- (CGSize)collectionViewContentSize {
+    CGSize size = [super collectionViewContentSize];
+    CGFloat minHeight = self.collectionView.superview.frame.size.height;
+    
+    if (size.height < minHeight) {
+        size = CGSizeMake(size.width, minHeight);
+    } else {
+        size = CGSizeMake(size.width, size.height + minHeight/2);
+    }
+    
+    return size;
+}
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSArray *layoutAttributesForElementsInRect = [super layoutAttributesForElementsInRect:rect];

@@ -78,7 +78,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 @property (assign, nonatomic) CGRect parentRect;
 @property (assign, nonatomic) CGRect previousRect;
 @property (assign, nonatomic) NSArray *sectionPaths;
-@property (assign, nonatomic) BOOL scrolling;
+@property (assign, nonatomic) BOOL moving;
 @property (assign, nonatomic) BOOL resizing;
 @property (assign, nonatomic) CGSize previousSize;
 
@@ -120,7 +120,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     self.shadowView = [[UIView alloc] init];
     self.shadowView.hidden = true;
     self.shadowView.backgroundColor = [UIColor grayColor];
-    self.shadowView.alpha = 0.15;
+    self.shadowView.alpha = 0.35;
 
     [self.collectionView addSubview:self.shadowView];
 }
@@ -226,33 +226,40 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
 - (void)resizeIndexPath:(NSIndexPath *)indexPath rect:(CGRect)newRect withScroll:(BOOL)scroll {
     UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+    UICollectionViewLayoutAttributes *attrs = [self layoutAttributesForItemAtIndexPath:indexPath];
     
     CGSize newSize = newRect.size;
-    CGSize oldSize = cell.frame.size;
+    //CGSize oldSize = cell.frame.size;
+    CGSize oldSize = attrs.frame.size;
     CGFloat diff = oldSize.height - newSize.height;
     
     if (diff == 0) {
         return;
     }
     
-    //_scrolling = YES;
     _resizing = YES;
     CGPoint offset = self.collectionView.contentOffset;
+    offset = CGPointMake(offset.x, offset.y-diff);
     
-    CGSize contentSize = self.collectionView.contentSize;
-    self.collectionView.contentSize = CGSizeMake(contentSize.width, contentSize.height - diff);
+    //CGSize contentSize = [self collectionViewContentSize];
+    //self.collectionView.contentSize = CGSizeMake(contentSize.width, contentSize.height - diff);
     
     cell.contentView.autoresizesSubviews = YES;
-    
-    [self.collectionView performBatchUpdates:^{
-        [UIView animateWithDuration:0.3 animations:^{
+
+    [UIView animateWithDuration:0.3 animations:^{
+
+        [self.collectionView performBatchUpdates:^{
             cell.frame = newRect;
             
-            if (scroll)
-                self.collectionView.contentOffset = CGPointMake(offset.x, offset.y-diff);
+            if (scroll) {
+                self.collectionView.contentOffset = offset;
+            }
+
+        } completion:^(BOOL finished) {
+        
+            cell.contentView.autoresizesSubviews = NO;
+            _resizing = NO;
         }];
-    } completion:^(BOOL finished) {
-        _resizing = NO;
     }];
 }
 
@@ -290,21 +297,11 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
         [self resizeIndexPath:path rect:reducedRect withScroll:scroll];
     }
-    
-//    CGPoint offset = self.collectionView.contentOffset;
-//    _scrolling = YES;
-//    
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.collectionView.contentOffset = CGPointMake(offset.x, offset.y - diff);
-//    }
-//    completion:^(BOOL finished) {
-//        _scrolling = NO;
-//    }];
 }
 
 - (void)invalidateLayoutIfNecessary {
 
-    if (_resizing) {
+    if (_resizing || _moving) {
         return;
     }
     
@@ -321,8 +318,10 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     if (newIndexPath == nil) {
         flag = true;
         
+        CGSize superSize = [super collectionViewContentSize];
+        
         // if we are beyond the content bounds expand to full width
-        if (currentPoint.y >= self.collectionViewContentSize.height) {
+        if (currentPoint.y >= superSize.height) {
             NSInteger section = self.collectionView.numberOfSections;
             NSInteger items = [self.collectionView numberOfItemsInSection:section-1];
             
@@ -412,15 +411,15 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         [self.dataSource collectionView:self.collectionView itemAtIndexPath:previousIndexPath willMoveToIndexPath:newIndexPath];
     }
     
-    self.selectedItemIndexPath = newIndexPath;
-    self.targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
-    self.resizing = YES;
+    _selectedItemIndexPath = newIndexPath;
+    _targetRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
+    _moving = YES;
     
     __weak typeof(self) weakSelf = self;
     [self.collectionView performBatchUpdates:^{
         __strong typeof(self) strongSelf = weakSelf;
         if (strongSelf) {
-            self.shadowView.hidden = YES;
+            _shadowView.hidden = YES;
             [strongSelf.collectionView moveItemAtIndexPath:previousIndexPath toIndexPath:newIndexPath];
         }
     } completion:^(BOOL finished) {
@@ -433,8 +432,8 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         if (!CGRectEqualToRect(self.targetRect, CGRectZero)) {
             CGRect shadowRect = [self layoutAttributesForItemAtIndexPath:newIndexPath].frame;
             
-            self.shadowView.frame = shadowRect;
-            self.shadowView.hidden = NO;
+            _shadowView.frame = shadowRect;
+            _shadowView.hidden = NO;
         }
         
         __strong typeof(self) strongSelf = weakSelf;
@@ -442,7 +441,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             [strongSelf.dataSource collectionView:strongSelf.collectionView itemAtIndexPath:previousIndexPath didMoveToIndexPath:newIndexPath];
         }
         
-        _resizing = NO;
+        _moving = NO;
     }];
 }
 
@@ -648,6 +647,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                 self.currentViewCenter = CGPointZero;
                 self.targetRect = CGRectZero;
                 self.shadowView.hidden = true;
+                self.parentRect = CGRectZero;
                 
 //                NSArray *attributes = [self layoutAttributesForElementsInRect:self.originRect];
 //                NSMutableArray *paths = [NSMutableArray arrayWithCapacity:attributes.count];

@@ -395,6 +395,11 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
             if( !self.storyContent!.managedObjectContext!.save(&error)) {
                 println("could not save FrameSet: \(error?.localizedDescription)")
             }
+            
+//            let fireRef: Firebase = Firebase(url: "https://eyekon.firebaseio.com")
+//            fireRef.setValue("what next?")
+            
+            
         } else {
             // edit
             self.editable = true
@@ -693,17 +698,17 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
         return rect
     }
     
-    func collectionView(collectionView: UICollectionView!, updateItemAtIndexPath indexPath: NSIndexPath!) {
-        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
-        
-        if (view is UIImageView) {
-            let imageView = view as UIImageView
-            let image = imageView.image!
-            let rect = self.computeRects([image])[0]
-            imageView.frame = rect
-            self.collectionView.reloadItemsAtIndexPaths([indexPath])
-        }
-    }
+//    func collectionView(collectionView: UICollectionView!, updateItemAtIndexPath indexPath: NSIndexPath!) {
+//        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+//        
+//        if (view is UIImageView) {
+//            let imageView = view as UIImageView
+//            let image = imageView.image!
+//            let rect = self.computeRects([image])[0]
+//            imageView.frame = rect
+//            self.collectionView.reloadItemsAtIndexPaths([indexPath])
+//        }
+//    }
     
 //    func collectionView(collectionView: UICollectionView!, relocateItemAtIndexPath fromIndexPath: NSIndexPath!, toPoint pt: CGPoint) {
 //        if (pt.y > self.collectionView.contentSize.height) {
@@ -786,21 +791,21 @@ class StoryViewController: UIViewController, UICollectionViewDelegate, UIScrollV
     
     // MARK: - UIScrollViewDelegate
     
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if(self.selectedIndexPath == nil) {
-            return
-        }
-        
-        displayEditTools(self.selectedIndexPath!)
-    }
-    
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if(self.selectedIndexPath == nil) {
-            return
-        }
-        
-        displayEditTools(self.selectedIndexPath!)
-    }
+//    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        if(self.selectedIndexPath == nil) {
+//            return
+//        }
+//        
+//        displayEditTools(self.selectedIndexPath!)
+//    }
+//    
+//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        if(self.selectedIndexPath == nil) {
+//            return
+//        }
+//        
+//        displayEditTools(self.selectedIndexPath!)
+//    }
     
     // MARK: - UICollectionViewDelegateFlowLayout
     

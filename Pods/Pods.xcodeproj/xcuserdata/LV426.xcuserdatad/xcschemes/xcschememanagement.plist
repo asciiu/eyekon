@@ -9,7 +9,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-Eyekon-UICollectionViewLeftAlignedLayout.xcscheme</key>
+		<key>Pods-Eyekon-Firebase.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -22,17 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>14CD9A9F5AF4017463001335</key>
+		<key>8AF356E50C960D0720CEAF6C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>59A51C419313E69F044893F6</key>
+		<key>AC9B8F387EC368F2F90023AB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F9B0054C68DCABE7A6613D24</key>
+		<key>B529944F77164D045D43099B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

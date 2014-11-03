@@ -14,7 +14,7 @@
 #import "AwesomeMenu.h"
 #import "AwesomeMenuItem.h"
 #import "SPUserResizableView.h"
-#import "UICollectionViewLeftAlignedLayout.h"
+#import <Firebase/Firebase.h>
 
 
 

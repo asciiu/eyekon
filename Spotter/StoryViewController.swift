@@ -261,8 +261,11 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         miView.cellSpacing = self.cellSpacing
         
         for (var i = 0; i < images.count; ++i) {
+            let imageView = UIImageView(image: images[i])
+            imageView.contentMode = UIViewContentMode.ScaleAspectFill
+            imageView.clipsToBounds = true
             
-            miView.addImageView(UIImageView(image: images[i]))
+            miView.addImageView(imageView)
             if(miView.subviewCount() == 3) {
                 self.cubes.addObject(miView)
                 miView = MIView(frame: CGRectMake(0, 0, self.tableView.frame.width, 10))

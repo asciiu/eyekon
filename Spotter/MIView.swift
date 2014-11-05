@@ -23,13 +23,13 @@ enum ResizeDirection: Int {
 
 class ResizeButton: UIView {
     
-    var nipple: UIView?
+    //var nipple: UIView?
     var refPoint: CGPoint = CGPointZero
     let panGesture: UIPanGestureRecognizer?
     let tapGesture: UITapGestureRecognizer?
     var views: [UIView] = [UIView]()
     var direction: ResizeDirection = ResizeDirection.Horizontal
-    var tableView: UITableView?
+    //var tableView: UITableView?
     var delegate: ResizeButtonDelegate?
     
     override init(frame: CGRect) {
@@ -47,7 +47,9 @@ class ResizeButton: UIView {
     }
     
     required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init()
+        // do nothing
+        //fatalError("init(coder:) has not been implemented")
     }
     
     func resizeHorizontal(deltaX: CGFloat) {
@@ -112,16 +114,26 @@ class ResizeButton: UIView {
 }
 
 
-class MIView: UIView, ResizeButtonDelegate {
+class MIView: UIView, NSCoding, ResizeButtonDelegate  {
     
-    var views: [UIImageView] = [UIImageView]()
+    var views: NSMutableArray = NSMutableArray()
     var resizeHandles: [ResizeButton] = [ResizeButton]()
     var cellSpacing: CGFloat = 0
     var delegate: MIDelegate?
     var indexPath: NSIndexPath?
     
     required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+        
+        self.views = aDecoder.decodeObjectForKey("views") as NSMutableArray
+        self.cellSpacing = CGFloat(aDecoder.decodeFloatForKey("spacing"))
+        
+        for (var i = 0; i < self.views.count; ++i) {
+            let view = self.views.objectAtIndex(i) as UIImageView
+            self.addSubview(view)
+        }
+        
+        //aDecoder.decode)
     }
     
     override init(frame: CGRect) {
@@ -129,11 +141,31 @@ class MIView: UIView, ResizeButtonDelegate {
         //self.backgroundColor = UIColor.whiteColor()
     }
     
+    override func encodeWithCoder(aCoder: NSCoder) {
+        
+        // we do not want these to be encoded
+        self.removeResizeViews()
+        
+        super.encodeWithCoder(aCoder)
+        
+        for (var i = 0; i < self.views.count; ++i) {
+            let imageView = self.views.objectAtIndex(i) as UIImageView
+            imageView.highlighted = false
+        }
+        
+        aCoder.encodeObject(self.views, forKey: "views")
+        aCoder.encodeFloat(Float(self.cellSpacing), forKey: "spacing")
+    }
+    
     func addImageView(view: UIImageView) {
-        views.append(view)
+        views.addObject(view)
         self.addSubview(view)
 
-        let images: [UIImage] = self.views.map{ (var imageView) -> UIImage in return imageView.image! }
+        var images: [UIImage] = [UIImage]()
+        for (var i = 0; i < self.views.count; ++i) {
+            let imageView = self.views.objectAtIndex(i) as UIImageView
+            images.append(imageView.image!)
+        }
         
         let frameWidth = self.frame.width
         let imageCount = images.count
@@ -158,7 +190,7 @@ class MIView: UIView, ResizeButtonDelegate {
             
             x += width + self.cellSpacing
             
-            let iv = self.views[j]
+            let iv = self.views[j] as UIImageView
             
             iv.frame = rect
         }
@@ -168,7 +200,14 @@ class MIView: UIView, ResizeButtonDelegate {
         for view in self.views {
             view.removeFromSuperview()
         }
-        views.removeAll(keepCapacity: false)
+        views.removeAllObjects()
+        //views.removeAll(keepCapacity: false)
+    }
+    
+    func removeResizeViews() {
+        for view in self.resizeHandles {
+            view.removeFromSuperview()
+        }
     }
     
     func removeImageView(imageView: UIImageView) {
@@ -176,7 +215,7 @@ class MIView: UIView, ResizeButtonDelegate {
         for (var i = 0; i < self.views.count; ++i) {
             if (self.views[i] === imageView) {
                 self.views[i].removeFromSuperview()
-                self.views.removeAtIndex(i)
+                self.views.removeObjectAtIndex(i)
             }
         }
     }

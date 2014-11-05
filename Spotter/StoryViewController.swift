@@ -397,8 +397,12 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
             for (var i = 0; i < self.cubes.count; ++i) {
                 let view = self.cubes.objectAtIndex(i) as UIView
                 
-                // this ensures that text cubes are draggable when touched
-                view.userInteractionEnabled = false
+                if (view is MIView) {
+                    (view as MIView).enableResize()
+                } else {
+                    // this ensures that text cubes are draggable when touched
+                    view.userInteractionEnabled = false
+                }
             }
             self.showToolbar()
         }
@@ -616,9 +620,12 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         if (view is MIView) {
             let mi = view as MIView
-            mi.enableResize()
             mi.delegate = self
             mi.indexPath = indexPath
+            
+            if (self.editable) {
+                mi.enableResize()
+            }
         }
         
         cell.contentView.addSubview(view)

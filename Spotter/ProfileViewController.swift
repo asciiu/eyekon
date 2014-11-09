@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class CollectionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var context: NSManagedObjectContext?
     var stories: [Story] = [Story]()
@@ -39,6 +39,8 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
         // Dispose of any resources that can be recreated.
     }
     
+
+    
     func loadManagedCollection() {
         
         let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Story", inManagedObjectContext: self.context!)
@@ -57,6 +59,11 @@ class CollectionViewController: UIViewController, UITableViewDataSource, UITable
     @IBAction func addStory(sender: AnyObject) {
         self.selectedStory = nil
         self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
+    }
+    
+    @IBAction func logout(sender: AnyObject) {
+        Server.logout()
+        self.navigationController?.popToRootViewControllerAnimated(true)
     }
 
     // MARK: - UITableViewDelegate

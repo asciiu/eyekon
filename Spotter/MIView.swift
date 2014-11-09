@@ -31,6 +31,9 @@ class ResizeButton: UIView {
     var direction: ResizeDirection = ResizeDirection.Horizontal
     //var tableView: UITableView?
     var delegate: ResizeButtonDelegate?
+    weak var parentView: MIView?
+    
+    var minPadding: CGFloat = 10
     
     override init(frame: CGRect) {
         
@@ -55,17 +58,21 @@ class ResizeButton: UIView {
     func resizeHorizontal(deltaX: CGFloat) {
         if (self.views.count > 0) {
             let view1 = self.views[0]
-            
-            let frame1 = view1.frame
-            view1.frame = CGRectMake(frame1.origin.x, frame1.origin.y, frame1.size.width+deltaX, frame1.size.height)
-            //view1.frame.size.width += deltaX
-            
             let view2 = self.views[1]
+            let frame1 = view1.frame
+            let frame2 = view2.frame
+            
+            if (frame1.size.width + deltaX < self.frame.size.width ||
+                frame2.size.width - deltaX < self.frame.size.width) {
+                return
+            }
+            
+            view1.frame.size.width += deltaX
             view2.frame.origin.x += deltaX
             view2.frame.size.width -= deltaX
+            
+            self.center = CGPointMake(self.center.x + deltaX, self.center.y)
         }
-        
-        self.center = CGPointMake(self.center.x + deltaX, self.center.y)
     }
     
     func resizeVertical(deltaY: CGFloat) {
@@ -74,6 +81,10 @@ class ResizeButton: UIView {
         let origin = view.frame.origin
         let size = view.frame.size
         let newSize = CGSizeMake(size.width, size.height+deltaY)
+        
+        if (newSize.height < self.frame.size.height) {
+            return
+        }
         
         view.autoresizesSubviews = true
         view.frame = CGRectMake(origin.x, origin.y, newSize.width, newSize.height)
@@ -105,6 +116,27 @@ class ResizeButton: UIView {
             self.refPoint = point
             break
         case UIGestureRecognizerState.Ended:
+            
+            if (self.direction == ResizeDirection.Horizontal) {
+                let view1 = self.views[0]
+                let view2 = self.views[1]
+                
+                if (view1.frame.size.width < self.parentView!.minimumSize.width) {
+                    let delta = self.parentView!.minimumSize.width - view1.frame.size.width
+                    self.resizeHorizontal(delta)
+                } else if (view2.frame.size.width < self.parentView!.minimumSize.width) {
+                    let delta = self.parentView!.minimumSize.width - view2.frame.size.width
+                    self.resizeHorizontal(-delta)
+                }
+            } else {
+                let view = self.views[0]
+                if (view.frame.size.height < self.parentView!.minimumSize.height) {
+                    
+                    let delta = self.parentView!.minimumSize.height - view.frame.size.height
+                    self.resizeVertical(delta)
+                    
+                }
+            }
             break
         default:
             // Do nothing...
@@ -121,6 +153,7 @@ class MIView: UIView, NSCoding, ResizeButtonDelegate  {
     var cellSpacing: CGFloat = 0
     var delegate: MIDelegate?
     var indexPath: NSIndexPath?
+    var minimumSize: CGSize = CGSizeMake(50, 50)
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -244,6 +277,7 @@ class MIView: UIView, NSCoding, ResizeButtonDelegate  {
                 resizeBtn.center = CGPointMake(x+self.cellSpacing/2, y)
                 resizeBtn.views.append(view)
                 resizeBtn.views.append(self.views[i+1] as UIView)
+                resizeBtn.parentView = self
                 
                 self.addSubview(resizeBtn)
                 self.resizeHandles.append(resizeBtn)
@@ -254,6 +288,7 @@ class MIView: UIView, NSCoding, ResizeButtonDelegate  {
         verticalBtn.center = CGPointMake(self.frame.size.width/2, height + self.cellSpacing/2)
         verticalBtn.views.append(self)
         verticalBtn.delegate = self
+        verticalBtn.parentView = self
         self.addSubview(verticalBtn)
         self.resizeHandles.append(verticalBtn)
     }

@@ -35,8 +35,11 @@
 		6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2423CA19E359D500966445 /* SMCalloutView.m */; };
 		6E2423CD19E3645700966445 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CC19E3645700966445 /* trash.png */; };
 		6E2423CF19E39B1500966445 /* pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E2423CE19E39B1500966445 /* pencil.png */; };
-		6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */; };
-		6E66D9771A0207570012317D /* ESCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66D9761A0207570012317D /* ESCollectionView.swift */; };
+		6E3A3B0F19AEE3B40023499C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3A3B0E19AEE3B40023499C /* ProfileViewController.swift */; };
+		6E640A411A0F165100058721 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E640A401A0F165100058721 /* Main.storyboard */; };
+		6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E640A421A0F174B00058721 /* SignUpViewController.swift */; };
+		6E640A451A0F1F3700058721 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E640A441A0F1F3700058721 /* TabViewController.swift */; };
+		6E66D9771A0207570012317D /* MITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66D9761A0207570012317D /* MITableView.swift */; };
 		6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */; };
 		6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */; };
 		6E79658419E0E8C700C23AAC /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658319E0E8C700C23AAC /* Story.swift */; };
@@ -55,7 +58,6 @@
 		6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8319A66669006CB2E2 /* AppDelegate.swift */; };
 		6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */; };
 		6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */; };
-		6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8A19A66669006CB2E2 /* Main.storyboard */; };
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
 		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
@@ -64,6 +66,9 @@
 		6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135619C6407700152F7E /* CaptureSessionManager.swift */; };
 		6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE0135819C64BD000152F7E /* AVFoundation.framework */; };
 		6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */; };
+		6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */; };
+		6EEA62071A0EDE49008E6EE2 /* EKServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62061A0EDE49008E6EE2 /* EKServer.swift */; };
+		6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62081A0EE445008E6EE2 /* RootViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,8 +116,11 @@
 		6E2423CA19E359D500966445 /* SMCalloutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCalloutView.m; sourceTree = "<group>"; };
 		6E2423CC19E3645700966445 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
 		6E2423CE19E39B1500966445 /* pencil.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pencil.png; sourceTree = "<group>"; };
-		6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
-		6E66D9761A0207570012317D /* ESCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ESCollectionView.swift; sourceTree = "<group>"; };
+		6E3A3B0E19AEE3B40023499C /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		6E640A401A0F165100058721 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		6E640A421A0F174B00058721 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		6E640A441A0F1F3700058721 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		6E66D9761A0207570012317D /* MITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MITableView.swift; sourceTree = "<group>"; };
 		6E79657D19E0C27800C23AAC /* UIImage+NSCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCoding.h"; sourceTree = "<group>"; };
 		6E79657E19E0C27800C23AAC /* UIImage+NSCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+NSCoding.m"; sourceTree = "<group>"; };
 		6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+NSCopying.h"; sourceTree = "<group>"; };
@@ -141,7 +149,6 @@
 		6EC03D8319A66669006CB2E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6EC03D8619A66669006CB2E2 /* Spotter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spotter.xcdatamodel; sourceTree = "<group>"; };
 		6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureViewController.swift; sourceTree = "<group>"; };
-		6EC03D8B19A66669006CB2E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6EC03D8D19A66669006CB2E2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6EC03D9319A6666A006CB2E2 /* EyekonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyekonTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -152,6 +159,9 @@
 		6EE0135619C6407700152F7E /* CaptureSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureSessionManager.swift; sourceTree = "<group>"; };
 		6EE0135819C64BD000152F7E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
+		6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		6EEA62061A0EDE49008E6EE2 /* EKServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EKServer.swift; sourceTree = "<group>"; };
+		6EEA62081A0EE445008E6EE2 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,12 +187,16 @@
 		6E1CE2D019B511B10085FF19 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				6E3A3B0E19AEE3B40023499C /* CollectionViewController.swift */,
+				6EE0135619C6407700152F7E /* CaptureSessionManager.swift */,
 				6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */,
 				6E1CE30719B6ADED0085FF19 /* CapturePreviewController.swift */,
 				6EE0135019C2185A00152F7E /* StoryViewController.swift */,
 				6EE0135219C27CF900152F7E /* PublishViewController.swift */,
-				6EE0135619C6407700152F7E /* CaptureSessionManager.swift */,
+				6E3A3B0E19AEE3B40023499C /* ProfileViewController.swift */,
+				6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */,
+				6EEA62081A0EE445008E6EE2 /* RootViewController.swift */,
+				6E640A421A0F174B00058721 /* SignUpViewController.swift */,
+				6E640A441A0F1F3700058721 /* TabViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -213,7 +227,7 @@
 				6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */,
 				6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */,
 				6E97168219EF416200A30E56 /* MIView.swift */,
-				6E66D9761A0207570012317D /* ESCollectionView.swift */,
+				6E66D9761A0207570012317D /* MITableView.swift */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -295,13 +309,14 @@
 		6EC03D8019A66669006CB2E2 /* Spotter */ = {
 			isa = PBXGroup;
 			children = (
+				6EEA62051A0EDE24008E6EE2 /* Server */,
 				6E1CE30D19B83CA30085FF19 /* Models */,
 				6E1CE2DE19B525730085FF19 /* photos */,
 				6E1CE2D119B511E40085FF19 /* Custom Views */,
 				6E1CE2D019B511B10085FF19 /* Controllers */,
+				6E640A401A0F165100058721 /* Main.storyboard */,
 				6E1CE2D419B516230085FF19 /* Spotter-Bridging-Header.h */,
 				6EC03D8319A66669006CB2E2 /* AppDelegate.swift */,
-				6EC03D8A19A66669006CB2E2 /* Main.storyboard */,
 				6EC03D8D19A66669006CB2E2 /* Images.xcassets */,
 				6EC03D8119A66669006CB2E2 /* Supporting Files */,
 			);
@@ -340,6 +355,14 @@
 				0073A8926997F9F5080FF1BF /* libPods-Eyekon.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6EEA62051A0EDE24008E6EE2 /* Server */ = {
+			isa = PBXGroup;
+			children = (
+				6EEA62061A0EDE49008E6EE2 /* EKServer.swift */,
+			);
+			name = Server;
 			sourceTree = "<group>";
 		};
 		D7A4A6227BE939AEEED13364 /* Pods */ = {
@@ -440,6 +463,7 @@
 				6E1CE30019B525A00085FF19 /* 14.jpg in Resources */,
 				6E1CE2FD19B525A00085FF19 /* 11.jpg in Resources */,
 				6E1CE2FB19B525A00085FF19 /* 9.jpg in Resources */,
+				6E640A411A0F165100058721 /* Main.storyboard in Resources */,
 				6E903D4919F4AFF100A1B6B3 /* add.png in Resources */,
 				6E1CE2FA19B525A00085FF19 /* 8.jpg in Resources */,
 				6E1CE2F919B525A00085FF19 /* 7.jpg in Resources */,
@@ -455,7 +479,6 @@
 				6E1CE2F819B525A00085FF19 /* 6.jpg in Resources */,
 				6E1CE2FC19B525A00085FF19 /* 10.jpg in Resources */,
 				6E1CE30319B525A00085FF19 /* 17.jpg in Resources */,
-				6EC03D8C19A66669006CB2E2 /* Main.storyboard in Resources */,
 				6E903D3219F48E7300A1B6B3 /* libTool.png in Resources */,
 				6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */,
 				6E1CE2F519B525A00085FF19 /* 3.jpg in Resources */,
@@ -511,27 +534,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */,
 				6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */,
 				6E903D3D19F49B1B00A1B6B3 /* AwesomeMenuItem.m in Sources */,
 				6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */,
-				6E3A3B0F19AEE3B40023499C /* CollectionViewController.swift in Sources */,
+				6E3A3B0F19AEE3B40023499C /* ProfileViewController.swift in Sources */,
+				6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
 				6E97168319EF416200A30E56 /* MIView.swift in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,
+				6EEA62071A0EDE49008E6EE2 /* EKServer.swift in Sources */,
 				6E79658419E0E8C700C23AAC /* Story.swift in Sources */,
 				6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */,
 				6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */,
 				6E903D3C19F49B1B00A1B6B3 /* AwesomeMenu.m in Sources */,
 				6E1CE2CD19B428210085FF19 /* ImageCollectionViewCell.swift in Sources */,
+				6E640A451A0F1F3700058721 /* TabViewController.swift in Sources */,
 				6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */,
 				6E1CE2DC19B516E80085FF19 /* RACollectionViewReorderableTripletLayout.m in Sources */,
 				6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */,
 				6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */,
 				6E903D4C19F5C17900A1B6B3 /* SPUserResizableView.m in Sources */,
 				6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
-				6E66D9771A0207570012317D /* ESCollectionView.swift in Sources */,
+				6E66D9771A0207570012317D /* MITableView.swift in Sources */,
 				6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
+				6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */,
 				6EC03D8719A66669006CB2E2 /* Spotter.xcdatamodeld in Sources */,
@@ -557,17 +585,6 @@
 			targetProxy = 6EC03D9419A6666A006CB2E2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		6EC03D8A19A66669006CB2E2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6EC03D8B19A66669006CB2E2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		6EC03D9B19A6666A006CB2E2 /* Debug */ = {

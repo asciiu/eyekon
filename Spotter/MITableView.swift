@@ -35,6 +35,10 @@ extension CADisplayLink {
 }
 
 
+@objc protocol MITableViewDelegate: UITableViewDelegate {
+    optional func doubleTab(indexPath: NSIndexPath)
+}
+
 class MITableView: UITableView, UIGestureRecognizerDelegate {
 
     /*
@@ -47,6 +51,7 @@ class MITableView: UITableView, UIGestureRecognizerDelegate {
     
     var displayLink: CADisplayLink?
     var selectedItemIndexPath: NSIndexPath?
+    var doubleTapGestureRecognier: UITapGestureRecognizer?
     var longPressGestureRecognizer: UILongPressGestureRecognizer?
     var currentView: UIView?
     var currentViewCenter: CGPoint = CGPointZero
@@ -55,6 +60,7 @@ class MITableView: UITableView, UIGestureRecognizerDelegate {
     //var panGestureRecognizer: UIPanGestureRecognizer?
     //@property (assign, nonatomic) CGFloat scrollingSpeed;
     //@property (assign, nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;
+    var miDelegate: MITableViewDelegate?
     
     override init() {
         super.init()
@@ -77,6 +83,10 @@ class MITableView: UITableView, UIGestureRecognizerDelegate {
         
         self.panGestureRecognizer.addTarget(self, action: "handlePanGesture:")
         self.panGestureRecognizer.delegate = self
+        
+        self.doubleTapGestureRecognier = UITapGestureRecognizer(target: self, action: "handleDoubleTap:")
+        self.doubleTapGestureRecognier!.numberOfTapsRequired = 2
+        self.addGestureRecognizer(self.doubleTapGestureRecognier!)
         
     // Links the default long press gesture recognizer to the custom long press gesture recognizer we are creating now
 //    // by enforcing failure dependency so that they doesn't clash.
@@ -130,6 +140,15 @@ class MITableView: UITableView, UIGestureRecognizerDelegate {
     
     // MARK: - Target/Action methods
     // Tight loop, allocate memory sparely, even if they are stack allocation.
+    func handleDoubleTap(gestureRecognizer: UILongPressGestureRecognizer) {
+        let point = gestureRecognizer.locationInView(self)
+        let indexPath = self.indexPathForRowAtPoint(point)
+        
+        if (indexPath != nil) {
+            self.miDelegate?.doubleTab?(indexPath!)
+        }
+    }
+    
     func handleScroll(displayLink: CADisplayLink) {
 
     }
@@ -161,7 +180,7 @@ class MITableView: UITableView, UIGestureRecognizerDelegate {
             let tableCell: UITableViewCell = self.cellForRowAtIndexPath(self.selectedItemIndexPath!)!
             let cellFrame: CGRect = tableCell.frame
             
-            self.currentView = tableCell.snapshotViewAfterScreenUpdates(true)
+            self.currentView = tableCell.snapshotViewAfterScreenUpdates(false)
             self.currentView!.frame = self.superview!.convertRect(cellFrame, fromView: self)
             let parentRect = cellFrame;
             

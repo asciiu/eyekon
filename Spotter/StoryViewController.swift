@@ -12,14 +12,13 @@ import CoreData
 let kStoryHashtag = "#untitled"
 
 
-class StoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, HPGrowingTextViewDelegate,CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, SPUserResizableViewDelegate, MIDelegate {
+class StoryViewController: UIViewController, UITableViewDataSource, MITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, SPUserResizableViewDelegate, MIDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
     //@IBOutlet var collectionView: UICollectionView!
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var tableView: UITableView!
     @IBOutlet var deleteBtn: UIBarButtonItem!
-    @IBOutlet var editBtn: UIBarButtonItem!
     
     var cellSpacing: CGFloat = 3.0
 
@@ -33,28 +32,16 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     var titleTextField: UITextField?
     
-    // dummy text view used during text cube insertion
-    var textView: UITextView?
-    var keyboardToolBar: UIToolbar?
-    var keyboardToolBarTextView: HPGrowingTextView?
-    
-    // editing existing text cube
-    var editingText = false
-    
     // index of selected cube/UIView
     var currentIndexPath: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
     var selectedIndexPath: NSIndexPath?
-
-    // callout used for editing tools
-    //let calloutView: SMCalloutView = SMCalloutView.platformCalloutView()
-    //let editBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
-    //let deleteBtn: UIButton = UIButton(frame: CGRectMake(0, 0, 30, 30))
     
     // main tool to add new content
     var mainTool: AwesomeMenu?
     var mainToolPosition: CGPoint = CGPointMake(0, 0)
     
-    let fireRef: Firebase = Firebase(url: "https://eyekon.firebaseio.com")
+    var post: Dictionary<String, String>?
+    var keyboardFrame: CGRect = CGRectZero
     
     func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
         
@@ -83,39 +70,6 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.titleTextField!.textColor = UIColor.whiteColor()
         self.navigationItem.titleView = self.titleTextField!
         
-        // toolbar for text view accessory view
-        let toolbarRect = CGRectMake(0, 0, self.view.frame.width, 40)
-        
-        // setup a textview on the keyboardToolBar
-        self.keyboardToolBar = UIToolbar(frame: toolbarRect)
-        self.keyboardToolBarTextView = HPGrowingTextView(frame: toolbarRect)
-        self.keyboardToolBarTextView!.returnKeyType = UIReturnKeyType.Done
-        self.keyboardToolBarTextView!.font = UIFont.systemFontOfSize(16)
-        self.keyboardToolBarTextView!.maxNumberOfLines = 7
-        //self.keyboardToolBarTextView!.contentInset = UIEdgeInsetsMake(0, 5, 0, 5)
-        self.keyboardToolBarTextView!.delegate = self
-        self.keyboardToolBar!.addSubview(self.keyboardToolBarTextView!)
-        
-        // setup offscreen text view
-        self.textView = UITextView(frame: CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, 50))
-        self.textView!.returnKeyType = UIReturnKeyType.Done
-        self.textView!.inputAccessoryView = self.keyboardToolBar
-        self.textView!.userInteractionEnabled = false
-        self.textView!.font = UIFont.systemFontOfSize(16)
-        self.textView!.inputAccessoryView = self.keyboardToolBar
-        self.view.addSubview(self.textView!)
-        
-        // delete button for callout view
-        //self.deleteBtn.setImage(UIImage(named: "trash.png"), forState: UIControlState.Normal)
-        //self.deleteBtn.addTarget(self, action: "deleteSelected", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        // edit button for callout view
-        //self.editBtn.setImage(UIImage(named: "pencil.png"), forState: UIControlState.Normal)
-        //self.editBtn.addTarget(self, action: "editSelected", forControlEvents: UIControlEvents.TouchUpInside)
-        
-        //self.calloutView.leftAccessoryView = self.editBtn
-        //self.calloutView.rightAccessoryView = self.deleteBtn
-        
         let addImage = UIImage(named: "add.png")
         let txtImage = UIImage(named: "txtTool.png")
         let libImage = UIImage(named: "libTool.png")
@@ -127,24 +81,13 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         let addBtn = AwesomeMenuItem(image: addImage, highlightedImage: addImage, contentImage: addImage, highlightedContentImage: addImage)
         
         self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
-        //self.mainTool = AwesomeMenu(frame: self.view.frame, menus: [txtBtn, libBtn, camBtn])
-        //self.mainTool!.image = addImage
         self.mainTool!.delegate = self
-
-        //self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus:[txtBtn, libBtn, camBtn])
         self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2,
                                                 self.view.frame.size.height - addImage!.size.height/2)
         
-        //self.mainTool!.startPoint = CGPointMake(200, 300)
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
-        //self.toolbar.addSubview(self.mainTool!)
         self.view.addSubview(self.mainTool!)
-        //self.resizeTool.delegate = self
-        //self.tableView.addSubview(self.resizeTool)
-        
-        //self.tableView.contentInset = UIEdgeInsetsMake( CGRectGetHeight(self.navigationController!.toolbar.frame), 0, 0, 0)
-        
-        //self.resizeTool.showEditingHandles()
+        (self.tableView as MITableView).miDelegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -177,7 +120,6 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
         self.deleteBtn.enabled = false
-        self.editBtn.enabled = false
         
         self.toolbar.frame.origin.y = self.view.frame.size.height
 
@@ -197,28 +139,15 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.titleTextField!.text = self.storyContent!.story.title
         self.tableView.reloadData()
         
-            self.fireRef.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
-                
-                if (data.value == nil) {
-                    return
-                }
-                
-                if (self.editable) {
-                    return
-                }
-                
-                let base64: NSString = data.value["post"] as NSString
-                let data = NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-                
-                self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(data!) as NSMutableArray
-                
-                println(self.cubes.count)
-                self.tableView.reloadData()
-            })
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -307,12 +236,23 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     // edit selected text
-    func editSelected() {
-        self.editingText = true
-        //self.calloutView.dismissCalloutAnimated(false)
-        let textView: UITextView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UITextView
+    func doubleTab(indexPath: NSIndexPath) {
+        if (!self.editable) {
+            return
+        }
         
-        textView.becomeFirstResponder()
+        self.selectedIndexPath = indexPath
+        
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        if (view is UITextView) {
+            let textView: UITextView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UITextView
+            
+            textView.inputAccessoryView = nil
+            textView.userInteractionEnabled = true
+            textView.reloadInputViews()
+            
+            textView.becomeFirstResponder()
+        }
     }
     
     func setStoryContent(content: StoryContent) {
@@ -348,17 +288,20 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
         if (self.selectedIndexPath == nil) {
             return
         }
+        let view: UIView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
+        view.removeFromSuperview()
         
         self.cubes.removeObjectAtIndex(self.selectedIndexPath!.row)
         self.tableView.deleteRowsAtIndexPaths([self.selectedIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
         
         // move current index path to previous index item
-        //if (self.currentIndexPath.row > 0) {
-        //    self.currentIndexPath.row.advancedBy(-1)
-        //}
+        if (self.currentIndexPath.row > 0) {
+            self.currentIndexPath.row.advancedBy(-1)
+        }
         
         self.selectedIndexPath = nil
         self.deleteBtn.enabled = false
+        self.tableView.reloadData()
     }
     
     @IBAction func returnToPrevious(sender: AnyObject) {
@@ -388,9 +331,16 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
                 println("could not save FrameSet: \(error?.localizedDescription)")
             }
             
-            let ref = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
+            let msg = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
             
-            self.fireRef.setValue(["name":"eyekon", "post":ref])
+            let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
+            self.post = post
+            //EKClient.sendData(post, toUserID: EKClient.authData!.uid)
+            
+            //EKClient.userPosts.setValue(post)
+            //self.fireRef.setValue(["name":"eyekon", "post":ref])
+            
+            self.performSegueWithIdentifier("FromStoryToCircle", sender: self)
             
         } else {
             // edit
@@ -415,16 +365,28 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
 
     @IBAction func addText(sender: AnyObject) {
-        self.editingText = false
-        self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-        self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-        self.keyboardToolBarTextView!.text = ""
-        self.textView!.text = ""
+//        self.editingText = false
+//        self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
+//        self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
+//        self.keyboardToolBarTextView!.text = ""
+//        self.textView!.text = ""
+//        
+//        self.textView!.becomeFirstResponder()
+//        self.keyboardToolBarTextView!.text = ""
+//        self.keyboardToolBarTextView!.becomeFirstResponder()
         
-        self.textView!.becomeFirstResponder()
-        self.keyboardToolBarTextView!.text = ""
-        self.keyboardToolBarTextView!.becomeFirstResponder()
-        //self.calloutView.dismissCalloutAnimated(false)
+        let frameWidth = self.tableView.frame.size.width
+        let textView = UITextView(frame: CGRectMake(0, 0, frameWidth, 50))
+        textView.font = UIFont.systemFontOfSize(16)
+        textView.delegate = self
+        textView.returnKeyType = UIReturnKeyType.Done
+        textView.inputAccessoryView = nil
+        textView.userInteractionEnabled = true
+        textView.becomeFirstResponder()
+        
+        self.cubes.insertObject(textView, atIndex: self.currentIndexPath.row)
+        self.tableView.insertRowsAtIndexPaths([self.currentIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+        self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
     }
     
     @IBAction func addPhotoFromCamera(sender: AnyObject) {
@@ -464,6 +426,9 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
             let destination: CaptureViewController = segue.destinationViewController as CaptureViewController
             destination.storyController = self
             //destination.loadTestImages()
+        } else if (segue.identifier == "FromStoryToCircle") {
+            let destination: CircleViewController = segue.destinationViewController as CircleViewController
+            destination.setPost(self.post!)
         }
     }
     
@@ -472,11 +437,45 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     // MARK: - Notifications
     func keyboardWillShow(notification: NSNotification) {
-        //let text = SharedDataFrame.dataFrame!.annotation
-        let text = self.textView!.text
+        self.moveView(notification.userInfo!, up:true)
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        self.moveView(notification.userInfo!, up:false)
+    }
+    
+    func moveView(userInfo: Dictionary<NSObject, AnyObject>, up: Bool) {
+        var keyboardEndFrame: CGRect = CGRectZero
+        (userInfo[UIKeyboardFrameEndUserInfoKey]! as NSValue).getValue(&keyboardEndFrame)
         
-        self.keyboardToolBarTextView?.text = text
-        self.keyboardToolBarTextView?.becomeFirstResponder()
+        let keyboardFrame: CGRect = self.view.convertRect(keyboardEndFrame, toView: nil)
+        self.keyboardFrame = keyboardFrame
+        
+        let y = keyboardFrame.size.height * (up ? -1: 1)
+        
+        UIView.animateWithDuration(0.3, animations: {
+            self.tableView.frame = CGRectOffset(self.tableView.frame, 0, y)
+        })
+        
+//    UIViewAnimationCurve animationCurve;
+//    [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey]
+//    getValue:&animationCurve];
+//    
+//    NSTimeInterval animationDuration;
+//    [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey]
+//    getValue:&animationDuration];
+//    
+//    // Get the correct keyboard size to we slide the right amount.
+//    [UIView beginAnimations:nil context:nil];
+//    [UIView setAnimationBeginsFromCurrentState:YES];
+//    [UIView setAnimationDuration:animationDuration];
+//    [UIView setAnimationCurve:animationCurve];
+//    
+//    CGRect keyboardFrame = [self.view convertRect:keyboardEndFrame toView:nil];
+//    int y = keyboardFrame.size.height * (up ? -1 : 1);
+//    self.view.frame = CGRectOffset(self.view.frame, 0, y);
+//    
+//    [UIView commitAnimations];
     }
     
     // MARK: UITextFieldDelegate
@@ -494,6 +493,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         
         if(text == "\n") {
+            //textView.userInteractionEnabled = false
             textView.resignFirstResponder()
             //self.displayEditTools(self.currentIndexPath)
         } else {
@@ -503,70 +503,18 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
             textView.sizeToFit()
             textView.frame.size.width = frameWidth
             
-            if (textView.frame.size.height != cellHeight) {
-                //self.tableView.collectionViewLayout.invalidateLayout()
-                //self.collectionView.reloadItemsAtIndexPaths([self.selectedIndex!])
-                //textView.becomeFirstResponder()
-            }
+            //let rect = self.tableView.rectForRowAtIndexPath(self.selectedIndexPath!)
+            //let tableViewFrame = self.view.convertRect(self.tableView.frame, toView: nil)
+            //let textViewBottom = tableViewFrame.origin.y + tableViewFrame.size.height
+//            let textViewFrame = self.view.convertRect(rect, toView: nil)
+//            let bottomEdge = textViewFrame.origin.y + textViewFrame.size.height
+//            println("textview: \(bottomEdge) \(self.keyboardFrame.origin.y)")
+//            
+//            if (bottomEdge > self.keyboardFrame.origin.y) {
+//                self.tableView.frame = CGRectOffset(self.tableView.frame, 0, -keyboardFrame.size.height)
+//            }
         }
         return true
-    }
-    
-    
-    // MARK: HPGrowingTextViewDelegate
-    func growingTextView(growingTextView: HPGrowingTextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool {
-        
-        // triggered when done button is touched
-        if(text == "\n") {
-            //let index = self.selectedIndex?.row ?? 0
-            //let indexPath = NSIndexPath(forRow: index, inSection: 0)
-    
-            self.keyboardToolBarTextView!.resignFirstResponder()
-            self.textView!.resignFirstResponder()
-            
-            self.textView!.text = self.keyboardToolBarTextView!.text
-            self.textView!.sizeToFit()
-            let frameWidth = self.tableView.frame.size.width
-            
-            //self.selectedIndex = indexPath
-            
-            // if not editing existing text
-            if (!self.editingText) {
-                // create a new text view
-                let textCube = UITextView(frame: CGRectMake(0, 0, frameWidth, self.textView!.frame.size.height))
-                textCube.font = UIFont.systemFontOfSize(16)
-                textCube.text = self.keyboardToolBarTextView!.text
-                textCube.sizeToFit()
-                textCube.frame.size.width = frameWidth
-                textCube.userInteractionEnabled = false
-                textCube.delegate = self
-                textCube.returnKeyType = UIReturnKeyType.Done
-                
-                self.cubes.insertObject(textCube, atIndex: self.currentIndexPath.row)
-                self.tableView.insertRowsAtIndexPaths([self.currentIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-                //self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-                self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
-                
-                //self.calloutView.dismissCalloutAnimated(false)
-            } else {
-                //let cube = self.cubes.objectAtIndex(index) as NSMutableArray
-                let textCube = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UITextView
-                textCube.text = self.keyboardToolBarTextView!.text
-                textCube.sizeToFit()
-                //self.collectionView.reloadItemsAtIndexPaths([self.selectedIndexPath!])
-            }
-        }
-        
-        return true
-    }
-    
-    func growingTextView(growingTextView: HPGrowingTextView!, willChangeHeight height: Float) {
-        let diff: CGFloat = CGFloat(height) - growingTextView.frame.size.height
-        
-        var r: CGRect = self.keyboardToolBar!.frame
-        r.size.height += diff
-        r.origin.y -= diff
-        self.keyboardToolBar!.frame = r
     }
     
     func resized(indexPath: NSIndexPath) {
@@ -590,6 +538,8 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
             if (self.editable) {
                 mi.enableResize()
             }
+        } else if (view is UITextView) {
+            (view as UITextView).delegate = self
         }
         
         cell.contentView.addSubview(view)
@@ -609,23 +559,28 @@ class StoryViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        if (!self.editable) {
+        if (!self.editable || self.selectedIndexPath === indexPath) {
             return
         }
         
-        // add a blue border around the selection
+        if (self.selectedIndexPath != nil) {
+            // remove the border around the existing selection
+            let previousView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
+            previousView.layer.borderWidth = 0.0
+        }
+        
+        // add a blue border around the new selection
         let view = self.cubes.objectAtIndex(indexPath.row) as UIView
         
         if (view is MIView) {
             view.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
             view.layer.borderWidth = 3.0
-            self.deleteBtn.enabled = true
         } else if (view is UITextView) {
-            self.editBtn.enabled = true
+            view.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+            view.layer.borderWidth = 1.0
         }
         
-        
-        //self.displayEditTools(indexPath)
+        self.deleteBtn.enabled = true
         self.currentIndexPath = indexPath
         self.selectedIndexPath = indexPath
     }

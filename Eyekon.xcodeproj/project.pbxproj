@@ -47,6 +47,7 @@
 		6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658819E210C600C23AAC /* HPGrowingTextView.m */; };
 		6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658A19E210C600C23AAC /* HPTextViewInternal.m */; };
 		6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */; };
+		6E8AC5531A1032BE00BCA2FD /* CircleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */; };
 		6E903D3219F48E7300A1B6B3 /* libTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D2F19F48E7300A1B6B3 /* libTool.png */; };
 		6E903D3319F48E7300A1B6B3 /* camTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D3019F48E7300A1B6B3 /* camTool.png */; };
 		6E903D3419F48E7300A1B6B3 /* txtTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D3119F48E7300A1B6B3 /* txtTool.png */; };
@@ -60,6 +61,8 @@
 		6EC03D8919A66669006CB2E2 /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D8819A66669006CB2E2 /* CaptureViewController.swift */; };
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
+		6EDAB7311A1494A40016A97B /* contact-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDAB7301A1494A40016A97B /* contact-default.png */; };
+		6EDAB7371A1855C40016A97B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB7361A1855C40016A97B /* User.swift */; };
 		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
@@ -67,7 +70,7 @@
 		6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE0135819C64BD000152F7E /* AVFoundation.framework */; };
 		6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */; };
 		6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */; };
-		6EEA62071A0EDE49008E6EE2 /* EKServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62061A0EDE49008E6EE2 /* EKServer.swift */; };
+		6EEA62071A0EDE49008E6EE2 /* EKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62061A0EDE49008E6EE2 /* EKClient.swift */; };
 		6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62081A0EE445008E6EE2 /* RootViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -133,6 +136,7 @@
 		6E79658A19E210C600C23AAC /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LXReorderableCollectionViewFlowLayout.h; path = LXReorderableCollectionViewFlowLayout/LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LXReorderableCollectionViewFlowLayout.m; path = LXReorderableCollectionViewFlowLayout/LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
+		6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewController.swift; sourceTree = "<group>"; };
 		6E903D2F19F48E7300A1B6B3 /* libTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = libTool.png; sourceTree = "<group>"; };
 		6E903D3019F48E7300A1B6B3 /* camTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camTool.png; sourceTree = "<group>"; };
 		6E903D3119F48E7300A1B6B3 /* txtTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = txtTool.png; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 		6EC03D9319A6666A006CB2E2 /* EyekonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyekonTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
+		6EDAB7301A1494A40016A97B /* contact-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "contact-default.png"; sourceTree = "<group>"; };
+		6EDAB7361A1855C40016A97B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -160,7 +166,7 @@
 		6EE0135819C64BD000152F7E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		6EEA62061A0EDE49008E6EE2 /* EKServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EKServer.swift; sourceTree = "<group>"; };
+		6EEA62061A0EDE49008E6EE2 /* EKClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EKClient.swift; sourceTree = "<group>"; };
 		6EEA62081A0EE445008E6EE2 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -197,6 +203,7 @@
 				6EEA62081A0EE445008E6EE2 /* RootViewController.swift */,
 				6E640A421A0F174B00058721 /* SignUpViewController.swift */,
 				6E640A441A0F1F3700058721 /* TabViewController.swift */,
+				6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -235,6 +242,7 @@
 		6E1CE2DE19B525730085FF19 /* photos */ = {
 			isa = PBXGroup;
 			children = (
+				6EDAB7301A1494A40016A97B /* contact-default.png */,
 				6E903D2F19F48E7300A1B6B3 /* libTool.png */,
 				6E903D3019F48E7300A1B6B3 /* camTool.png */,
 				6E903D3119F48E7300A1B6B3 /* txtTool.png */,
@@ -268,6 +276,7 @@
 		6E1CE30D19B83CA30085FF19 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6EDAB7361A1855C40016A97B /* User.swift */,
 				6E79658319E0E8C700C23AAC /* Story.swift */,
 				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
@@ -360,7 +369,7 @@
 		6EEA62051A0EDE24008E6EE2 /* Server */ = {
 			isa = PBXGroup;
 			children = (
-				6EEA62061A0EDE49008E6EE2 /* EKServer.swift */,
+				6EEA62061A0EDE49008E6EE2 /* EKClient.swift */,
 			);
 			name = Server;
 			sourceTree = "<group>";
@@ -458,6 +467,7 @@
 			files = (
 				6E2423CF19E39B1500966445 /* pencil.png in Resources */,
 				6E903D3319F48E7300A1B6B3 /* camTool.png in Resources */,
+				6EDAB7311A1494A40016A97B /* contact-default.png in Resources */,
 				6E2423CD19E3645700966445 /* trash.png in Resources */,
 				6E1CE30219B525A00085FF19 /* 16.jpg in Resources */,
 				6E1CE30019B525A00085FF19 /* 14.jpg in Resources */,
@@ -540,10 +550,12 @@
 				6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* ProfileViewController.swift in Sources */,
 				6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */,
+				6E8AC5531A1032BE00BCA2FD /* CircleViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
+				6EDAB7371A1855C40016A97B /* User.swift in Sources */,
 				6E97168319EF416200A30E56 /* MIView.swift in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,
-				6EEA62071A0EDE49008E6EE2 /* EKServer.swift in Sources */,
+				6EEA62071A0EDE49008E6EE2 /* EKClient.swift in Sources */,
 				6E79658419E0E8C700C23AAC /* Story.swift in Sources */,
 				6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */,
 				6E79658119E0C27800C23AAC /* UIImage+NSCoding.m in Sources */,

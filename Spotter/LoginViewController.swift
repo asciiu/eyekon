@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
 
@@ -14,7 +15,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var passwordField: UITextField!
     
     var alertController: UIAlertController?
-    var server: EKServer = EKServer()
+    var context: NSManagedObjectContext?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +26,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         let okAction: UIAlertAction = UIAlertAction(title: "ok", style: UIAlertActionStyle.Cancel, handler: nil)
         self.alertController!.addAction(okAction)
+        
+        self.context = NSManagedObjectContext()
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -48,7 +53,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        fireRef.authUser(email, password: password) {
+        EKClient.appRef.authUser(email, password: password) {
             error, authData in
             
             if (error != nil) {
@@ -56,15 +61,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if let errorCode = FAuthenticationError(rawValue: error.code) {
                     switch (errorCode) {
                     case .UserDoesNotExist:
-                        println("does not exist")
                         // Handle invalid user
                         break
                     case .InvalidEmail:
-                        println("invalid email")
                         // Handle invalid email
                         break
                     case .InvalidPassword:
-                        println("invalid password")
                         // Hand invalid password
                         break
                     default:
@@ -77,7 +79,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 self.presentViewController(self.alertController!, animated: true, completion: {})
                 
             } else {
-                //self.performSegueWithIdentifier("FromLoginToTab", sender: self)
                 self.showApplication()
             }
         }
@@ -85,9 +86,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func showApplication() {
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewControllerWithIdentifier("tab") as UIViewController
+        let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
        
-        //self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -99,6 +99,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
         return true
     }
+    
     /*
     // MARK: - Navigation
 

@@ -9,14 +9,18 @@
 import UIKit
 import CoreData
 
-class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
 
     var context: NSManagedObjectContext?
     var stories: [Story] = [Story]()
     var selectedStory: Story?
     
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var usernameLabel: UILabel!
+    @IBOutlet var profileImageButton: UIButton!
     
+    let imagePicker: UIImagePickerController = UIImagePickerController()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -25,12 +29,83 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         self.context = NSManagedObjectContext()
         let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
+        
+        self.profileImageButton.layer.cornerRadius = self.profileImageButton.layer.frame.size.width/2
+        self.profileImageButton.clipsToBounds = true
+        self.profileImageButton.layer.borderWidth = 1.0
+        self.profileImageButton.layer.borderColor = UIColor.grayColor().CGColor
+        self.profileImageButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+        
+        self.imagePicker.delegate = self
+        self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        self.usernameLabel.text = ""
+        
+        EKClient.userHomeURL?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
+            if (data.value === NSNull()) {
+                return
+            }
+            
+            let first: NSString = data.value["first"] as NSString
+            let last: NSString = data.value["last"] as NSString
+            self.usernameLabel.text = first + " " + last
+
+            let base64Image: NSString? = data.value["profileImage"] as? NSString
+            
+            if (base64Image != nil) {
+                let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                
+                let image = UIImage(data: data!)
+                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+            }
+        })
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.loadManagedCollection()
         self.tableView.reloadData()
+        
+        //self.usernameLabel.text = EKClient.username
+        
+        self.navigationItem.rightBarButtonItem?.title = "Logout"
+        
+//        let postURL = url + "/users/" + EKClient.authData!.uid + "/posts"
+//        let ref = Firebase(url: postURL)
+//
+        EKClient.userPostsRef?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
+            
+            if (data.value === NSNull()) {
+                return
+            }
+            
+            let hashtag: NSString = data.value["hashtag"] as NSString
+            let base64: NSString = data.value["packet"] as NSString
+            
+            let data = NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+            
+            let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
+            story.title = hashtag
+            story.summary = "Summary"
+            
+            let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent", inManagedObjectContext: self.context!) as StoryContent
+            
+            story.content = content
+            content.story = story
+            content.data = data
+
+            //var error: NSError?
+            //if( content.managedObjectContext!.save(&error)) {
+            //    println("could not save story: \(error?.localizedDescription)")
+            //} else {
+                self.stories.append(story)
+                self.tableView.reloadData()
+            //}
+            
+            //self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(data!) as NSMutableArray
+            
+            //println(self.cubes.count)
+            //self.tableView.reloadData()
+        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -62,10 +137,41 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     @IBAction func logout(sender: AnyObject) {
-        Server.logout()
+        EKClient.logout()
         self.navigationController?.popToRootViewControllerAnimated(true)
     }
 
+    @IBAction func changeProfileImage(sender: AnyObject) {
+        self.presentViewController(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+        let cropController = RSKImageCropViewController(image: image)
+        cropController.delegate = self
+        
+        picker.pushViewController(cropController, animated: true)
+    }
+    
+    // MARK: - RSKImageCropViewControllerDelegate
+    // Crop image has been canceled.
+    func imageCropViewController(controller: RSKImageCropViewController!, didCropImage croppedImage: UIImage!) {
+        self.imagePicker.dismissViewControllerAnimated(true, completion: nil)
+        self.profileImageButton.imageView!.image = croppedImage
+        
+        // convert profile image into a base64 string 
+        let data = UIImagePNGRepresentation(croppedImage)
+        let base64Image = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
+        
+        // send the profile image to the server
+        let serverRef = EKClient.userHomeURL?.childByAppendingPath("profileImage")
+        serverRef?.setValue(base64Image)
+    }
+    
+    func imageCropViewControllerDidCancelCrop(controller: RSKImageCropViewController!) {
+        self.imagePicker.popViewControllerAnimated(true)
+    }
+    
     // MARK: - UITableViewDelegate
     
     func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {

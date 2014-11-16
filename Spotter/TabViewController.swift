@@ -18,7 +18,6 @@ class TabViewController: UITabBarController {
     
     override func viewWillAppear(animated: Bool) {
         self.navigationItem.hidesBackButton = true
-    
         self.navigationController?.navigationBar.topItem!.title = "Eyekon"
     }
 

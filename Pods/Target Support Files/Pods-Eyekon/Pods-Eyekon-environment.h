@@ -18,3 +18,9 @@
 #define COCOAPODS_VERSION_MINOR_Firebase 2
 #define COCOAPODS_VERSION_PATCH_Firebase 3
 
+// RSKImageCropper
+#define COCOAPODS_POD_AVAILABLE_RSKImageCropper
+#define COCOAPODS_VERSION_MAJOR_RSKImageCropper 0
+#define COCOAPODS_VERSION_MINOR_RSKImageCropper 3
+#define COCOAPODS_VERSION_PATCH_RSKImageCropper 1
+

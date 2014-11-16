@@ -15,6 +15,7 @@
 #import "AwesomeMenuItem.h"
 #import "SPUserResizableView.h"
 #import <Firebase/Firebase.h>
+#import "RSKImageCropViewController.h"
 
 
 

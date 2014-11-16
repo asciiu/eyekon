@@ -14,6 +14,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-Eyekon-RSKImageCropper.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Eyekon.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>8AF356E50C960D0720CEAF6C</key>
+		<key>0869CEA6CB4424149700465D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>AC9B8F387EC368F2F90023AB</key>
+		<key>19B0227B70D31768C561B45B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B529944F77164D045D43099B</key>
+		<key>29330CBF7D40B12FDA79E11B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>851062E898DC32ED658F40C6</key>
 		<dict>
 			<key>primary</key>
 			<true/>

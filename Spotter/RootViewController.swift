@@ -17,10 +17,10 @@ class RootViewController: UIViewController {
 
     override func viewWillAppear(animated: Bool) {
         
-        if (fireRef.authData != nil) {
+        if (EKClient.authData != nil) {            
             self.navigationController?.navigationBarHidden = false
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyboard.instantiateViewControllerWithIdentifier("tab") as UIViewController
+            let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
             
             self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
             self.navigationController?.pushViewController(controller, animated: false)
@@ -33,13 +33,7 @@ class RootViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    func showApplication() {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewControllerWithIdentifier("tab") as UIViewController
-        
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
+
     /*
     // MARK: - Navigation
 

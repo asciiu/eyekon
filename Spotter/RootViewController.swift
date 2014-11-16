@@ -8,22 +8,28 @@
 
 import UIKit
 
+let EKLogoutNotification = "EKLogoutNotification"
 
 class RootViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLogout:", name: EKLogoutNotification, object: nil)
     }
-
+    
     override func viewWillAppear(animated: Bool) {
         
-        if (EKClient.authData != nil) {            
-            self.navigationController?.navigationBarHidden = false
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
+        if (EKClient.authData != nil) {
             
-            self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
-            self.navigationController?.pushViewController(controller, animated: false)
+            self.performSegueWithIdentifier("FromRootToTab", sender: self)
+            
+//            self.navigationController?.navigationBarHidden = false
+//            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//            let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
+//            
+//            self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
+//            self.navigationController?.pushViewController(controller, animated: false)
         } else {
             self.navigationController?.navigationBarHidden = true
         }
@@ -34,6 +40,9 @@ class RootViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func handleLogout(notification: NSNotification) {
+        self.navigationController?.popToRootViewControllerAnimated(false)
+    }
     /*
     // MARK: - Navigation
 

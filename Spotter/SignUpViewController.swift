@@ -86,11 +86,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                 
                 EKClient.usersURL.childByAppendingPath(authData.uid).setValue(newUser)
                 
-                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
+                self.performSegueWithIdentifier("FromSignUpToTab", sender: self)
                 
-                self.navigationController?.pushViewController(controller, animated: true)
-                self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
+//                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//                let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
+//                
+//                self.navigationController?.pushViewController(controller, animated: true)
+//                self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
             }
         }
     }

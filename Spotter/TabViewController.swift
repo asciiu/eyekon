@@ -8,6 +8,17 @@
 
 import UIKit
 
+class PushNoAnimationSegue: UIStoryboardSegue {
+    override func perform() {
+        //self.sourceViewController.pushViewController(destinationViewController as UIViewController, animated: false)
+        
+        //let controller = self.sourceViewController as UIViewController
+        //controller.navigationController?.pushViewController(destinationViewController as UIViewController, animated: false)
+        
+        self.sourceViewController.presentViewController(destinationViewController as UIViewController, animated: false, completion: nil)
+    }
+}
+
 class TabViewController: UITabBarController {
 
     override func viewDidLoad() {

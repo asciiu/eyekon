@@ -21,7 +21,6 @@ class FBClient: NSObject {
     var userPostsRef: Firebase?
     var username: String = ""
     var context: NSManagedObjectContext?
-    var user: User?
     
     required override init() {
         super.init()

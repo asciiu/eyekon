@@ -9,6 +9,8 @@
 import UIKit
 import CoreData
 
+
+
 class LoginViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var emailField: UITextField!
@@ -85,10 +87,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func showApplication() {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
-       
-        self.navigationController?.pushViewController(controller, animated: true)
+        self.performSegueWithIdentifier("FromLoginToTab", sender: self)
+//        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//        let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
+//       
+//        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {

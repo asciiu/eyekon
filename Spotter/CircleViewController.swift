@@ -8,10 +8,23 @@
 
 import UIKit
 
+class UserInfo {
+    var id: String
+    var email: String
+    var name: String
+    var profileImage: UIImage?
+    
+    init(id: String, email: String, name: String) {
+        self.id = id
+        self.email = email
+        self.name = name
+    }
+}
+
 class CircleViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet var tableView: UITableView!
-    var users: [Dictionary<String, String>] = [Dictionary<String, String>]()
+    var users: [UserInfo] = [UserInfo]()
     var post: Dictionary<String, String>?
     
     override func viewDidLoad() {
@@ -32,9 +45,24 @@ class CircleViewController: UIViewController, UITableViewDataSource, UITableView
                 }
                 
                 let email = user.value["email"] as String
+                let first = user.value["first"] as String
+                let last = user.value["last"] as String
+                let name = first + " " + last
+                
+                let userInfo = UserInfo(id: user.name, email: email, name: name)
+                
+                let base64Image: NSString? = user.value["profileImage"] as? NSString
+                
+                if (base64Image != nil) {
+                    let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                    
+                    let image = UIImage(data: data!)
+                    userInfo.profileImage = image
+                }
+
+        
                 //println(user.name)
-                let user: Dictionary<String, String> = ["id": user.name, "email": email];
-                self.users.append(user)
+                self.users.append(userInfo)
             }
             self.tableView.reloadData()
         }, withCancelBlock: { error in
@@ -63,11 +91,20 @@ class CircleViewController: UIViewController, UITableViewDataSource, UITableView
     
     // MARK: - UITableViewDataSource
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("ContactCell", forIndexPath: indexPath) as UITableViewCell
+        let cell: ContactTableViewCell = tableView.dequeueReusableCellWithIdentifier("ContactCell", forIndexPath: indexPath) as ContactTableViewCell
         
         //let story: Story = self.stories[indexPath.row]
         
-        cell.textLabel.text = self.users[indexPath.row]["email"]
+        let userInfo = self.users[indexPath.row]
+        cell.username.text = userInfo.name
+        
+        if (userInfo.profileImage != nil) {
+            cell.profileImageView.image = userInfo.profileImage
+        } else {
+            cell.profileImageView.image = UIImage(named: "contact-default.png")
+        }
+        cell.imageView.layer.cornerRadius = cell.imageView.layer.frame.size.width/2
+        cell.imageView.clipsToBounds = true
         
         return cell
     }
@@ -78,7 +115,7 @@ class CircleViewController: UIViewController, UITableViewDataSource, UITableView
     
     // MARK: - UITableViewDelegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let contact: Dictionary<String, String> = self.users[indexPath.row]
-        EKClient.sendData(self.post!, toUserID: contact["id"]!)
+        //let contact: Dictionary<String, String> = self.users[indexPath.row]
+        //EKClient.sendData(self.post!, toUserID: contact["id"]!)
     }
 }

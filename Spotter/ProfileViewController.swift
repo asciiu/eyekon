@@ -34,7 +34,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         self.profileImageButton.clipsToBounds = true
         self.profileImageButton.layer.borderWidth = 1.0
         self.profileImageButton.layer.borderColor = UIColor.grayColor().CGColor
-        self.profileImageButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+        //self.profileImageButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
         
         self.imagePicker.delegate = self
         self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
@@ -140,7 +140,10 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBAction func logout(sender: AnyObject) {
         EKClient.logout()
-        self.navigationController?.popToRootViewControllerAnimated(true)
+        NSNotificationCenter.defaultCenter().postNotificationName(EKLogoutNotification, object: self)
+        self.dismissViewControllerAnimated(true, completion: nil)
+
+        //self.navigationController?.popToRootViewControllerAnimated(true)
     }
 
     @IBAction func changeProfileImage(sender: AnyObject) {

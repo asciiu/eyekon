@@ -62,7 +62,7 @@
 		6EC03D8E19A66669006CB2E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EC03D8D19A66669006CB2E2 /* Images.xcassets */; };
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
 		6EDAB7311A1494A40016A97B /* contact-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDAB7301A1494A40016A97B /* contact-default.png */; };
-		6EDAB7371A1855C40016A97B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB7361A1855C40016A97B /* User.swift */; };
+		6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */; };
 		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
@@ -158,7 +158,7 @@
 		6EC03D9819A6666A006CB2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
 		6EDAB7301A1494A40016A97B /* contact-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "contact-default.png"; sourceTree = "<group>"; };
-		6EDAB7361A1855C40016A97B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -235,6 +235,7 @@
 				6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */,
 				6E97168219EF416200A30E56 /* MIView.swift */,
 				6E66D9761A0207570012317D /* MITableView.swift */,
+				6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -276,7 +277,6 @@
 		6E1CE30D19B83CA30085FF19 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6EDAB7361A1855C40016A97B /* User.swift */,
 				6E79658319E0E8C700C23AAC /* Story.swift */,
 				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
@@ -552,7 +552,6 @@
 				6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */,
 				6E8AC5531A1032BE00BCA2FD /* CircleViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
-				6EDAB7371A1855C40016A97B /* User.swift in Sources */,
 				6E97168319EF416200A30E56 /* MIView.swift in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,
 				6EEA62071A0EDE49008E6EE2 /* EKClient.swift in Sources */,
@@ -569,6 +568,7 @@
 				6E903D4C19F5C17900A1B6B3 /* SPUserResizableView.m in Sources */,
 				6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				6E66D9771A0207570012317D /* MITableView.swift in Sources */,
+				6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */,
 				6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
 				6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */,

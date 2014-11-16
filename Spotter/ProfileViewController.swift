@@ -40,25 +40,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         self.usernameLabel.text = ""
         
-        EKClient.userHomeURL?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
-            if (data.value === NSNull()) {
-                return
-            }
-            
-            let first: NSString = data.value["first"] as NSString
-            let last: NSString = data.value["last"] as NSString
-            self.usernameLabel.text = first + " " + last
-
-            let base64Image: NSString? = data.value["profileImage"] as? NSString
-            
-            if (base64Image != nil) {
-                let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-                
-                let image = UIImage(data: data!)
-                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
-            }
-        })
-    }
+      }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -72,6 +54,26 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 //        let postURL = url + "/users/" + EKClient.authData!.uid + "/posts"
 //        let ref = Firebase(url: postURL)
 //
+        EKClient.userHomeURL?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
+            if (data.value === NSNull()) {
+                return
+            }
+            
+            let first: NSString = data.value["first"] as NSString
+            let last: NSString = data.value["last"] as NSString
+            self.usernameLabel.text = first + " " + last
+            
+            let base64Image: NSString? = data.value["profileImage"] as? NSString
+            
+            if (base64Image != nil) {
+                let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                
+                let image = UIImage(data: data!)
+                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+            }
+        })
+
+        
         EKClient.userPostsRef?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
             
             if (data.value === NSNull()) {

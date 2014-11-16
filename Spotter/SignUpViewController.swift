@@ -84,11 +84,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                     "last": last
                 ]
                 
-                //self.saveUserData(authData.uid, first: first, last: last)
-                
-                //EKClient.usersURL.childByAppendingPath(authData.uid).setValue(newUser)
-                //EKClient.authData = authData!
-                //EKClient.username = first + " " + last
+                EKClient.usersURL.childByAppendingPath(authData.uid).setValue(newUser)
                 
                 let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
@@ -164,19 +160,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         
         return true
     }
-    
-    // Save the user data to local storage so we can retrieve from local storage later
-//    func saveUserData(uid: String, first: String, last: String) {
-//        let user: User = NSEntityDescription.insertNewObjectForEntityForName("User", inManagedObjectContext: self.context!) as User
-//        user.first = first
-//        user.last = last
-//        user.uid = uid
-//        
-//        var error: NSError?
-//        if( !user.managedObjectContext!.save(&error)) {
-//            println("SignUpViewController: count not save new user\(error?.localizedDescription)")
-//        }
-//    }
     
     /*
     // MARK: - Navigation

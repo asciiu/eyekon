@@ -34,11 +34,6 @@ class FBClient: NSObject {
             authData = self.appRef.authData
             userHomeURL = self.usersURL.childByAppendingPath(self.appRef.authData.uid)
             userPostsRef = userHomeURL!.childByAppendingPath("posts")
-            
-//            let fullName = self.fetchUserName(self.appRef.authData.uid)
-//            if (fullName != nil) {
-//                username = fullName!
-//            }
         }
 
         // invoked after login
@@ -48,11 +43,6 @@ class FBClient: NSObject {
                 self.authData = authData
                 self.userHomeURL = self.usersURL.childByAppendingPath(authData.uid)
                 self.userPostsRef = self.userHomeURL!.childByAppendingPath("posts")
-                
-//                let fullName = self.fetchUserName(authData.uid)
-//                if (fullName != nil) {
-//                    self.username = fullName!
-//                }
             }
         })
     }
@@ -68,38 +58,6 @@ class FBClient: NSObject {
         
         return true
     }
-    
-//    func fetchUserName(uid: String) -> String? {
-//        
-//        let entityDesc: NSEntityDescription = NSEntityDescription.entityForName("User", inManagedObjectContext: self.context!)!
-//        
-//        // create a fetch request with the entity description
-//        // this works like a SQL SELECT statement
-//        let request: NSFetchRequest = NSFetchRequest()
-//        request.entity = entityDesc
-//        
-//        // set a predicate to filter results
-//        // remove the predicate to fetch all results
-//        let pred: NSPredicate = NSPredicate(format: "(uid = %@)", argumentArray: [uid])
-//        request.predicate = pred
-//        
-//        //var match: NSManagedObject?
-//        var error: NSError?
-//        
-//        let objects: [AnyObject] = self.context!.executeFetchRequest(request, error: &error)!
-//        
-//        if objects.count != 0 {
-//            let match: User = objects[0] as User
-//            self.user = match
-//            
-//            // address and phone are the entity's attributes
-//            let first = match.valueForKey("first") as String
-//            let last = match.valueForKey("last") as String
-//            return first + " " + last
-//        }
-//        
-//        return nil
-//    }
     
     func sendData(post: Dictionary<String, String>, toUserID: String) {
         let postURL = url + "/users/" + toUserID + "/posts"

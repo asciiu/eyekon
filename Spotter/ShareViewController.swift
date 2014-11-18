@@ -14,28 +14,26 @@ class ShareViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet var tableView: UITableView!
     
     var contacts: [Contact] = [Contact]()
-    var context: NSManagedObjectContext?
+    let coreContext: CoreContext = CoreContext()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        self.context = NSManagedObjectContext()
-        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
     }
     
     override func viewWillAppear(animated: Bool) {
-    
-        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Contact", inManagedObjectContext: self.context!)
+            
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Contact", inManagedObjectContext: self.coreContext.context)
         
         // create a fetch request with the entity description
         // this works like a SQL SELECT statement
         let request: NSFetchRequest = NSFetchRequest()
         request.entity = entityDesc!
         
+        let pred: NSPredicate = NSPredicate(format:"(ownerID = %@)", EKClient.authData!.uid)!
+        request.predicate = pred
+        
         var error: NSError?
-        self.contacts = self.context!.executeFetchRequest(request, error: &error) as [Contact]
+        self.contacts = self.coreContext.context.executeFetchRequest(request, error: &error) as [Contact]
     }
     
     override func didReceiveMemoryWarning() {
@@ -50,8 +48,11 @@ class ShareViewController: UIViewController, UITableViewDataSource, UITableViewD
         let cell = self.tableView.dequeueReusableCellWithIdentifier("ContactCell", forIndexPath: indexPath) as ContactTableViewCell
         let contact = self.contacts[indexPath.row]
         
-        cell.profileImageView.image = UIImage(data: contact.profileImage)
         cell.username.text = contact.name
+        
+        if (contact.profileImage != nil) {
+            cell.profileImageView.image = UIImage(data: contact.profileImage!)
+        }
    
         return cell
     }

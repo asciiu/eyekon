@@ -29,6 +29,8 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
     var selectedUsers: [UserInfo] = [UserInfo]()
     var post: Dictionary<String, String>?
     var context: NSManagedObjectContext?
+    var coreContext: CoreContext = CoreContext()
+    var contacts: [Contact] = [Contact]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,17 +83,49 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         }, withCancelBlock: { error in
             println(error.description)
         })
+        
+        // fetch existing contacts from core data
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Contact", inManagedObjectContext: self.coreContext.context)
+        
+        // create a fetch request with the entity description
+        // this works like a SQL SELECT statement
+        let request: NSFetchRequest = NSFetchRequest()
+        request.entity = entityDesc!
+        
+        let pred: NSPredicate = NSPredicate(format:"(ownerID = %@)", EKClient.authData!.uid)!
+        request.predicate = pred
+        
+        var error: NSError?
+        self.contacts = self.coreContext.context.executeFetchRequest(request, error: &error) as [Contact]
     }
     
     override func viewWillDisappear(animated: Bool) {
         for user in self.selectedUsers {
             
-            let contact: Contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: self.context!) as Contact
+            // filter the contacts array to see if the contact was already added
+            let filter = self.contacts.filter({ (addedContact: Contact) -> Bool in
+                if (addedContact.contactID == user.id) {
+                    return true
+                }
+                return false
+            })
+            // if already added skip
+            if (filter.count > 0) {
+                continue
+            }
             
+            let contact = self.coreContext.createEntity("Contact") as Contact
+            
+            //let contact: Contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: self.context!) as Contact
+            
+            contact.ownerID = EKClient.authData!.uid
+            contact.contactID = user.id
             contact.name = user.name
-            contact.id = user.id
             contact.email = user.email
-            contact.profileImage = UIImagePNGRepresentation(user.profileImage)
+            
+            if (user.profileImage != nil) {
+                contact.profileImage = UIImagePNGRepresentation(user.profileImage)
+            }
             
             var error: NSError?
             if( !contact.managedObjectContext!.save(&error)) {

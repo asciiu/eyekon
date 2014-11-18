@@ -16,6 +16,8 @@ class FBClient: NSObject {
     
     var authData: FAuthData?
     let appRef: Firebase = Firebase(url: "https://eyekon.firebaseio.com")
+    let stories: Firebase = Firebase(url: "https://eyekon.firebaseio.com/stories")
+    let userStories: Firebase = Firebase(url: "https://eyekon.firebaseio.com/user-stories")
     var usersURL: Firebase = Firebase(url: "https://eyekon.firebaseio.com/users")
     var userHomeURL: Firebase?
     var userPostsRef: Firebase?

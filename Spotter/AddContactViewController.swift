@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class UserInfo {
     var id: String
@@ -21,16 +22,21 @@ class UserInfo {
     }
 }
 
-class CircleViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class AddContactViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet var tableView: UITableView!
     var users: [UserInfo] = [UserInfo]()
+    var selectedUsers: [UserInfo] = [UserInfo]()
     var post: Dictionary<String, String>?
+    var context: NSManagedObjectContext?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.context = NSManagedObjectContext()
+        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -59,15 +65,39 @@ class CircleViewController: UIViewController, UITableViewDataSource, UITableView
                     let image = UIImage(data: data!)
                     userInfo.profileImage = image
                 }
-
         
-                //println(user.name)
-                self.users.append(userInfo)
+                let found = self.users.filter({ (user) -> Bool in
+                    if (user.id == user.name) {
+                        return true
+                    }
+                    return false
+                })
+                
+                if (found.count == 0)  {
+                    self.users.append(userInfo)
+                }
             }
             self.tableView.reloadData()
         }, withCancelBlock: { error in
             println(error.description)
         })
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        for user in self.selectedUsers {
+            
+            let contact: Contact = NSEntityDescription.insertNewObjectForEntityForName("Contact", inManagedObjectContext: self.context!) as Contact
+            
+            contact.name = user.name
+            contact.id = user.id
+            contact.email = user.email
+            contact.profileImage = UIImagePNGRepresentation(user.profileImage)
+            
+            var error: NSError?
+            if( !contact.managedObjectContext!.save(&error)) {
+                println("could not save Contact: \(error?.localizedDescription)")
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -115,7 +145,23 @@ class CircleViewController: UIViewController, UITableViewDataSource, UITableView
     
     // MARK: - UITableViewDelegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        //let contact: Dictionary<String, String> = self.users[indexPath.row]
-        //EKClient.sendData(self.post!, toUserID: contact["id"]!)
+        
+        let cell = self.tableView.cellForRowAtIndexPath(indexPath)
+        let type = cell?.accessoryType
+        if (type == UITableViewCellAccessoryType.Checkmark) {
+            cell?.accessoryType = UITableViewCellAccessoryType.None
+            
+            // remove selected user
+            let userID = self.users[indexPath.row].id
+            for (var i = 0; i < self.selectedUsers.count; ++i) {
+                let user = self.selectedUsers[i]
+                if (user.id == userID) {
+                    self.selectedUsers.removeAtIndex(i)
+                }
+            }
+        } else {
+            self.selectedUsers.append(self.users[indexPath.row])
+            cell?.accessoryType = UITableViewCellAccessoryType.Checkmark
+        }
     }
 }

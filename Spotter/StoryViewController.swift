@@ -68,6 +68,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         self.titleTextField!.text = kStoryHashtag
         self.titleTextField!.font = UIFont.boldSystemFontOfSize(19)
         self.titleTextField!.textColor = UIColor.whiteColor()
+        self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
         let addImage = UIImage(named: "add.png")
@@ -87,10 +88,12 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
         self.view.addSubview(self.mainTool!)
-        (self.tableView as MITableView).miDelegate = self
+        (self.tableView as MITableView).miDelegate = self        
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        
         if(self.storyContent == nil) {
             // create a new story
             self.cubes.removeAllObjects()
@@ -335,12 +338,22 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             
             let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
             self.post = post
+            
+            let newStoryRef = EKClient.stories.childByAutoId()
+            newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
+            
+            let storyID = newStoryRef.name
+            let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
+            userStories.setValue(["hashtag": self.titleTextField!.text])
+            
+            //EKClient.userHomeURL!.updateChildValues(["stories:": storyID])
+            
             //EKClient.sendData(post, toUserID: EKClient.authData!.uid)
             
             //EKClient.userPosts.setValue(post)
             //self.fireRef.setValue(["name":"eyekon", "post":ref])
             
-            self.performSegueWithIdentifier("FromStoryToCircle", sender: self)
+            //self.performSegueWithIdentifier("FromStoryToCircle", sender: self)
             
         } else {
             // edit
@@ -427,7 +440,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             destination.storyController = self
             //destination.loadTestImages()
         } else if (segue.identifier == "FromStoryToCircle") {
-            let destination: CircleViewController = segue.destinationViewController as CircleViewController
+            let destination: AddContactViewController = segue.destinationViewController as AddContactViewController
             destination.setPost(self.post!)
         }
     }

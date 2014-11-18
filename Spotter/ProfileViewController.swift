@@ -72,7 +72,20 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 self.profileImageButton.setImage(image, forState: UIControlState.Normal)
             }
         })
-
+        
+        let userStories = EKClient.userStories.childByAppendingPath(EKClient.authData?.uid)
+        userStories.observeEventType(FEventType.Value, withBlock: { (data: FDataSnapshot!) -> Void in
+            if (data.value === NSNull()) {
+                return
+            }
+            let stories = data.children.allObjects as [FDataSnapshot]
+            
+            for story in stories {
+                let storyID = story.name
+                let title = story.value["hashtag"] as NSString
+                println(storyID + " " + title)
+            }
+        })
         
         EKClient.userPostsRef?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
             

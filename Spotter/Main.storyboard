@@ -119,7 +119,7 @@
         <!--Add Contact-->
         <scene sceneID="PWL-aK-xPJ">
             <objects>
-                <viewController id="mEh-0n-vKf" customClass="CircleViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="mEh-0n-vKf" customClass="AddContactViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Wv5-SI-M8c">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -135,7 +135,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="50" id="C1O-ka-hkA" customClass="ContactTableViewCell" customModule="Eyekon" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="50" id="C1O-ka-hkA" customClass="ContactTableViewCell" customModule="Eyekon" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="288" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C1O-ka-hkA" id="Uzk-Od-WXk">
@@ -176,7 +176,62 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hcB-7z-ANS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1998" y="2107"/>
+            <point key="canvasLocation" x="-1998" y="2115"/>
+        </scene>
+        <!--Share View Controller-->
+        <scene sceneID="WNE-So-ugv">
+            <objects>
+                <viewController id="CtV-CF-Mjx" customClass="ShareViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Cls-Nk-ge5">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="N3n-HM-wiW">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="59" id="fns-Hk-Fhf" customClass="ContactTableViewCell" customModule="Eyekon" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fns-Hk-Fhf" id="Nsa-3W-tJg">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Vcd-Tq-qad">
+                                                    <rect key="frame" x="8" y="4" width="50" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BxU-5N-nWf">
+                                                    <rect key="frame" x="66" y="18" width="246" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="profileImageView" destination="Vcd-Tq-qad" id="4dF-8l-dsP"/>
+                                            <outlet property="username" destination="BxU-5N-nWf" id="oJX-lO-VYG"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="CtV-CF-Mjx" id="Jeh-Bb-cby"/>
+                                    <outlet property="delegate" destination="CtV-CF-Mjx" id="p5J-wD-ZT7"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="XyD-Bq-XKJ"/>
+                    <connections>
+                        <outlet property="tableView" destination="N3n-HM-wiW" id="uut-Ak-JdJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bZe-1K-Nbg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1598" y="2115"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="MDk-0F-nEN">
@@ -358,12 +413,12 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Profile" id="vSA-Oa-JTh">
-                        <barButtonItem key="leftBarButtonItem" title="+bro" id="iyb-KG-d60">
+                        <barButtonItem key="leftBarButtonItem" title="Add Contact" id="iyb-KG-d60">
                             <connections>
                                 <segue destination="mEh-0n-vKf" kind="push" id="Owd-ui-pVm"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="STP-iy-o0a">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
                             <connections>
                                 <action selector="addStory:" destination="QHJ-c1-pPb" id="TZK-9Y-GHW"/>
                             </connections>
@@ -508,7 +563,7 @@
         <!--Story-->
         <scene sceneID="wL7-hp-1go">
             <objects>
-                <viewController id="uya-p5-87Y" customClass="StoryViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController hidesBottomBarWhenPushed="YES" id="uya-p5-87Y" customClass="StoryViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bp4-Hk-zZP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -536,7 +591,12 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <items>
-                                    <barButtonItem width="262" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
+                                    <barButtonItem title="Share" style="plain" id="sTd-7j-umc">
+                                        <connections>
+                                            <segue destination="CtV-CF-Mjx" kind="push" id="9GP-qa-qAR"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="224" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
                                     <barButtonItem systemItem="trash" id="UmB-Ox-iDQ">
                                         <connections>
                                             <action selector="deleteSelected:" destination="uya-p5-87Y" id="d4m-yI-8xe"/>

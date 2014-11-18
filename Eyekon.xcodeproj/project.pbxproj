@@ -47,7 +47,7 @@
 		6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658819E210C600C23AAC /* HPGrowingTextView.m */; };
 		6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658A19E210C600C23AAC /* HPTextViewInternal.m */; };
 		6E7CB2C519DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */; };
-		6E8AC5531A1032BE00BCA2FD /* CircleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */; };
+		6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8AC5521A1032BE00BCA2FD /* AddContactViewController.swift */; };
 		6E903D3219F48E7300A1B6B3 /* libTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D2F19F48E7300A1B6B3 /* libTool.png */; };
 		6E903D3319F48E7300A1B6B3 /* camTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D3019F48E7300A1B6B3 /* camTool.png */; };
 		6E903D3419F48E7300A1B6B3 /* txtTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D3119F48E7300A1B6B3 /* txtTool.png */; };
@@ -63,6 +63,8 @@
 		6EC03D9A19A6666A006CB2E2 /* SpotterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */; };
 		6EDAB7311A1494A40016A97B /* contact-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EDAB7301A1494A40016A97B /* contact-default.png */; };
 		6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */; };
+		6EDF03571A1B3CF4003D3721 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF03561A1B3CF4003D3721 /* Contact.swift */; };
+		6EDF035B1A1B41A7003D3721 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF035A1A1B41A7003D3721 /* ShareViewController.swift */; };
 		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
@@ -136,7 +138,7 @@
 		6E79658A19E210C600C23AAC /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		6E7CB2C319DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LXReorderableCollectionViewFlowLayout.h; path = LXReorderableCollectionViewFlowLayout/LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6E7CB2C419DA2CB000C3CEB0 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LXReorderableCollectionViewFlowLayout.m; path = LXReorderableCollectionViewFlowLayout/LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
-		6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewController.swift; sourceTree = "<group>"; };
+		6E8AC5521A1032BE00BCA2FD /* AddContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactViewController.swift; sourceTree = "<group>"; };
 		6E903D2F19F48E7300A1B6B3 /* libTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = libTool.png; sourceTree = "<group>"; };
 		6E903D3019F48E7300A1B6B3 /* camTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camTool.png; sourceTree = "<group>"; };
 		6E903D3119F48E7300A1B6B3 /* txtTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = txtTool.png; sourceTree = "<group>"; };
@@ -159,6 +161,8 @@
 		6EC03D9919A6666A006CB2E2 /* SpotterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotterTests.swift; sourceTree = "<group>"; };
 		6EDAB7301A1494A40016A97B /* contact-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "contact-default.png"; sourceTree = "<group>"; };
 		6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
+		6EDF03561A1B3CF4003D3721 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		6EDF035A1A1B41A7003D3721 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -203,7 +207,8 @@
 				6EEA62081A0EE445008E6EE2 /* RootViewController.swift */,
 				6E640A421A0F174B00058721 /* SignUpViewController.swift */,
 				6E640A441A0F1F3700058721 /* TabViewController.swift */,
-				6E8AC5521A1032BE00BCA2FD /* CircleViewController.swift */,
+				6E8AC5521A1032BE00BCA2FD /* AddContactViewController.swift */,
+				6EDF035A1A1B41A7003D3721 /* ShareViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				6E79658319E0E8C700C23AAC /* Story.swift */,
 				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
+				6EDF03561A1B3CF4003D3721 /* Contact.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -546,11 +552,13 @@
 			files = (
 				6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */,
 				6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */,
+				6EDF03571A1B3CF4003D3721 /* Contact.swift in Sources */,
 				6E903D3D19F49B1B00A1B6B3 /* AwesomeMenuItem.m in Sources */,
 				6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */,
 				6E3A3B0F19AEE3B40023499C /* ProfileViewController.swift in Sources */,
 				6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */,
-				6E8AC5531A1032BE00BCA2FD /* CircleViewController.swift in Sources */,
+				6EDF035B1A1B41A7003D3721 /* ShareViewController.swift in Sources */,
+				6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */,
 				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
 				6E97168319EF416200A30E56 /* MIView.swift in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,

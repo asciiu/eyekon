@@ -59,10 +59,15 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
                 
                 let userInfo = UserInfo(id: user.name, email: email, name: name)
                 
-                let base64Image: NSString? = user.value["profileImage"] as? NSString
+                let base64Image: [NSString]? = user.value["profileImage"] as? [NSString]
                 
                 if (base64Image != nil) {
-                    let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                    var str = ""
+                    for chunk in base64Image! {
+                        str += chunk
+                    }
+                
+                    let data = NSData(base64EncodedString: str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
                     
                     let image = UIImage(data: data!)
                     userInfo.profileImage = image

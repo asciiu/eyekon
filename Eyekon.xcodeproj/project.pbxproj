@@ -65,6 +65,7 @@
 		6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */; };
 		6EDF03571A1B3CF4003D3721 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF03561A1B3CF4003D3721 /* Contact.swift */; };
 		6EDF035B1A1B41A7003D3721 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF035A1A1B41A7003D3721 /* ShareViewController.swift */; };
+		6EDF035D1A1D8DCE003D3721 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF035C1A1D8DCE003D3721 /* User.swift */; };
 		6EE0135119C2185A00152F7E /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135019C2185A00152F7E /* StoryViewController.swift */; };
 		6EE0135319C27CF900152F7E /* PublishViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135219C27CF900152F7E /* PublishViewController.swift */; };
 		6EE0135519C52ED200152F7E /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135419C52ED200152F7E /* DraggableImageView.swift */; };
@@ -163,6 +164,7 @@
 		6EDF03541A18CEB8003D3721 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		6EDF03561A1B3CF4003D3721 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		6EDF035A1A1B41A7003D3721 /* ShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		6EDF035C1A1D8DCE003D3721 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		6EE0135019C2185A00152F7E /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		6EE0135219C27CF900152F7E /* PublishViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublishViewController.swift; sourceTree = "<group>"; };
 		6EE0135419C52ED200152F7E /* DraggableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 				6E79658319E0E8C700C23AAC /* Story.swift */,
 				6E79658519E0E8C800C23AAC /* StoryContent.swift */,
 				6EC03D8519A66669006CB2E2 /* Spotter.xcdatamodeld */,
+				6EDF035C1A1D8DCE003D3721 /* User.swift */,
 				6EDF03561A1B3CF4003D3721 /* Contact.swift */,
 			);
 			name = Models;
@@ -552,6 +555,7 @@
 			files = (
 				6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */,
 				6E2423CB19E359D500966445 /* SMCalloutView.m in Sources */,
+				6EDF035D1A1D8DCE003D3721 /* User.swift in Sources */,
 				6EDF03571A1B3CF4003D3721 /* Contact.swift in Sources */,
 				6E903D3D19F49B1B00A1B6B3 /* AwesomeMenuItem.m in Sources */,
 				6E1CE30819B6ADED0085FF19 /* CapturePreviewController.swift in Sources */,

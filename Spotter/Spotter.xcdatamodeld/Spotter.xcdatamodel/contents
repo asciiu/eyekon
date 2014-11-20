@@ -16,9 +16,16 @@
         <attribute name="data" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="story" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Story" inverseName="content" inverseEntity="Story" syncable="YES"/>
     </entity>
+    <entity name="User" representedClassName="Eyekon.User" syncable="YES">
+        <attribute name="first" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="last" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profileImage" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Story" positionX="-488" positionY="173" width="128" height="90"/>
         <element name="StoryContent" positionX="-459" positionY="45" width="128" height="73"/>
         <element name="Contact" positionX="-477" positionY="135" width="128" height="118"/>
+        <element name="User" positionX="-468" positionY="144" width="128" height="103"/>
     </elements>
 </model>

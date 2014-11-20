@@ -11,9 +11,9 @@ import CoreData
 
 class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
 
-    var context: NSManagedObjectContext?
     var stories: [Story] = [Story]()
     var selectedStory: Story?
+    let coreContext: CoreContext = CoreContext()
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var usernameLabel: UILabel!
@@ -26,10 +26,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 
         self.tableView.allowsMultipleSelectionDuringEditing = false
         
-        self.context = NSManagedObjectContext()
-        let appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        self.context!.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator
-        
         self.profileImageButton.layer.cornerRadius = self.profileImageButton.layer.frame.size.width/2
         self.profileImageButton.clipsToBounds = true
         self.profileImageButton.layer.borderWidth = 1.0
@@ -40,6 +36,62 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         self.usernameLabel.text = ""
         
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("User", inManagedObjectContext: self.coreContext.context)
+        
+        // create a fetch request with the entity description
+        // this works like a SQL SELECT statement
+        let request: NSFetchRequest = NSFetchRequest()
+        request.entity = entityDesc!
+        
+        let pred: NSPredicate = NSPredicate(format:"(uid = %@)", EKClient.authData!.uid)!
+        request.predicate = pred
+        
+        var error: NSError?
+        let users = self.coreContext.context.executeFetchRequest(request, error: &error) as [User]
+        
+        if (users.count == 0) {
+            EKClient.userHomeURL?.observeSingleEventOfType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
+                if (data.value === NSNull()) {
+                    return
+                }
+                
+                let user: User = self.coreContext.createEntity("User") as User
+                
+                user.uid = EKClient.authData!.uid
+                user.first = data.value["first"] as NSString
+                user.last  = data.value["last"] as NSString
+                self.usernameLabel.text = user.first + " " + user.last
+                
+                let base64Image: [NSString]? = data.value["profileImage"] as? [NSString]
+                
+                if (base64Image != nil) {
+                    var str = ""
+                    for chunk in base64Image! {
+                        str += chunk
+                    }
+                    
+                    let data = NSData(base64EncodedString: str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                   
+                    user.profileImage = data
+                    
+                    let image = UIImage(data: data!)
+                    self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+                }
+                
+                var error: NSError?
+                if( !user.managedObjectContext!.save(&error)) {
+                    println("ProfileViewControler: could not save User: \(error?.localizedDescription)")
+                }
+            })
+        } else {
+            let user = users[0]
+            self.usernameLabel.text = user.first + " " + user.last
+            
+            if (user.profileImage != nil) {
+                let image = UIImage(data: user.profileImage!)
+                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+            }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -54,29 +106,8 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 //        let postURL = url + "/users/" + EKClient.authData!.uid + "/posts"
 //        let ref = Firebase(url: postURL)
 //
-        EKClient.userHomeURL?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
-            if (data.value === NSNull()) {
-                return
-            }
-            
-            let first: NSString = data.value["first"] as NSString
-            let last: NSString = data.value["last"] as NSString
-            self.usernameLabel.text = first + " " + last
-            
-            let base64Image: [NSString]? = data.value["profileImage"] as? [NSString]
-            
-            if (base64Image != nil) {
-                var str = ""
-                for chunk in base64Image! {
-                    str += chunk
-                }
-                
-                let data = NSData(base64EncodedString: str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-                
-                let image = UIImage(data: data!)
-                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
-            }
-        })
+        
+
         
         let userStories = EKClient.userStories.childByAppendingPath(EKClient.authData?.uid)
         userStories.observeEventType(FEventType.Value, withBlock: { (data: FDataSnapshot!) -> Void in
@@ -136,7 +167,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func loadManagedCollection() {
         
-        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Story", inManagedObjectContext: self.context!)
+        let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("Story", inManagedObjectContext: self.coreContext.context)
         
         // create a fetch request with the entity description
         // this works like a SQL SELECT statement
@@ -145,7 +176,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         
         var error: NSError?
         
-        self.stories = self.context!.executeFetchRequest(request, error: &error) as [Story]
+        self.stories = self.coreContext.context.executeFetchRequest(request, error: &error) as [Story]
     }
     
     // MARK: - Actions
@@ -239,10 +270,10 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         let story: Story = self.stories[indexPath.row]
         
         self.stories.removeAtIndex(indexPath.row)
-        self.context!.deleteObject(story)
+        self.coreContext.context.deleteObject(story)
         
         var error: NSError?
-        if (!self.context!.save(&error)) {
+        if (!self.coreContext.context.save(&error)) {
                 println("CollectionViewController: could not remove item from store")
         }
         

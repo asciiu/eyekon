@@ -14,6 +14,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     var stories: [Story] = [Story]()
     var selectedStory: Story?
     let coreContext: CoreContext = CoreContext()
+    var user: User?
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var usernameLabel: UILabel!
@@ -81,6 +82,8 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 var error: NSError?
                 if( !user.managedObjectContext!.save(&error)) {
                     println("ProfileViewControler: could not save User: \(error?.localizedDescription)")
+                } else {
+                    self.user = user
                 }
             })
         } else {
@@ -91,6 +94,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 let image = UIImage(data: user.profileImage!)
                 self.profileImageButton.setImage(image, forState: UIControlState.Normal)
             }
+            self.user = user
         }
     }
     
@@ -214,6 +218,13 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         
         // convert profile image into a base64 string 
         let data: NSData = UIImagePNGRepresentation(croppedImage)
+        self.user!.profileImage = data
+        
+        var error: NSError?
+        if( !self.user!.managedObjectContext!.save(&error)) {
+            println("ProfileViewControler: could not save profileImage: \(error?.localizedDescription)")
+        }
+        
         let base64String = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
         
         //let byteSize = base64String.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)

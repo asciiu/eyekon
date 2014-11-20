@@ -32,3 +32,25 @@ class CoreContext {
         return NSEntityDescription.insertNewObjectForEntityForName(entity, inManagedObjectContext: self.context)
     }
 }
+
+func divideString(data: NSString) -> [String] {
+    
+    var offset = 0
+    let chunkSize = 10 * 1024 * 1024
+    let length = data.length
+    
+    var chunks: [String] = []
+    
+    do {
+        // get the chunk location
+        let thisChunkSize = length - offset > chunkSize ? chunkSize : length - offset
+    
+        let string = data.substringWithRange(NSRange(location: offset, length: thisChunkSize))
+        chunks.append(string)
+        
+        // update the offset
+        offset += thisChunkSize
+    } while (offset < length)
+    
+    return chunks
+}

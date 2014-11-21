@@ -11,6 +11,8 @@ import CoreData
 
 class Story: NSManagedObject {
 
+    @NSManaged var uid: String
+    @NSManaged var storyID: String
     @NSManaged var summary: String
     @NSManaged var title: String
     @NSManaged var content: StoryContent

@@ -19,6 +19,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var tableView: UITableView!
     @IBOutlet var deleteBtn: UIBarButtonItem!
+    @IBOutlet var shareBtn: UIBarButtonItem!
     
     var cellSpacing: CGFloat = 3.0
 
@@ -42,6 +43,8 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     
     var post: Dictionary<String, String>?
     var keyboardFrame: CGRect = CGRectZero
+    
+    var storyInfo: (String, String)?
     
     func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
         
@@ -101,6 +104,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             self.tableView.userInteractionEnabled = true
             
             let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
+            story.uid = EKClient.authData!.uid
             story.title = kStoryHashtag
             story.summary = "Summary"
             
@@ -112,8 +116,12 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             self.storyContent = content
             self.showToolbar()
             //self.masterTool.center = self.view.center
+            self.shareBtn.enabled = false
 
         } else {
+            let story = self.storyContent!.story
+            self.storyInfo = (story.storyID, story.title)
+            self.shareBtn.enabled = true
             // hide toolbar
             //self.toolbar.frame.origin.y = self.view.frame.size.height
             //self.mainTool!.userInteractionEnabled = false
@@ -132,9 +140,9 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 0)
         
         self.titleTextField!.userInteractionEnabled = self.editable
-        if (self.editable) {
-            self.showToolbar()
-        } else {
+        self.showToolbar()
+
+        if (!self.editable) {
             self.mainTool!.userInteractionEnabled = false
             self.mainTool!.alpha = 0.0
         }
@@ -324,10 +332,13 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
                 view?.highlighted = false
             }
             
+            let newStoryRef = EKClient.stories.childByAutoId()
+            let storyID = newStoryRef.name
             let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
             self.storyContent!.data = data
             self.storyContent!.story.title = self.titleTextField!.text
             self.storyContent!.story.summary = "Empty"
+            self.storyContent!.story.storyID = storyID
             
             var error: NSError?
             if( !self.storyContent!.managedObjectContext!.save(&error)) {
@@ -339,13 +350,13 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
             self.post = post
             
-            let newStoryRef = EKClient.stories.childByAutoId()
             newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
             
-            let storyID = newStoryRef.name
             let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
             userStories.setValue(["hashtag": self.titleTextField!.text])
             
+            self.storyInfo = (storyID, self.titleTextField!.text)
+            self.shareBtn.enabled = true
             //EKClient.userHomeURL!.updateChildValues(["stories:": storyID])
             
             //EKClient.sendData(post, toUserID: EKClient.authData!.uid)
@@ -442,6 +453,9 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         } else if (segue.identifier == "FromStoryToCircle") {
             let destination: AddContactViewController = segue.destinationViewController as AddContactViewController
             destination.setPost(self.post!)
+        } else if (segue.identifier == "FromStoryToShare") {
+            let destination: ShareViewController = segue.destinationViewController as ShareViewController
+            destination.storyInfo = self.storyInfo
         }
     }
     

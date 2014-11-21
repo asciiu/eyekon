@@ -8,8 +8,10 @@
         <attribute name="profileImage" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <entity name="Story" representedClassName="Eyekon.Story" syncable="YES">
+        <attribute name="storyID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="content" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoryContent" inverseName="story" inverseEntity="StoryContent" syncable="YES"/>
     </entity>
     <entity name="StoryContent" representedClassName="Eyekon.StoryContent" syncable="YES">
@@ -23,9 +25,9 @@
         <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Story" positionX="-488" positionY="173" width="128" height="90"/>
-        <element name="StoryContent" positionX="-459" positionY="45" width="128" height="73"/>
         <element name="Contact" positionX="-477" positionY="135" width="128" height="118"/>
+        <element name="Story" positionX="-488" positionY="173" width="128" height="120"/>
+        <element name="StoryContent" positionX="-459" positionY="45" width="128" height="73"/>
         <element name="User" positionX="-468" positionY="144" width="128" height="103"/>
     </elements>
 </model>

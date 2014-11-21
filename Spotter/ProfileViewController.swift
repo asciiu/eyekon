@@ -110,9 +110,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 //        let postURL = url + "/users/" + EKClient.authData!.uid + "/posts"
 //        let ref = Firebase(url: postURL)
 //
-        
-
-        
         let userStories = EKClient.userStories.childByAppendingPath(EKClient.authData?.uid)
         userStories.observeEventType(FEventType.Value, withBlock: { (data: FDataSnapshot!) -> Void in
             if (data.value === NSNull()) {
@@ -123,7 +120,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
             for story in stories {
                 let storyID = story.name
                 let title = story.value["hashtag"] as NSString
-                println(storyID + " " + title)
+                //println(storyID + " " + title)
             }
         })
         
@@ -178,8 +175,10 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         let request: NSFetchRequest = NSFetchRequest()
         request.entity = entityDesc!
         
-        var error: NSError?
+        let pred: NSPredicate = NSPredicate(format:"(uid = %@)", EKClient.authData!.uid)!
+        request.predicate = pred
         
+        var error: NSError?
         self.stories = self.coreContext.context.executeFetchRequest(request, error: &error) as [Story]
     }
     
@@ -227,22 +226,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         
         let base64String = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
         
-        //let byteSize = base64String.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)
-        //let splits = byteSize / 10000000
-    
-        //let length = byteSize
-        //let chunkSize = 1024 * 1024 * 10
-        //var offset = 0
-        
         let chunks: [NSString] = divideString(base64String)
-        
-        // if the image is greater than 10mb we need to break it up!
-        //if (byteSize > 10000000) {
-        //    println(length)
-         //   println(byteSize)
-        //} else {
-        //    println("just right")
-        //}
         
         // send the profile image to the server
         let serverRef = EKClient.userHomeURL?.childByAppendingPath("profileImage")

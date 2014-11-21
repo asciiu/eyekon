@@ -14,7 +14,10 @@ class ShareViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet var tableView: UITableView!
     
     var contacts: [Contact] = [Contact]()
+    var selectedContacts: [Contact] = []
     let coreContext: CoreContext = CoreContext()
+    
+    var storyInfo: (String, String)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +37,21 @@ class ShareViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         var error: NSError?
         self.contacts = self.coreContext.context.executeFetchRequest(request, error: &error) as [Contact]
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        
+        for contact in self.selectedContacts {
+            let username = contact.name
+            let userID = contact.contactID
+            
+            if (self.storyInfo != nil) {
+                let (storyID, hashtag) = self.storyInfo!
+                
+                let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(userID).childByAppendingPath(storyID)
+                userStories.setValue(["hashtag": hashtag])
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -59,6 +77,27 @@ class ShareViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.contacts.count
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let cell = self.tableView.cellForRowAtIndexPath(indexPath)
+        let type = cell?.accessoryType
+        if (type == UITableViewCellAccessoryType.Checkmark) {
+            cell?.accessoryType = UITableViewCellAccessoryType.None
+            
+            // remove selected user
+            let userID = self.contacts[indexPath.row].contactID
+            for (var i = 0; i < self.selectedContacts.count; ++i) {
+                let user = self.selectedContacts[i]
+                if (user.contactID == userID) {
+                    self.selectedContacts.removeAtIndex(i)
+                }
+            }
+        } else {
+            self.selectedContacts.append(self.contacts[indexPath.row])
+            cell?.accessoryType = UITableViewCellAccessoryType.Checkmark
+        }
     }
     
     /*

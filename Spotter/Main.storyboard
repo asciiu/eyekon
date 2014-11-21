@@ -95,22 +95,36 @@
         <!--Circles-->
         <scene sceneID="DCq-wP-ZXt">
             <objects>
-                <viewController title="Circles" id="NO7-p8-hqc" sceneMemberID="viewController">
+                <viewController title="Circles" id="NO7-p8-hqc" customClass="SharedStoriesViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WDo-1q-srw">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Circles" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="yYv-1U-Ej5">
-                                <rect key="frame" x="134" y="273" width="53" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="65M-Wq-7Ni">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CollectionCell" id="Kzx-7N-rQQ">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kzx-7N-rQQ" id="i5S-NA-uKt">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="NO7-p8-hqc" id="yCN-9I-Y5J"/>
+                                    <outlet property="delegate" destination="NO7-p8-hqc" id="mNd-px-zSY"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Circles" id="16C-Xj-hem"/>
+                    <connections>
+                        <outlet property="tableView" destination="65M-Wq-7Ni" id="Q9x-kz-MMg"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rGp-9i-ikn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -593,7 +607,7 @@
                                 <items>
                                     <barButtonItem title="Share" style="plain" id="sTd-7j-umc">
                                         <connections>
-                                            <segue destination="CtV-CF-Mjx" kind="push" id="9GP-qa-qAR"/>
+                                            <segue destination="CtV-CF-Mjx" kind="push" identifier="FromStoryToShare" id="9GP-qa-qAR"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem width="224" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
@@ -617,6 +631,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="deleteBtn" destination="UmB-Ox-iDQ" id="JkY-Dc-ff3"/>
+                        <outlet property="shareBtn" destination="sTd-7j-umc" id="WuS-gg-alC"/>
                         <outlet property="tableView" destination="57H-Z9-WSP" id="MGM-Zk-h53"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
                         <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
@@ -688,6 +703,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="Stz-xy-uLe"/>
-        <segue reference="Owd-ui-pVm"/>
+        <segue reference="7JB-Mg-Amt"/>
     </inferredMetricsTieBreakers>
 </document>

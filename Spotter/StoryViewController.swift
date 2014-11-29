@@ -12,16 +12,16 @@ import CoreData
 let kStoryHashtag = "#untitled"
 
 
-class StoryViewController: UIViewController, UITableViewDataSource, MITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, SPUserResizableViewDelegate, MIDelegate {
+class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
-    //@IBOutlet var collectionView: UICollectionView!
     @IBOutlet var toolbar: UIToolbar!
-    @IBOutlet var tableView: UITableView!
     @IBOutlet var deleteBtn: UIBarButtonItem!
     @IBOutlet var shareBtn: UIBarButtonItem!
+    @IBOutlet var collectionView: UICollectionView!
     
-    var cellSpacing: CGFloat = 3.0
+    let cellSpacing: CGFloat = 3.0
+    let sideInset: CGFloat = 6.0
 
     // ordered collection of UIViews
     var cubes: NSMutableArray = NSMutableArray()
@@ -36,6 +36,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     // index of selected cube/UIView
     var currentIndexPath: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
     var selectedIndexPath: NSIndexPath?
+    var selectedCell: UICollectionViewCell?
     
     // main tool to add new content
     var mainTool: AwesomeMenu?
@@ -45,6 +46,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     var keyboardFrame: CGRect = CGRectZero
     
     var storyInfo: (String, String)?
+    var collectionViewFrame: CGRect = CGRectZero
     
     func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
         
@@ -87,21 +89,20 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
         self.mainTool!.delegate = self
         self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2,
-                                                self.view.frame.size.height - addImage!.size.height/2)
+                                            self.view.frame.size.height - addImage!.size.height/2)
         
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
         self.view.addSubview(self.mainTool!)
-        (self.tableView as MITableView).miDelegate = self        
+        
+        self.collectionViewFrame = self.collectionView.frame        
     }
     
     override func viewWillAppear(animated: Bool) {
-        
         
         if(self.storyContent == nil) {
             // create a new story
             self.cubes.removeAllObjects()
             self.editable = true
-            self.tableView.userInteractionEnabled = true
             
             let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
             story.uid = EKClient.authData!.uid
@@ -117,6 +118,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             self.showToolbar()
             //self.masterTool.center = self.view.center
             self.shareBtn.enabled = false
+            //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
 
         } else {
             let story = self.storyContent!.story
@@ -137,7 +139,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2, 300)
         
         // defaults as the end of the data source
-        self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 0)
+        self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 1)
         
         self.titleTextField!.userInteractionEnabled = self.editable
         self.showToolbar()
@@ -148,7 +150,6 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         }
        
         self.titleTextField!.text = self.storyContent!.story.title
-        self.tableView.reloadData()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -169,7 +170,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     // MARK: - Custom stuff
     
     func computeRects(images: [UIImage]) -> [CGRect] {
-        let frameWidth = self.tableView.frame.width
+        let frameWidth = self.collectionView.frame.width
         let imageCount = images.count
         let totalWidth = frameWidth - (self.cellSpacing * (CGFloat(images.count)-1))
         
@@ -217,54 +218,41 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
 //    }
     
     func addImages(images: [UIImage]) {
-        var imageGroups: [[UIImage]] = [[UIImage]]()
-        var imageGroup: [UIImage] = [UIImage]()
-        var miView: MIView = MIView(frame: CGRectMake(0, 0, self.tableView.frame.width, 10))
-        miView.cellSpacing = self.cellSpacing
-        
+        var imageGroups: [[UIImage]] = [[]]
+        var imageGroup: [UIImage] = []
+
         for (var i = 0; i < images.count; ++i) {
-            let imageView = UIImageView(image: images[i])
-            imageView.contentMode = UIViewContentMode.ScaleAspectFill
-            imageView.clipsToBounds = true
+            imageGroup.append(images[i])
             
-            miView.addImageView(imageView)
-            if(miView.subviewCount() == 3) {
-                self.cubes.addObject(miView)
-                miView = MIView(frame: CGRectMake(0, 0, self.tableView.frame.width, 10))
-                miView.cellSpacing = self.cellSpacing
-
-                self.tableView.insertRowsAtIndexPaths([self.currentIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-                self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
-
-            
+            if (imageGroup.count == 3) {
+                imageGroups.append(imageGroup)
+                imageGroup = []
             } else if (i == images.count - 1) {
-                self.cubes.addObject(miView)
-                
-                self.tableView.insertRowsAtIndexPaths([self.currentIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                imageGroups.append(imageGroup)
+            }
+        }
+        
+        let frameWidth = self.collectionView.frame.size.width
+        for (var i = 0; i < imageGroups.count; ++i) {
+            let group = imageGroups[i]
+            let frameContentWidth = (frameWidth - (self.sideInset * 2) - (CGFloat(group.count-1) * self.cellSpacing)) / CGFloat(group.count)
+            //let rects = self.computeRects(group)
+            
+            for (var r = 0; r < group.count; ++r) {
+                let frame = CGRectMake(0, 0, frameContentWidth, frameContentWidth)
+                let imageView = UIImageView(frame: frame)
+                imageView.image = group[r]
+                imageView.contentMode = UIViewContentMode.ScaleAspectFill
+                self.cubes.insertObject(imageView, atIndex: self.currentIndexPath.row)
+
+                self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
                 self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
             }
         }
     }
     
     // edit selected text
-    func doubleTab(indexPath: NSIndexPath) {
-        if (!self.editable) {
-            return
-        }
-        
-        self.selectedIndexPath = indexPath
-        
-        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-        if (view is UITextView) {
-            let textView: UITextView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UITextView
-            
-            textView.inputAccessoryView = nil
-            textView.userInteractionEnabled = true
-            textView.reloadInputViews()
-            
-            textView.becomeFirstResponder()
-        }
-    }
+
     
     func setStoryContent(content: StoryContent) {
         self.storyContent = content
@@ -285,11 +273,11 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
                 
             }, completion: { (value: Bool) in
                 self.mainTool!.userInteractionEnabled = true
-                let tableSize = self.tableView.frame.size
-                let tableOrigin = self.tableView.frame.origin
+                let tableSize = self.collectionView.frame.size
+                let tableOrigin = self.collectionView.frame.origin
                 let toolbarSize = self.toolbar.frame.size
                 let viewSize = self.view.frame.size
-                self.tableView.frame = CGRectMake(tableOrigin.x, tableOrigin.y, tableSize.width, viewSize.height - toolbarSize.height)
+                self.collectionView.frame = CGRectMake(tableOrigin.x, tableOrigin.y, tableSize.width, viewSize.height - toolbarSize.height)
         })
     }
     
@@ -299,20 +287,23 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         if (self.selectedIndexPath == nil) {
             return
         }
+        
+        // need to remove view from the selected cell otherwise reusable cells will still
+        // contain this view
         let view: UIView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
         view.removeFromSuperview()
         
-        self.cubes.removeObjectAtIndex(self.selectedIndexPath!.row)
-        self.tableView.deleteRowsAtIndexPaths([self.selectedIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+        self.cubes.removeObject(view)
+        self.collectionView.deleteItemsAtIndexPaths([self.selectedIndexPath!])
         
         // move current index path to previous index item
         if (self.currentIndexPath.row > 0) {
             self.currentIndexPath.row.advancedBy(-1)
         }
-        
+
+        self.selectedCell = nil
         self.selectedIndexPath = nil
         self.deleteBtn.enabled = false
-        self.tableView.reloadData()
     }
     
     @IBAction func returnToPrevious(sender: AnyObject) {
@@ -337,7 +328,6 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
             self.storyContent!.data = data
             self.storyContent!.story.title = self.titleTextField!.text
-            self.storyContent!.story.summary = "Empty"
             self.storyContent!.story.storyID = storyID
             
             var error: NSError?
@@ -369,7 +359,7 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         } else {
             // edit
             self.editable = true
-            self.tableView.userInteractionEnabled = true
+            self.collectionView.userInteractionEnabled = true
             self.upperRightButton.title = "Save"
             
             self.titleTextField!.userInteractionEnabled = true
@@ -377,40 +367,38 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
             for (var i = 0; i < self.cubes.count; ++i) {
                 let view = self.cubes.objectAtIndex(i) as UIView
                 
-                if (view is MIView) {
-                    (view as MIView).enableResize()
-                } else {
-                    // this ensures that text cubes are draggable when touched
-                    view.userInteractionEnabled = false
-                }
+                
+                // this ensures that text cubes are draggable when touched
+                view.userInteractionEnabled = false
+            
             }
             self.showToolbar()
         }
     }
 
     @IBAction func addText(sender: AnyObject) {
-//        self.editingText = false
-//        self.keyboardToolBar!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-//        self.keyboardToolBarTextView!.frame = CGRectMake(0, 0, self.view.frame.width, 35)
-//        self.keyboardToolBarTextView!.text = ""
-//        self.textView!.text = ""
-//        
-//        self.textView!.becomeFirstResponder()
-//        self.keyboardToolBarTextView!.text = ""
-//        self.keyboardToolBarTextView!.becomeFirstResponder()
-        
-        let frameWidth = self.tableView.frame.size.width
-        let textView = UITextView(frame: CGRectMake(0, 0, frameWidth, 50))
+        let frameWidth = self.collectionView.frame.size.width - self.sideInset * 2
+        let textView = UITextView(frame: CGRectMake(0, 0, frameWidth, 35))
         textView.font = UIFont.systemFontOfSize(16)
         textView.delegate = self
         textView.returnKeyType = UIReturnKeyType.Done
         textView.inputAccessoryView = nil
         textView.userInteractionEnabled = true
-        textView.becomeFirstResponder()
+        textView.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+        textView.layer.borderWidth = 1.0
         
+        if (self.selectedCell != nil) {
+            // remove the border around the existing selection
+            self.selectedCell!.layer.borderWidth = 0.0
+        }
+
         self.cubes.insertObject(textView, atIndex: self.currentIndexPath.row)
-        self.tableView.insertRowsAtIndexPaths([self.currentIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+        self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+        
+        self.deleteBtn.enabled = true
+        self.selectedIndexPath = self.currentIndexPath
         self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
+        textView.becomeFirstResponder()
     }
     
     @IBAction func addPhotoFromCamera(sender: AnyObject) {
@@ -475,43 +463,27 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
         var keyboardEndFrame: CGRect = CGRectZero
         (userInfo[UIKeyboardFrameEndUserInfoKey]! as NSValue).getValue(&keyboardEndFrame)
         
-        let keyboardFrame: CGRect = self.view.convertRect(keyboardEndFrame, toView: nil)
-        self.keyboardFrame = keyboardFrame
-        
-        let y = keyboardFrame.size.height * (up ? -1: 1)
-        
-        UIView.animateWithDuration(0.3, animations: {
-            self.tableView.frame = CGRectOffset(self.tableView.frame, 0, y)
-        })
-        
-//    UIViewAnimationCurve animationCurve;
-//    [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey]
-//    getValue:&animationCurve];
-//    
-//    NSTimeInterval animationDuration;
-//    [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey]
-//    getValue:&animationDuration];
-//    
-//    // Get the correct keyboard size to we slide the right amount.
-//    [UIView beginAnimations:nil context:nil];
-//    [UIView setAnimationBeginsFromCurrentState:YES];
-//    [UIView setAnimationDuration:animationDuration];
-//    [UIView setAnimationCurve:animationCurve];
-//    
-//    CGRect keyboardFrame = [self.view convertRect:keyboardEndFrame toView:nil];
-//    int y = keyboardFrame.size.height * (up ? -1 : 1);
-//    self.view.frame = CGRectOffset(self.view.frame, 0, y);
-//    
-//    [UIView commitAnimations];
+        if (up) {
+            self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y, self.collectionViewFrame.size.width, self.collectionViewFrame.size.height - keyboardEndFrame.size.height)
+        } else {
+            self.collectionView.frame = self.collectionViewFrame
+        }
+       
+        //let keyboardFrame: CGRect = self.view.convertRect(keyboardEndFrame, toView: nil)
+        //self.keyboardFrame = keyboardFrame
+        //let inset = self.collectionView.contentInset
+        //let height = up ? keyboardEndFrame.size.height: 0
+        //let frame = self.collectionView.bounds
+        //self.collectionView.contentInset = UIEdgeInsets(top: inset.top, left: inset.left, bottom: height, right: inset.right)
     }
     
     // MARK: UITextFieldDelegate
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-        //self.calloutView.dismissCalloutAnimated(false)
-        return true
-    }
-    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        if (textField.tag == 1) {
+            self.storyContent?.story.summary = textField.text
+        }
+        
         textField.resignFirstResponder()
         return false
     }
@@ -520,95 +492,153 @@ class StoryViewController: UIViewController, UITableViewDataSource, MITableViewD
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         
         if(text == "\n") {
-            //textView.userInteractionEnabled = false
+            textView.userInteractionEnabled = false
             textView.resignFirstResponder()
             //self.displayEditTools(self.currentIndexPath)
         } else {
-            let frameWidth = self.tableView.frame.size.width
+            let frameWidth = textView.frame.size.width
             let cellHeight = textView.frame.size.height
             
             textView.sizeToFit()
             textView.frame.size.width = frameWidth
             
-            //let rect = self.tableView.rectForRowAtIndexPath(self.selectedIndexPath!)
-            //let tableViewFrame = self.view.convertRect(self.tableView.frame, toView: nil)
-            //let textViewBottom = tableViewFrame.origin.y + tableViewFrame.size.height
-//            let textViewFrame = self.view.convertRect(rect, toView: nil)
-//            let bottomEdge = textViewFrame.origin.y + textViewFrame.size.height
-//            println("textview: \(bottomEdge) \(self.keyboardFrame.origin.y)")
-//            
-//            if (bottomEdge > self.keyboardFrame.origin.y) {
-//                self.tableView.frame = CGRectOffset(self.tableView.frame, 0, -keyboardFrame.size.height)
-//            }
+            if (textView.frame.size.height != cellHeight) {
+                self.collectionView.collectionViewLayout.invalidateLayout()
+            }
         }
         return true
     }
     
     func resized(indexPath: NSIndexPath) {
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
+        //self.tableView.beginUpdates()
+        //self.tableView.endUpdates()
     }
  
-    // MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    // MARK: - LXReorderableCollectionViewFlowLayout
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 3.0
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 3.0
+    }
+    
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("TableCell") as UITableViewCell
-        let cube: AnyObject = self.cubes.objectAtIndex(indexPath.row)
-        var height: CGFloat = 0
-        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        let view = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
+        self.cubes.removeObject(view)
+        self.cubes.insertObject(view, atIndex: toIndexPath.row)
+    }
+    
+    // MARK: - UICollectionViewDataSource
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        if (view is MIView) {
-            let mi = view as MIView
-            mi.delegate = self
-            mi.indexPath = indexPath
+        if (indexPath.section == 0) {
+            let cell: StoryTitleCollectionViewCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
+            cell.textField.text = self.storyContent?.story.summary
+            cell.textField.tag = 1
+            cell.textField.delegate = self
             
-            if (self.editable) {
-                mi.enableResize()
+            return cell
+        } else {
+            let cell: ResizeableCollectionCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
+            
+            let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+            view.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleTopMargin | UIViewAutoresizing.FlexibleBottomMargin
+            
+            if (view is UITextView) {
+                (view as UITextView).delegate = self
             }
-        } else if (view is UITextView) {
-            (view as UITextView).delegate = self
+            
+            cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
+            cell.contentView.addSubview(view)
+            cell.contentView.autoresizesSubviews = false
+            
+            return cell
         }
-        
-        cell.contentView.addSubview(view)
-        
-        return cell
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.cubes.count
-    }
-    
-    // MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
-        return view.frame.size.height + self.cellSpacing
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
+        if (section == 0) {
+            return 1
+        } else if (section == 1){
+            return self.cubes.count
+        } else {
+            return 0
+        }
+    }
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 2
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if (!self.editable || self.selectedIndexPath === indexPath) {
             return
         }
         
-        if (self.selectedIndexPath != nil) {
+        if (self.selectedCell != nil) {
             // remove the border around the existing selection
-            let previousView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
-            previousView.layer.borderWidth = 0.0
+            self.selectedCell!.layer.borderWidth = 0.0
         }
         
-        // add a blue border around the new selection
+        let cell: UICollectionViewCell? = self.collectionView.cellForItemAtIndexPath(indexPath)
         let view = self.cubes.objectAtIndex(indexPath.row) as UIView
         
-        if (view is MIView) {
-            view.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
-            view.layer.borderWidth = 3.0
+        // add a blue border around the new selection
+        if (view is UIImageView) {
+            cell!.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+            cell!.layer.borderWidth = 3.0
+            //(view as MIView).enableResize()
         } else if (view is UITextView) {
-            view.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
-            view.layer.borderWidth = 1.0
+            cell!.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+            cell!.layer.borderWidth = 1.0
         }
         
+        self.selectedCell = cell
         self.deleteBtn.enabled = true
         self.currentIndexPath = indexPath
         self.selectedIndexPath = indexPath
+    }
+    
+    // MARK: - UICollectionViewDelegateFlowLayout
+    func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!, doubleTapIndexPath indexPath: NSIndexPath!) {
+        if (!self.editable) {
+            return
+        }
+        
+        self.selectedIndexPath = indexPath
+        
+        let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+        if (view is UITextView) {
+            let textView: UITextView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UITextView
+            
+            textView.inputAccessoryView = nil
+            textView.userInteractionEnabled = true
+            textView.reloadInputViews()
+            
+            textView.becomeFirstResponder()
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        if (indexPath.section == 1) {
+            let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
+            return view.frame.size
+        } else {
+            let size = self.collectionView.frame.size
+            return CGSizeMake(size.width, size.height/3)
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        
+        if (section == 1) {
+            return UIEdgeInsets(top: self.sideInset, left: self.sideInset, bottom: 0, right: self.sideInset)
+        }
+        
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }

@@ -582,24 +582,56 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="57H-Z9-WSP" customClass="MITableView" customModule="Eyekon" customModuleProvider="target">
-                                <rect key="frame" x="16" y="0.0" width="288" height="568"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="FtJ-5O-DFC">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TableCell" id="GbG-ew-Mgn">
-                                        <rect key="frame" x="0.0" y="0.0" width="288" height="44"/>
+                                <color key="backgroundColor" red="0.99023797769999999" green="0.99385388210000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <collectionViewLayout key="collectionViewLayout" id="kJD-OH-Vub" customClass="LXReorderableCollectionViewFlowLayout"/>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TitleCell" id="Ah7-F8-eKv" customClass="StoryTitleCollectionViewCell" customModule="Eyekon" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GbG-ew-Mgn" id="WtN-2t-1oE">
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="286" height="243"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="lvn-Sn-oen">
+                                                    <rect key="frame" x="0.0" y="0.0" width="286" height="243"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                </imageView>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Title" textAlignment="center" minimumFontSize="17" id="0Tp-qh-qX3">
+                                                    <rect key="frame" x="8" y="136" width="270" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="34"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <size key="customSize" width="286" height="243"/>
+                                        <connections>
+                                            <outlet property="imageView" destination="lvn-Sn-oen" id="MbY-Qi-6Tf"/>
+                                            <outlet property="textField" destination="0Tp-qh-qX3" id="IYP-pJ-RK8"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StoryCell" id="PCr-0h-CB4" customClass="ResizeableCollectionCell" customModule="Eyekon" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
                                 <connections>
-                                    <outlet property="dataSource" destination="uya-p5-87Y" id="EqE-YM-woJ"/>
-                                    <outlet property="delegate" destination="uya-p5-87Y" id="WdZ-na-8HP"/>
+                                    <outlet property="dataSource" destination="uya-p5-87Y" id="WGN-Ch-Dfp"/>
+                                    <outlet property="delegate" destination="uya-p5-87Y" id="hNk-tj-nKp"/>
                                 </connections>
-                            </tableView>
+                            </collectionView>
                             <toolbar opaque="NO" contentMode="scaleToFill" barStyle="black" id="53a-Fm-bFs">
                                 <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -630,9 +662,9 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="collectionView" destination="FtJ-5O-DFC" id="AXJ-lp-Hmg"/>
                         <outlet property="deleteBtn" destination="UmB-Ox-iDQ" id="JkY-Dc-ff3"/>
                         <outlet property="shareBtn" destination="sTd-7j-umc" id="WuS-gg-alC"/>
-                        <outlet property="tableView" destination="57H-Z9-WSP" id="MGM-Zk-h53"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
                         <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>

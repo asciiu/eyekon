@@ -9,14 +9,15 @@
 import UIKit
 import CoreData
 
-class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
+class ProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
 
     var stories: [Story] = [Story]()
     var selectedStory: Story?
     let coreContext: CoreContext = CoreContext()
     var user: User?
     
-    @IBOutlet var tableView: UITableView!
+    @IBOutlet var collectionView: UICollectionView!
+    //@IBOutlet var tableView: UITableView!
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var profileImageButton: UIButton!
     
@@ -25,7 +26,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.allowsMultipleSelectionDuringEditing = false
+       // self.tableView.allowsMultipleSelectionDuringEditing = false
         
         self.profileImageButton.layer.cornerRadius = self.profileImageButton.layer.frame.size.width/2
         self.profileImageButton.clipsToBounds = true
@@ -101,7 +102,8 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.loadManagedCollection()
-        self.tableView.reloadData()
+        self.collectionView.reloadData()
+        //self.tableView.reloadData()
         
         //self.usernameLabel.text = EKClient.username
         
@@ -239,46 +241,69 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // MARK: - UITableViewDelegate
     
-    func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
-        return true
+//    func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+//        return true
+//    }
+//    
+//    func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+//        self.selectedStory = self.stories[indexPath.row]
+//        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
+//    }
+    
+    // MARK: - UICollectionViewDataSource
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.stories.count
     }
     
-    func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
-        self.selectedStory = self.stories[indexPath.row]
-        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
-    }
-    
-    // MARK: - UITableViewDataSource
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("CollectionCell", forIndexPath: indexPath) as UITableViewCell
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell: TitleCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as TitleCollectionViewCell
+     
+        let story = self.stories[indexPath.row]
         
-        let story: Story = self.stories[indexPath.row]
-        
-        cell.textLabel.text = story.title
+        cell.imageView.image = UIImage(named: "placeholder.png")
+        cell.title.text = story.title
         
         return cell
     }
     
-    func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
-        
-        let story: Story = self.stories[indexPath.row]
-        
-        self.stories.removeAtIndex(indexPath.row)
-        self.coreContext.context.deleteObject(story)
-        
-        var error: NSError?
-        if (!self.coreContext.context.save(&error)) {
-                println("CollectionViewController: could not remove item from store")
-        }
-        
-        self.tableView.reloadData()
+    // MARK: - UICollectionViewDelegate
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        self.selectedStory = self.stories[indexPath.row]
+        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.stories.count
-    }
-    
+//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+//        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("TitleCell", forIndexPath: indexPath) as UITableViewCell
+//        
+//        let story: Story = self.stories[indexPath.row]
+//        
+//        cell.textLabel.text = story.title
+//        
+//        return cell
+//    }
+//    
+//    func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
+//        
+//        let story: Story = self.stories[indexPath.row]
+//        
+//        self.stories.removeAtIndex(indexPath.row)
+//        self.coreContext.context.deleteObject(story)
+//        
+//        var error: NSError?
+//        if (!self.coreContext.context.save(&error)) {
+//                println("CollectionViewController: could not remove item from store")
+//        }
+//        
+//        self.collectionView.reloadData()
+//        //self.tableView.reloadData()
+//    }
+//    
+//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return self.stories.count
+//    }
+//    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -299,6 +324,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBAction func unwindToCollection(unwindSegue: UIStoryboardSegue) {
         self.loadManagedCollection()
-        self.tableView.reloadData()
+        self.collectionView.reloadData()
+        //self.tableView.reloadData()
     }
 }

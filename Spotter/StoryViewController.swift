@@ -345,10 +345,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
             self.post = post
             
-            newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
+            //newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
             
-            let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
-            userStories.setValue(["hashtag": self.titleTextField!.text])
+            //let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
+            //userStories.setValue(["hashtag": self.titleTextField!.text])
             
             self.storyInfo = (storyID, self.titleTextField!.text)
             self.shareBtn.enabled = true

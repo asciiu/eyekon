@@ -14,9 +14,10 @@ enum DraggableDirection: Int {
     case HorizontalAndVertical = 3
 }
 
-class DraggableHandle: UIView {
+class DraggableHandle: UIView, UIGestureRecognizerDelegate {
     
-    var refPoint: CGPoint = CGPointZero
+    var startSize: CGSize = CGSizeZero
+    
     let direction: DraggableDirection = DraggableDirection.Vertical
     
     let panGesture: UIPanGestureRecognizer?
@@ -35,6 +36,9 @@ class DraggableHandle: UIView {
         
         self.panGesture = UIPanGestureRecognizer(target: self, action: "handlePan:")
         self.addGestureRecognizer(self.panGesture!)
+        self.panGesture!.delegate = self
+        
+        self.userInteractionEnabled = true
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -42,22 +46,23 @@ class DraggableHandle: UIView {
     }
     
     func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
+        
         switch (gestureRecognizer.state) {
         case UIGestureRecognizerState.Began:
             // When resizing, all calculations are done in the superview's coordinate space.
-            self.refPoint = gestureRecognizer.locationInView(self.superview)
+            self.startSize = self.cell!.frame.size
             self.cell!.contentView.autoresizesSubviews = true
             
             break
         case UIGestureRecognizerState.Changed:
-            let touchLocation = gestureRecognizer.locationInView(self.superview)
-            let deltaX = touchLocation.x - self.refPoint.x
-            let deltaY = touchLocation.y - self.refPoint.y
+            
+            //let touchLocation = gestureRecognizer.locationInView(self.superview)
+            let translation = gestureRecognizer.translationInView(self.superview!)
             let maxWidth = self.cell!.maxWidth
             let cellSize = self.cell!.frame.size
 
             if (self.direction == DraggableDirection.Horizontal) {
-                var newWidth = cellSize.width + deltaX
+                var newWidth = self.startSize.width + translation.x
                 
                 if (newWidth > self.cell!.maxWidth) {
                     newWidth = self.cell!.maxWidth
@@ -68,7 +73,7 @@ class DraggableHandle: UIView {
                 self.cell!.frame.size.width = newWidth
 
             } else if (self.direction == DraggableDirection.Vertical){
-                var newHeight = cellSize.height + deltaY
+                var newHeight = self.startSize.height + translation.y
                 
                 if (newHeight < self.cell!.minimumSize.height) {
                     newHeight = self.cell!.minimumSize.height
@@ -77,7 +82,8 @@ class DraggableHandle: UIView {
                 self.cell!.frame.size.height = newHeight
                 
             } else {
-                self.cell!.frame.size = CGSizeMake(cellSize.width + deltaX, cellSize.height + deltaY)
+                self.cell!.frame.size = CGSizeMake(self.startSize.width + translation.x
+, self.startSize.height + translation.y)
             }
             
             (self.cell!.superview as UICollectionView).performBatchUpdates({ () -> Void in
@@ -86,10 +92,41 @@ class DraggableHandle: UIView {
                 
             })
             
-            self.refPoint = touchLocation
             break
         case UIGestureRecognizerState.Ended:
             //self.cell!.contentView.autoresizesSubviews = false
+            let maxWidth = self.cell!.maxWidth
+            let cellSize = self.cell!.frame.size
+            
+            if (cellSize.width < maxWidth && self.direction == DraggableDirection.Horizontal) {
+                
+                let increment = maxWidth * 0.25
+                var newWidth = cellSize.width + (increment - cellSize.width % increment)
+                
+                if (newWidth > maxWidth) {
+                    newWidth = maxWidth
+                }
+                
+                UIView.animateWithDuration(0.5, animations: {
+                    self.cell!.frame.size.width = newWidth
+                })
+            } else if (self.direction == DraggableDirection.Vertical) {
+                var newHeight = cellSize.height + (25 - cellSize.height % 25)
+                
+                if (newHeight > maxWidth) {
+                    newHeight = maxWidth
+                }
+                
+                UIView.animateWithDuration(0.5, animations: {
+                    self.cell!.frame.size.height = newHeight
+                })
+            }
+            
+            (self.cell!.superview as UICollectionView).performBatchUpdates({ () -> Void in
+                (self.cell!.superview as UICollectionView).collectionViewLayout.invalidateLayout()
+                }, completion: { (fin:Bool) -> Void in
+                    
+            })
 
             break
         default:

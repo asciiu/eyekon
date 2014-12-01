@@ -75,6 +75,7 @@
 		6EE0135719C6407700152F7E /* CaptureSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135619C6407700152F7E /* CaptureSessionManager.swift */; };
 		6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE0135819C64BD000152F7E /* AVFoundation.framework */; };
 		6EE0136119C82D3600152F7E /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */; };
+		6EE963D51A2BE10100F0E1FA /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE963D41A2BE10100F0E1FA /* placeholder.png */; };
 		6EEA62041A0ECDA1008E6EE2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */; };
 		6EEA62071A0EDE49008E6EE2 /* EKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62061A0EDE49008E6EE2 /* EKClient.swift */; };
 		6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62081A0EE445008E6EE2 /* RootViewController.swift */; };
@@ -178,6 +179,7 @@
 		6EE0135619C6407700152F7E /* CaptureSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureSessionManager.swift; sourceTree = "<group>"; };
 		6EE0135819C64BD000152F7E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
+		6EE963D41A2BE10100F0E1FA /* placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder.png; sourceTree = "<group>"; };
 		6EEA62031A0ECDA1008E6EE2 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		6EEA62061A0EDE49008E6EE2 /* EKClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EKClient.swift; sourceTree = "<group>"; };
 		6EEA62081A0EE445008E6EE2 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 		6E1CE2DE19B525730085FF19 /* photos */ = {
 			isa = PBXGroup;
 			children = (
+				6EE963D41A2BE10100F0E1FA /* placeholder.png */,
 				6EDAB7301A1494A40016A97B /* contact-default.png */,
 				6E903D2F19F48E7300A1B6B3 /* libTool.png */,
 				6E903D3019F48E7300A1B6B3 /* camTool.png */,
@@ -498,6 +501,7 @@
 				6E1CE2FA19B525A00085FF19 /* 8.jpg in Resources */,
 				6E1CE2F919B525A00085FF19 /* 7.jpg in Resources */,
 				6E903D3419F48E7300A1B6B3 /* txtTool.png in Resources */,
+				6EE963D51A2BE10100F0E1FA /* placeholder.png in Resources */,
 				6E1CE2F619B525A00085FF19 /* 4.jpg in Resources */,
 				6E1CE30119B525A00085FF19 /* 15.jpg in Resources */,
 				6E1CE2FF19B525A00085FF19 /* 13.jpg in Resources */,

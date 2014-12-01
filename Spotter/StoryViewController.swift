@@ -94,12 +94,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
         self.view.addSubview(self.mainTool!)
         
-        self.collectionViewFrame = self.collectionView.frame        
+        self.collectionViewFrame = self.collectionView.frame
     }
     
     override func viewWillAppear(animated: Bool) {
         
-        if(self.storyContent == nil) {
+        if (self.storyContent == nil) {
             // create a new story
             self.cubes.removeAllObjects()
             self.editable = true
@@ -282,6 +282,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     // MARK: - Actions
+    
+    @IBAction func changeCoverPhoto(sender: AnyObject) {
+        
+        
+    }
     
     @IBAction func deleteSelected(sender: AnyObject) {
         if (self.selectedIndexPath == nil) {

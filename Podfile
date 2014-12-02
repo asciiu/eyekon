@@ -9,6 +9,7 @@ pod 'CTAssetsPickerController',  '~> 2.6.0'
 pod 'Firebase', '>= 1.2.3'
 pod 'RSKImageCropper'
 pod 'UICollectionViewLeftAlignedLayout'
+pod 'KxMenu', '~> 1'
 
 end
 

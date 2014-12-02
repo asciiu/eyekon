@@ -17,7 +17,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var deleteBtn: UIBarButtonItem!
-    @IBOutlet var shareBtn: UIBarButtonItem!
+    //@IBOutlet var shareBtn: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
     
     let cellSpacing: CGFloat = 3.0
@@ -30,6 +30,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
     var storyContent: StoryContent?
     var context: NSManagedObjectContext?
+    let coreContext: CoreContext = CoreContext()
 
     var titleTextField: UITextField?
     
@@ -117,15 +118,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.storyContent = content
             self.showToolbar()
             //self.masterTool.center = self.view.center
-            self.shareBtn.enabled = false
+            //self.shareBtn.enabled = false
             //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
 
         } else {
             let story = self.storyContent!.story
             self.storyInfo = (story.storyID, story.title)
-            self.shareBtn.enabled = true
             // hide toolbar
-            //self.toolbar.frame.origin.y = self.view.frame.size.height
+            self.toolbar.frame.origin.y = self.view.frame.size.height
             //self.mainTool!.userInteractionEnabled = false
 
             //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width,
@@ -142,7 +142,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 1)
         
         self.titleTextField!.userInteractionEnabled = self.editable
-        self.showToolbar()
+        //self.showToolbar()
 
         if (!self.editable) {
             self.mainTool!.userInteractionEnabled = false
@@ -316,6 +316,59 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.navigationController?.popViewControllerAnimated(true)
     }
     
+    @IBAction func expandTools(sender: AnyObject) {
+        var rect = (sender as UIButton).frame
+        rect.size.height *= 2
+        
+        let editItem = KxMenuItem("Edit", image: nil, target: self, action: "editStory:")
+        let deleteItem = KxMenuItem("Delete", image: nil, target: self, action: "deleteStory:")
+        let publishItem = KxMenuItem("Share", image: nil, target: self, action: "shareStory:")
+
+        KxMenu.showMenuInView(self.navigationController!.view, fromRect: rect, menuItems: [editItem, deleteItem, publishItem])
+    }
+    
+    @IBAction func editStory(sender: AnyObject) {
+        self.editable = true
+        self.collectionView.userInteractionEnabled = true
+        self.titleTextField!.userInteractionEnabled = true
+        
+        for (var i = 0; i < self.cubes.count; ++i) {
+            let view = self.cubes.objectAtIndex(i) as UIView
+            
+            // this ensures that text cubes are draggable when touched
+            view.userInteractionEnabled = false
+            
+        }
+        self.showToolbar()
+    }
+    
+    @IBAction func deleteStory(sender: AnyObject) {
+        let alertController = UIAlertController(title:"Warning!",
+            message: "Are you sure you want to delete this? This will remove the entire entry from your collection.",
+            preferredStyle:UIAlertControllerStyle.Alert)
+        
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+        let deleteAction: UIAlertAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: {(alert :UIAlertAction!) in
+            self.storyContent!.managedObjectContext!.deleteObject(self.storyContent!.story)
+    
+            var error: NSError?
+            if (!self.storyContent!.managedObjectContext!.save(&error)) {
+                    println("StoryViewController: could not delete entry from collection")
+            }
+            
+            self.performSegueWithIdentifier("FromStoryToProfile", sender: self)
+        })
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    @IBAction func shareStory(sender: AnyObject) {
+        self.performSegueWithIdentifier("FromStoryToShare", sender: self)
+    }
+    
     @IBAction func publish(sender: AnyObject) {
         
         //let index = self.selectedIndex?.row ?? 0
@@ -351,7 +404,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             //userStories.setValue(["hashtag": self.titleTextField!.text])
             
             self.storyInfo = (storyID, self.titleTextField!.text)
-            self.shareBtn.enabled = true
+            //self.shareBtn.enabled = true
             //EKClient.userHomeURL!.updateChildValues(["stories:": storyID])
             
             //EKClient.sendData(post, toUserID: EKClient.authData!.uid)

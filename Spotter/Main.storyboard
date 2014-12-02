@@ -673,12 +673,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <items>
-                                    <barButtonItem title="Share" style="plain" id="sTd-7j-umc">
-                                        <connections>
-                                            <segue destination="CtV-CF-Mjx" kind="push" identifier="FromStoryToShare" id="9GP-qa-qAR"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem width="224" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
+                                    <barButtonItem width="250" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
                                     <barButtonItem systemItem="trash" id="UmB-Ox-iDQ">
                                         <connections>
                                             <action selector="deleteSelected:" destination="uya-p5-87Y" id="d4m-yI-8xe"/>
@@ -691,23 +686,30 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Story" id="QrM-5l-46K">
-                        <barButtonItem key="rightBarButtonItem" title="Publish" id="4bI-f9-ib9">
-                            <connections>
-                                <action selector="publish:" destination="uya-p5-87Y" id="7d9-U8-l6j"/>
-                            </connections>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="cRH-8O-eR4">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6YI-eT-ryH">
+                                <rect key="frame" x="-23" y="-15" width="71" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Tools">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="expandTools:" destination="uya-p5-87Y" eventType="touchUpInside" id="dxn-uR-BGO"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="FtJ-5O-DFC" id="AXJ-lp-Hmg"/>
                         <outlet property="deleteBtn" destination="UmB-Ox-iDQ" id="JkY-Dc-ff3"/>
-                        <outlet property="shareBtn" destination="sTd-7j-umc" id="WuS-gg-alC"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
-                        <outlet property="upperRightButton" destination="4bI-f9-ib9" id="jKn-3A-hRp"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>
                         <segue destination="mEh-0n-vKf" kind="push" identifier="FromStoryToCircle" id="7JB-Mg-Amt"/>
+                        <segue destination="7hl-er-YBB" kind="unwind" identifier="FromStoryToProfile" unwindAction="unwindToCollection:" id="kMz-I3-RdV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="7hl-er-YBB" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-1598" y="1365"/>
         </scene>

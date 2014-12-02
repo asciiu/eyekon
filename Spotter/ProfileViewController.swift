@@ -313,11 +313,11 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         if (destination != nil) {
             if (self.selectedStory != nil) {
                 destination!.setStoryContent(self.selectedStory!.content)
-                destination!.upperRightButton.title = "Edit"
+                //destination!.upperRightButton.title = "Edit"
                 destination!.editable = false
             } else {
                 destination!.storyContent = nil
-                destination!.upperRightButton.title = "Save"
+                //destination!.upperRightButton.title = "Save"
             }
         }
     }

@@ -15,6 +15,7 @@ class Story: NSManagedObject {
     @NSManaged var storyID: String
     @NSManaged var summary: String
     @NSManaged var title: String
+    @NSManaged var titleImage: NSData?
     @NSManaged var content: StoryContent
 }
 

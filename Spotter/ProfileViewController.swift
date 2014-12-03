@@ -261,7 +261,15 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
      
         let story = self.stories[indexPath.row]
         
-        cell.imageView.image = UIImage(named: "placeholder.png")
+        if (story.titleImage != nil) {
+            let image = UIImage(data: story.titleImage!)
+            cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+            cell.imageView.image = image
+            
+        } else {
+            cell.imageView.image = UIImage(named: "placeholder.png")
+        }
+        
         cell.title.text = story.title
         
         return cell

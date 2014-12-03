@@ -12,12 +12,11 @@ import CoreData
 let kStoryHashtag = "#untitled"
 
 
-class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate {
+class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var deleteBtn: UIBarButtonItem!
-    //@IBOutlet var shareBtn: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
     
     let cellSpacing: CGFloat = 3.0
@@ -48,6 +47,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     var storyInfo: (String, String)?
     var collectionViewFrame: CGRect = CGRectZero
+    
+    let imagePicker: UIImagePickerController = UIImagePickerController()
     
     func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
         
@@ -96,6 +97,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.view.addSubview(self.mainTool!)
         
         self.collectionViewFrame = self.collectionView.frame
+        
+        self.imagePicker.delegate = self
+        self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -105,10 +109,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.cubes.removeAllObjects()
             self.editable = true
             
+            let newStoryRef = EKClient.stories.childByAutoId()
             let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
             story.uid = EKClient.authData!.uid
             story.title = kStoryHashtag
             story.summary = "Summary"
+            story.storyID = newStoryRef.name
             
             let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent", inManagedObjectContext: self.context!) as StoryContent
             
@@ -117,6 +123,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             
             self.storyContent = content
             self.showToolbar()
+            
             //self.masterTool.center = self.view.center
             //self.shareBtn.enabled = false
             //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
@@ -124,6 +131,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         } else {
             let story = self.storyContent!.story
             self.storyInfo = (story.storyID, story.title)
+            
             // hide toolbar
             self.toolbar.frame.origin.y = self.view.frame.size.height
             //self.mainTool!.userInteractionEnabled = false
@@ -134,7 +142,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         self.deleteBtn.enabled = false
         
-        self.toolbar.frame.origin.y = self.view.frame.size.height
+        //self.toolbar.frame.origin.y = self.view.frame.size.height
 
         //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2, 300)
         
@@ -284,8 +292,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     // MARK: - Actions
     
     @IBAction func changeCoverPhoto(sender: AnyObject) {
-        
-        
+        self.presentViewController(self.imagePicker, animated: true, completion: nil)
     }
     
     @IBAction func deleteSelected(sender: AnyObject) {
@@ -320,11 +327,23 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         var rect = (sender as UIButton).frame
         rect.size.height *= 2
         
+        let saveItem = KxMenuItem("Save", image: nil, target: self, action: "saveStory:")
         let editItem = KxMenuItem("Edit", image: nil, target: self, action: "editStory:")
         let deleteItem = KxMenuItem("Delete", image: nil, target: self, action: "deleteStory:")
         let publishItem = KxMenuItem("Share", image: nil, target: self, action: "shareStory:")
 
-        KxMenu.showMenuInView(self.navigationController!.view, fromRect: rect, menuItems: [editItem, deleteItem, publishItem])
+        KxMenu.showMenuInView(self.navigationController!.view, fromRect: rect, menuItems: [saveItem, editItem, deleteItem, publishItem])
+    }
+    
+    @IBAction func saveStory(sender: AnyObject) {
+        let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
+        self.storyContent!.data = data
+        self.storyContent!.story.title = self.titleTextField!.text
+        
+        var error: NSError?
+        if( !self.storyContent!.managedObjectContext!.save(&error)) {
+            println("could not save FrameSet: \(error?.localizedDescription)")
+        }
     }
     
     @IBAction func editStory(sender: AnyObject) {
@@ -366,7 +385,27 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     @IBAction func shareStory(sender: AnyObject) {
-        self.performSegueWithIdentifier("FromStoryToShare", sender: self)
+        
+        //self.performSegueWithIdentifier("FromStoryToShare", sender: self)
+        //et newStoryRef = EKClient.stories.childByAutoId()
+        let storyID = self.storyContent!.story.storyID
+        let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
+        let data = self.storyContent!.story.titleImage
+        
+        if (data == nil) {
+            return
+        }
+        
+        let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
+        userStories.setValue(["hashtag": self.titleTextField!.text])
+        
+        let base64String = data!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
+        let chunks: [NSString] = divideString(base64String)
+        
+        println(chunks.count)
+        newStoryRef.childByAppendingPath("author").setValue(EKClient.authData!.uid)
+        newStoryRef.childByAppendingPath("hashtag").setValue(self.titleTextField!.text)
+        newStoryRef.childByAppendingPath("titleData").setValue(chunks)
     }
     
     @IBAction func publish(sender: AnyObject) {
@@ -468,6 +507,19 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         picker.delegate = self
         self.presentViewController(picker, animated: true, completion: nil)
     }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+        self.imagePicker.dismissViewControllerAnimated(true, completion: nil)
+        
+        let cell: StoryTitleCollectionViewCell = self.collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0)) as StoryTitleCollectionViewCell
+        cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        cell.imageView.image = image
+        
+        let data: NSData = UIImageJPEGRepresentation(image, 1.0)
+        self.storyContent!.story.titleImage = data
+    }
+    
     
     // MARK: - AwesomeMenuDelegate
     /*func AwesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
@@ -596,6 +648,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             cell.textField.text = self.storyContent?.story.summary
             cell.textField.tag = 1
             cell.textField.delegate = self
+            
+            if (self.storyContent?.story.titleImage != nil) {
+                cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+                cell.imageView.image = UIImage(data: self.storyContent!.story.titleImage!)
+            }
             
             return cell
         } else {

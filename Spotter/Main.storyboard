@@ -675,24 +675,24 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 </imageView>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="f0R-a7-rBW">
-                                                    <rect key="frame" x="71" y="191" width="144" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <state key="normal" title="Change Cover Photo">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="changeCoverPhoto:" destination="uya-p5-87Y" eventType="touchUpInside" id="Ptx-Ab-F5c"/>
-                                                    </connections>
-                                                </button>
-                                                <textField opaque="NO" clipsSubviews="YES" alpha="0.59999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Title" textAlignment="center" minimumFontSize="17" id="0Tp-qh-qX3">
+                                                <textField opaque="NO" clipsSubviews="YES" alpha="0.80000000000000004" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Title" textAlignment="center" minimumFontSize="17" id="0Tp-qh-qX3">
                                                     <rect key="frame" x="8" y="8" width="270" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="34"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
                                                 </textField>
+                                                <button opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="f0R-a7-rBW">
+                                                    <rect key="frame" x="71" y="191" width="144" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <state key="normal" title="Change Cover Photo"/>
+                                                    <connections>
+                                                        <action selector="changeCoverPhoto:" destination="uya-p5-87Y" eventType="touchUpInside" id="Ptx-Ab-F5c"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -718,15 +718,58 @@
                                 </connections>
                             </collectionView>
                             <toolbar opaque="NO" contentMode="scaleToFill" barStyle="black" id="53a-Fm-bFs">
-                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="477" width="341" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <items>
-                                    <barButtonItem width="250" style="plain" systemItem="fixedSpace" id="DVz-vA-lvQ"/>
-                                    <barButtonItem systemItem="trash" id="UmB-Ox-iDQ">
-                                        <connections>
-                                            <action selector="deleteSelected:" destination="uya-p5-87Y" id="d4m-yI-8xe"/>
-                                        </connections>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="HlO-VP-VHy"/>
+                                    <barButtonItem image="pencil.png" style="plain" id="ZEi-Lp-Ryb">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="cJ6-fI-VBX">
+                                            <rect key="frame" x="46" y="6" width="62" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="txtTool.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="addText:" destination="uya-p5-87Y" eventType="touchUpInside" id="Z7g-NT-Rfr"/>
+                                            </connections>
+                                        </button>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" id="gl3-Sy-JaL">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nUI-9O-2ZJ">
+                                            <rect key="frame" x="118" y="6" width="62" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="libTool.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="addPhotoFromLibrary:" destination="uya-p5-87Y" eventType="touchUpInside" id="XLM-Ho-aN1"/>
+                                            </connections>
+                                        </button>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" id="JN1-6G-5GB">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="4Ks-9o-hbn">
+                                            <rect key="frame" x="190" y="6" width="62" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="camTool.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="addPhotoFromCamera:" destination="uya-p5-87Y" eventType="touchUpInside" id="ysr-H9-tqU"/>
+                                            </connections>
+                                        </button>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" id="uAN-ex-c6D">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="IYr-jV-LAA">
+                                            <rect key="frame" x="273" y="6" width="41" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Button" image="trash.png">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="deleteSelected:" destination="uya-p5-87Y" eventType="touchUpInside" id="xFs-yG-n1P"/>
+                                            </connections>
+                                        </button>
                                     </barButtonItem>
                                 </items>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -734,6 +777,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Story" id="QrM-5l-46K">
                         <barButtonItem key="rightBarButtonItem" style="plain" id="cRH-8O-eR4">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6YI-eT-ryH">
@@ -748,9 +792,10 @@
                             </button>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="collectionView" destination="FtJ-5O-DFC" id="AXJ-lp-Hmg"/>
-                        <outlet property="deleteBtn" destination="UmB-Ox-iDQ" id="JkY-Dc-ff3"/>
+                        <outlet property="deleteBtn" destination="IYr-jV-LAA" id="g8H-hW-Htu"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>
                         <segue destination="mEh-0n-vKf" kind="push" identifier="FromStoryToCircle" id="7JB-Mg-Amt"/>
@@ -813,8 +858,13 @@
         </scene>
     </scenes>
     <resources>
+        <image name="camTool.png" width="32" height="32"/>
         <image name="contact-default.png" width="100" height="100"/>
+        <image name="libTool.png" width="32" height="32"/>
+        <image name="pencil.png" width="1068" height="1067"/>
         <image name="placeholder.png" width="450" height="450"/>
+        <image name="trash.png" width="256" height="256"/>
+        <image name="txtTool.png" width="32" height="32"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -822,7 +872,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Owd-ui-pVm"/>
+        <segue reference="7JB-Mg-Amt"/>
         <segue reference="Stz-xy-uLe"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -39,10 +39,14 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
                 let storyID = story.name
                 let author = story.value["author"] as String
                 let hashtag = story.value["hashtag"] as String
-                let base64Image = story.value["titleData"] as [NSString]
+                let base64Image = story.value["titleData"] as? [NSString]
+                
+                if (base64Image == nil) {
+                    return
+                }
                 
                 var str = ""
-                for chunk in base64Image {
+                for chunk in base64Image! {
                     str += chunk
                 }
                 

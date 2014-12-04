@@ -24,6 +24,7 @@ class DraggableHandle: UIView, UIGestureRecognizerDelegate {
     weak var cell: ResizeableCollectionCell?
     
     var minPadding: CGFloat = 10
+    var enabled: Bool = true
     
     init(frame: CGRect, cell: ResizeableCollectionCell, resizeDirection: DraggableDirection) {
         self.cell = cell
@@ -31,8 +32,7 @@ class DraggableHandle: UIView, UIGestureRecognizerDelegate {
         
         super.init(frame: frame)
         
-        
-        self.backgroundColor = UIColor.blackColor()
+        //self.backgroundColor = UIColor.blackColor()
         
         self.panGesture = UIPanGestureRecognizer(target: self, action: "handlePan:")
         self.addGestureRecognizer(self.panGesture!)
@@ -46,6 +46,10 @@ class DraggableHandle: UIView, UIGestureRecognizerDelegate {
     }
     
     func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
+        
+        if (!self.enabled) {
+            return
+        }
         
         switch (gestureRecognizer.state) {
         case UIGestureRecognizerState.Began:
@@ -172,5 +176,11 @@ class ResizeableCollectionCell: UICollectionViewCell  {
         self.cornerHandle!.autoresizingMask = UIViewAutoresizing.FlexibleTopMargin |
             UIViewAutoresizing.FlexibleLeftMargin
         self.addSubview(self.cornerHandle!)
+    }
+    
+    func enableResize(enable: Bool) {
+        self.bottomHandle!.enabled = enable
+        self.rightHandle!.enabled = enable
+        self.cornerHandle!.enabled = enable
     }
 }

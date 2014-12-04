@@ -182,6 +182,13 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         
         var error: NSError?
         self.stories = self.coreContext.context.executeFetchRequest(request, error: &error) as [Story]
+                
+//        let story: Story = self.stories[0]
+//        self.stories.removeAtIndex(0)
+//        self.coreContext.context.deleteObject(story)
+//        if (!self.coreContext.context.save(&error)) {
+//                println("CollectionViewController: could not remove item from store")
+//        }
     }
     
     // MARK: - Actions
@@ -218,7 +225,7 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         //self.profileImageButton.imageView!.image = croppedImage
         
         // convert profile image into a base64 string 
-        let data: NSData = UIImagePNGRepresentation(croppedImage)
+        let data: NSData = UIImageJPEGRepresentation(croppedImage, 1.0)
         self.user!.profileImage = data
         
         var error: NSError?

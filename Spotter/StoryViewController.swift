@@ -12,12 +12,11 @@ import CoreData
 let kStoryHashtag = "#untitled"
 
 
-class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, AwesomeMenuDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    @IBOutlet var upperRightButton: UIBarButtonItem!
     @IBOutlet var toolbar: UIToolbar!
-    @IBOutlet var deleteBtn: UIBarButtonItem!
     @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var deleteBtn: UIButton!
     
     let cellSpacing: CGFloat = 3.0
     let sideInset: CGFloat = 6.0
@@ -39,9 +38,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var selectedCell: UICollectionViewCell?
     
     // main tool to add new content
-    var mainTool: AwesomeMenu?
-    var mainToolPosition: CGPoint = CGPointMake(0, 0)
-    
+//    var mainTool: AwesomeMenu?
+//    var mainToolPosition: CGPoint = CGPointMake(0, 0)
+//    
     var post: Dictionary<String, String>?
     var keyboardFrame: CGRect = CGRectZero
     
@@ -50,16 +49,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     let imagePicker: UIImagePickerController = UIImagePickerController()
     
-    func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
-        
-        if (idx == 0) {
-            self.addText(self)
-        } else if (idx == 1) {
-            self.addPhotoFromLibrary(self)
-        } else if (idx == 2) {
-            self.addPhotoFromCamera(self)
-        }
-    }
+//    func awesomeMenu(menu: AwesomeMenu!, didSelectIndex idx: Int) {
+//        
+//        if (idx == 0) {
+//            self.addText(self)
+//        } else if (idx == 1) {
+//            self.addPhotoFromLibrary(self)
+//        } else if (idx == 2) {
+//            self.addPhotoFromCamera(self)
+//        }
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,13 +87,13 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         let libBtn = AwesomeMenuItem(image: libImage, highlightedImage: libImage, contentImage: libImage, highlightedContentImage: nil)
         let addBtn = AwesomeMenuItem(image: addImage, highlightedImage: addImage, contentImage: addImage, highlightedContentImage: addImage)
         
-        self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
-        self.mainTool!.delegate = self
-        self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2,
-                                            self.view.frame.size.height - addImage!.size.height/2)
-        
-        self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
-        self.view.addSubview(self.mainTool!)
+//        self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
+//        self.mainTool!.delegate = self
+//        self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2,
+//                                            self.view.frame.size.height - addImage!.size.height/2)
+//        
+//        self.mainTool!.menuWholeAngle = CGFloat(-M_PI/3)
+//        self.view.addSubview(self.mainTool!)
         
         self.collectionViewFrame = self.collectionView.frame
         
@@ -122,7 +121,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             content.story = story
             
             self.storyContent = content
-            self.showToolbar()
+            //self.showToolbar()
             
             //self.masterTool.center = self.view.center
             //self.shareBtn.enabled = false
@@ -133,7 +132,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.storyInfo = (story.storyID, story.title)
             
             // hide toolbar
-            self.toolbar.frame.origin.y = self.view.frame.size.height
+            //self.toolbar.frame.origin.y = self.view.frame.size.height
             //self.mainTool!.userInteractionEnabled = false
 
             //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width,
@@ -152,9 +151,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.titleTextField!.userInteractionEnabled = self.editable
         //self.showToolbar()
 
-        if (!self.editable) {
-            self.mainTool!.userInteractionEnabled = false
-            self.mainTool!.alpha = 0.0
+        if (self.editable) {
+            // show toolbar
+            self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
+        } else {
+            // hide toolbar offscreen
+            self.toolbar.frame.origin.y = self.view.frame.size.height
         }
        
         self.titleTextField!.text = self.storyContent!.story.title
@@ -225,43 +227,53 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 //        self.collectionView.insertSections(sections)
 //    }
     
+//    func addImages(images: [UIImage]) {
+//        var imageGroups: [[UIImage]] = [[]]
+//        var imageGroup: [UIImage] = []
+//
+//        for (var i = 0; i < images.count; ++i) {
+//            imageGroup.append(images[i])
+//            
+//            if (imageGroup.count == 3) {
+//                imageGroups.append(imageGroup)
+//                imageGroup = []
+//            } else if (i == images.count - 1) {
+//                imageGroups.append(imageGroup)
+//            }
+//        }
+//        
+//        let frameWidth = self.collectionView.frame.size.width
+//        for (var i = 0; i < imageGroups.count; ++i) {
+//            let group = imageGroups[i]
+//            let frameContentWidth = (frameWidth - (self.sideInset * 2) - (CGFloat(group.count-1) * self.cellSpacing)) / CGFloat(group.count)
+//            //let rects = self.computeRects(group)
+//            
+//            for (var r = 0; r < group.count; ++r) {
+//                let frame = CGRectMake(0, 0, frameContentWidth, frameContentWidth)
+//                let imageView = UIImageView(frame: frame)
+//                imageView.image = group[r]
+//                imageView.contentMode = UIViewContentMode.ScaleAspectFill
+//                self.cubes.insertObject(imageView, atIndex: self.currentIndexPath.row)
+//
+//                self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+//                self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
+//            }
+//        }
+//    }
+    
     func addImages(images: [UIImage]) {
-        var imageGroups: [[UIImage]] = [[]]
-        var imageGroup: [UIImage] = []
-
-        for (var i = 0; i < images.count; ++i) {
-            imageGroup.append(images[i])
-            
-            if (imageGroup.count == 3) {
-                imageGroups.append(imageGroup)
-                imageGroup = []
-            } else if (i == images.count - 1) {
-                imageGroups.append(imageGroup)
-            }
-        }
         
-        let frameWidth = self.collectionView.frame.size.width
-        for (var i = 0; i < imageGroups.count; ++i) {
-            let group = imageGroups[i]
-            let frameContentWidth = (frameWidth - (self.sideInset * 2) - (CGFloat(group.count-1) * self.cellSpacing)) / CGFloat(group.count)
-            //let rects = self.computeRects(group)
-            
-            for (var r = 0; r < group.count; ++r) {
-                let frame = CGRectMake(0, 0, frameContentWidth, frameContentWidth)
-                let imageView = UIImageView(frame: frame)
-                imageView.image = group[r]
-                imageView.contentMode = UIViewContentMode.ScaleAspectFill
-                self.cubes.insertObject(imageView, atIndex: self.currentIndexPath.row)
+        for (var i = 0; i < images.count; ++i) {
+            //let imageView = UIImageView(image: images[i])
+            //imageView.contentMode = UIViewContentMode.ScaleAspectFill
 
-                self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-                self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
-            }
+            self.cubes.insertObject(images[i], atIndex: self.currentIndexPath.row)
+            self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+            self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
         }
     }
     
     // edit selected text
-
-    
     func setStoryContent(content: StoryContent) {
         self.storyContent = content
         
@@ -274,13 +286,13 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func showToolbar() {
         UIView.animateWithDuration(0.25,
             animations: {
-                self.mainTool!.alpha = 1.0
+                //self.mainTool!.alpha = 1.0
                 //self.mainTool!.startPoint = self.mainToolPosition
 
                 self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
                 
             }, completion: { (value: Bool) in
-                self.mainTool!.userInteractionEnabled = true
+                //self.mainTool!.userInteractionEnabled = true
                 let tableSize = self.collectionView.frame.size
                 let tableOrigin = self.collectionView.frame.origin
                 let toolbarSize = self.toolbar.frame.size
@@ -302,10 +314,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         // need to remove view from the selected cell otherwise reusable cells will still
         // contain this view
-        let view: UIView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
-        view.removeFromSuperview()
+        //let view: UIView = self.cubes.objectAtIndex(self.selectedIndexPath!.row) as UIView
+        //view.removeFromSuperview()
+        let contentView = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!.contentView
+        for view in contentView.subviews {
+            view.removeFromSuperview()
+        }
         
-        self.cubes.removeObject(view)
+        self.cubes.removeObjectAtIndex(self.selectedIndexPath!.item)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndexPath!])
         
         // move current index path to previous index item
@@ -336,6 +352,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     @IBAction func saveStory(sender: AnyObject) {
+        for view in self.cubes {
+            if (view is UIImageView) {
+                (view as UIImageView).highlighted = false
+            }
+        }
+        
         let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
         self.storyContent!.data = data
         self.storyContent!.story.title = self.titleTextField!.text
@@ -351,11 +373,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.collectionView.userInteractionEnabled = true
         self.titleTextField!.userInteractionEnabled = true
         
-        for (var i = 0; i < self.cubes.count; ++i) {
-            let view = self.cubes.objectAtIndex(i) as UIView
+        for resource in self.cubes {
+            
+            if (resource is UITextView) {
+                (resource as UITextView).userInteractionEnabled = true
+            }
+            //let view = self.cubes.objectAtIndex(i) as UIView
             
             // this ensures that text cubes are draggable when touched
-            view.userInteractionEnabled = false
+            //view.userInteractionEnabled = false
             
         }
         self.showToolbar()
@@ -401,77 +427,75 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         let base64String = data!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
         let chunks: [NSString] = divideString(base64String)
-        
-        println(chunks.count)
-        newStoryRef.childByAppendingPath("author").setValue(EKClient.authData!.uid)
-        newStoryRef.childByAppendingPath("hashtag").setValue(self.titleTextField!.text)
+
+        newStoryRef.setValue(["author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
         newStoryRef.childByAppendingPath("titleData").setValue(chunks)
     }
     
-    @IBAction func publish(sender: AnyObject) {
-        
-        //let index = self.selectedIndex?.row ?? 0
-        
-        if (self.upperRightButton.title == "Save" && self.cubes.count > 0) {
-            
-            // unhighlight every UIImageView because it cases the app to crash when deserializing
-            for (var i = 0; i < self.cubes.count; ++i) {
-                let view: UIImageView? = self.cubes.objectAtIndex(i) as? UIImageView
-                view?.highlighted = false
-            }
-            
-            let newStoryRef = EKClient.stories.childByAutoId()
-            let storyID = newStoryRef.name
-            let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
-            self.storyContent!.data = data
-            self.storyContent!.story.title = self.titleTextField!.text
-            self.storyContent!.story.storyID = storyID
-            
-            var error: NSError?
-            if( !self.storyContent!.managedObjectContext!.save(&error)) {
-                println("could not save FrameSet: \(error?.localizedDescription)")
-            }
-            
-            let msg = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
-            
-            let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
-            self.post = post
-            
-            //newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
-            
-            //let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
-            //userStories.setValue(["hashtag": self.titleTextField!.text])
-            
-            self.storyInfo = (storyID, self.titleTextField!.text)
-            //self.shareBtn.enabled = true
-            //EKClient.userHomeURL!.updateChildValues(["stories:": storyID])
-            
-            //EKClient.sendData(post, toUserID: EKClient.authData!.uid)
-            
-            //EKClient.userPosts.setValue(post)
-            //self.fireRef.setValue(["name":"eyekon", "post":ref])
-            
-            //self.performSegueWithIdentifier("FromStoryToCircle", sender: self)
-            
-        } else {
-            // edit
-            self.editable = true
-            self.collectionView.userInteractionEnabled = true
-            self.upperRightButton.title = "Save"
-            
-            self.titleTextField!.userInteractionEnabled = true
-            
-            for (var i = 0; i < self.cubes.count; ++i) {
-                let view = self.cubes.objectAtIndex(i) as UIView
-                
-                
-                // this ensures that text cubes are draggable when touched
-                view.userInteractionEnabled = false
-            
-            }
-            self.showToolbar()
-        }
-    }
+//    @IBAction func publish(sender: AnyObject) {
+//        
+//        //let index = self.selectedIndex?.row ?? 0
+//        
+//        if (self.upperRightButton.title == "Save" && self.cubes.count > 0) {
+//            
+//            // unhighlight every UIImageView because it cases the app to crash when deserializing
+//            for (var i = 0; i < self.cubes.count; ++i) {
+//                let view: UIImageView? = self.cubes.objectAtIndex(i) as? UIImageView
+//                view?.highlighted = false
+//            }
+//            
+//            let newStoryRef = EKClient.stories.childByAutoId()
+//            let storyID = newStoryRef.name
+//            let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
+//            self.storyContent!.data = data
+//            self.storyContent!.story.title = self.titleTextField!.text
+//            self.storyContent!.story.storyID = storyID
+//            
+//            var error: NSError?
+//            if( !self.storyContent!.managedObjectContext!.save(&error)) {
+//                println("could not save FrameSet: \(error?.localizedDescription)")
+//            }
+//            
+//            let msg = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
+//            
+//            let post: Dictionary<String, String> = ["packet": msg, "hashtag": self.titleTextField!.text]
+//            self.post = post
+//            
+//            //newStoryRef.setValue(["content": msg, "author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
+//            
+//            //let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
+//            //userStories.setValue(["hashtag": self.titleTextField!.text])
+//            
+//            self.storyInfo = (storyID, self.titleTextField!.text)
+//            //self.shareBtn.enabled = true
+//            //EKClient.userHomeURL!.updateChildValues(["stories:": storyID])
+//            
+//            //EKClient.sendData(post, toUserID: EKClient.authData!.uid)
+//            
+//            //EKClient.userPosts.setValue(post)
+//            //self.fireRef.setValue(["name":"eyekon", "post":ref])
+//            
+//            //self.performSegueWithIdentifier("FromStoryToCircle", sender: self)
+//            
+//        } else {
+//            // edit
+//            self.editable = true
+//            self.collectionView.userInteractionEnabled = true
+//            self.upperRightButton.title = "Save"
+//            
+//            self.titleTextField!.userInteractionEnabled = true
+//            
+//            for (var i = 0; i < self.cubes.count; ++i) {
+//                let view = self.cubes.objectAtIndex(i) as UIView
+//                
+//                
+//                // this ensures that text cubes are draggable when touched
+//                view.userInteractionEnabled = false
+//            
+//            }
+//            self.showToolbar()
+//        }
+//    }
 
     @IBAction func addText(sender: AnyObject) {
         let frameWidth = self.collectionView.frame.size.width - self.sideInset * 2
@@ -532,7 +556,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         let images: [UIImage] = assets.map({ (var asset) -> UIImage in
             let a = asset as ALAsset
             
-            return UIImage(CGImage: a.defaultRepresentation().fullResolutionImage().takeUnretainedValue())!
+            let representation = a.defaultRepresentation()
+            let cgImage = representation.fullResolutionImage().takeUnretainedValue()
+            let orientation = UIImageOrientation(rawValue: representation.orientation().rawValue)!
+
+            return UIImage(CGImage: cgImage, scale: 1.0, orientation: orientation)!
         })
 
         self.addImages(images)
@@ -635,9 +663,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
-        let view = self.cubes.objectAtIndex(fromIndexPath.row) as UIView
-        self.cubes.removeObject(view)
-        self.cubes.insertObject(view, atIndex: toIndexPath.row)
+        let resource: AnyObject = self.cubes.objectAtIndex(fromIndexPath.item)
+        self.cubes.removeObject(resource)
+        self.cubes.insertObject(resource, atIndex: toIndexPath.item)
     }
     
     // MARK: - UICollectionViewDataSource
@@ -658,16 +686,25 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         } else {
             let cell: ResizeableCollectionCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
             
-            let view = self.cubes.objectAtIndex(indexPath.row) as UIView
-            view.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleTopMargin | UIViewAutoresizing.FlexibleBottomMargin
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
+//            view.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleTopMargin | UIViewAutoresizing.FlexibleBottomMargin
             
-            if (view is UITextView) {
-                (view as UITextView).delegate = self
+            if (resource is UITextView) {
+                let textView = resource as UITextView
+                textView.delegate = self
+                cell.contentView.addSubview(textView)
+            } else if (resource is UIImage) {
+                let image = resource as UIImage
+                let size = self.imageFrameSize(image)
+                let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
+                imageView.image = image
+                
+                cell.contentView.addSubview(imageView)
             }
             
             cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
-            cell.contentView.addSubview(view)
             cell.contentView.autoresizesSubviews = false
+            cell.enableResize(false)
             
             return cell
         }
@@ -699,14 +736,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
         
         let cell: UICollectionViewCell? = self.collectionView.cellForItemAtIndexPath(indexPath)
-        let view = self.cubes.objectAtIndex(indexPath.row) as UIView
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
         
         // add a blue border around the new selection
-        if (view is UIImageView) {
+        if (resource is UIImage) {
             cell!.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
             cell!.layer.borderWidth = 3.0
             //(view as MIView).enableResize()
-        } else if (view is UITextView) {
+        } else if (resource is UITextView) {
             cell!.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
             cell!.layer.borderWidth = 1.0
         }
@@ -737,14 +774,30 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
     }
     
+    func imageFrameSize(image: UIImage) -> CGSize {
+        let imageWidth = image.size.width
+        let imageHeight = image.size.height
+        let viewWidth = self.collectionView.frame.size.width - self.sideInset * 2
+        let viewHeight = imageHeight * viewWidth / imageWidth
+        return CGSizeMake(viewWidth, viewHeight)
+    }
+    
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
         if (indexPath.section == 1) {
-            let view: UIView = self.cubes.objectAtIndex(indexPath.row) as UIView
-            return view.frame.size
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
+            
+            if (resource is UIImage) {
+                let image = resource as UIImage
+                return self.imageFrameSize(image)
+            } else {
+                println("textview")
+                return view.frame.size
+            }
         } else {
             let size = self.collectionView.frame.size
-            return CGSizeMake(size.width, size.height/3)
+            return CGSizeMake(size.width, size.height/2)
         }
     }
     

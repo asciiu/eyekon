@@ -4,7 +4,22 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Pods-Eyekon-AWSCognitoSync.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-AWSiOSSDKv2.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Eyekon-BZipCompression.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-Bolts.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -24,7 +39,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-Eyekon-GZIP.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Eyekon-KxMenu.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-Mantle.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -34,7 +59,27 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-Eyekon-Reachability.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-TMCache.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-UICKeyChainStore.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Eyekon-UICollectionViewLeftAlignedLayout.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-XMLDictionary.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -47,42 +92,87 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>5F22396B58C6E241F3F4A6B7</key>
+		<key>257E695AED65C292C1FCAD10</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>602F3F9A74D551D595ACBEBD</key>
+		<key>2D6DA33F0201D2241B7A0B35</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>784207F0DF7D9CC85B3C3317</key>
+		<key>2FC0A1AFA3B1DDDFEF22C6EF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9BDC28E9171E908FCD3066C2</key>
+		<key>3C4C72D4C9F61639108599A3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CC57579C70A2364E47F530A5</key>
+		<key>508AF093E195C53A14943D6C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D32E82FE74C8BD5C4F478BFD</key>
+		<key>69D41B9D512050CE38896479</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E818FEA45AF64C8A00118989</key>
+		<key>7819A4B6080B481DDA936465</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E998819DE5975A2DF0C7C729</key>
+		<key>830949446145FA1E84CA129B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>867AEFD890139A61CAC8CBCA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>93E7238F433E3BBEA10CA971</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A1042D7E3F405728D89998AD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AA7D7B59071414C64F1A34EA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ABA06673FA26605F2B43326D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ABACF3BC702201FB1A1101D1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D1BD925FDAFE1D45A4ABAFDD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E60A294EBFC5B1BAB818119F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FB4FDCD294A47E44F76B08C4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

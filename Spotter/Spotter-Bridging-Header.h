@@ -20,6 +20,11 @@
 #import "TDTZDecompressor.h"
 #import "BZipCompression.h"
 
+#import "S3.h"
+#import "AWSCore.h"
+#import "Cognito.h"
+#import "AWSService.h"
+#import "AWSS3Model.h"
 
 
 

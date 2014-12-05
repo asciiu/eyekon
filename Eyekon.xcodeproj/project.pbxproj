@@ -83,6 +83,8 @@
 		6EEA62071A0EDE49008E6EE2 /* EKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62061A0EDE49008E6EE2 /* EKClient.swift */; };
 		6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEA62081A0EE445008E6EE2 /* RootViewController.swift */; };
 		6EEFB9DF1A2FE3AD003E9781 /* DynamicFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEFB9DE1A2FE3AD003E9781 /* DynamicFlowLayout.swift */; };
+		6EEFB9E31A317793003E9781 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EEFB9E21A317793003E9781 /* libz.dylib */; };
+		6EEFB9E51A3177A2003E9781 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EEFB9E41A3177A2003E9781 /* libsqlite3.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,6 +192,8 @@
 		6EEA62061A0EDE49008E6EE2 /* EKClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EKClient.swift; sourceTree = "<group>"; };
 		6EEA62081A0EE445008E6EE2 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		6EEFB9DE1A2FE3AD003E9781 /* DynamicFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicFlowLayout.swift; sourceTree = "<group>"; };
+		6EEFB9E21A317793003E9781 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		6EEFB9E41A3177A2003E9781 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +201,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EEFB9E51A3177A2003E9781 /* libsqlite3.dylib in Frameworks */,
+				6EEFB9E31A317793003E9781 /* libz.dylib in Frameworks */,
 				6EE0135919C64BD000152F7E /* AVFoundation.framework in Frameworks */,
 				12C0433D30F4836BF0576F20 /* libPods-Eyekon.a in Frameworks */,
 			);
@@ -393,6 +399,8 @@
 		6EE0135A19C64BE300152F7E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6EEFB9E41A3177A2003E9781 /* libsqlite3.dylib */,
+				6EEFB9E21A317793003E9781 /* libz.dylib */,
 				6EE0135819C64BD000152F7E /* AVFoundation.framework */,
 				0073A8926997F9F5080FF1BF /* libPods-Eyekon.a */,
 			);
@@ -727,6 +735,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"/Users/LV426/Downloads/aws-ios-sdk-2.0.12/frameworks",
+				);
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = Eyekon;
@@ -742,6 +755,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"/Users/LV426/Downloads/aws-ios-sdk-2.0.12/frameworks",
+				);
 				INFOPLIST_FILE = Spotter/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = Eyekon;

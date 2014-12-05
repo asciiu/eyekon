@@ -44,7 +44,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var post: Dictionary<String, String>?
     var keyboardFrame: CGRect = CGRectZero
     
-    var storyInfo: (String, String)?
+    var storyInfo: StoryInfo?
     var collectionViewFrame: CGRect = CGRectZero
     
     let imagePicker: UIImagePickerController = UIImagePickerController()
@@ -103,7 +103,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     override func viewWillAppear(animated: Bool) {
         
-        if (self.storyContent == nil) {
+        if (self.storyInfo == nil) {
             // create a new story
             self.cubes.removeAllObjects()
             self.editable = true
@@ -120,6 +120,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             story.content = content
             content.story = story
             
+            self.storyInfo = StoryInfo(storyID: newStoryRef.name, authorID: EKClient.authData!.uid,
+                hashtag: kStoryHashtag, summary: "Summary", image: UIImage(named: "placeholder.png")!, cubeCount: 0)
+            
             self.storyContent = content
             //self.showToolbar()
             
@@ -127,17 +130,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             //self.shareBtn.enabled = false
             //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
 
-        } else {
-            let story = self.storyContent!.story
-            self.storyInfo = (story.storyID, story.title)
-            
-            // hide toolbar
-            //self.toolbar.frame.origin.y = self.view.frame.size.height
-            //self.mainTool!.userInteractionEnabled = false
-
-            //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width,
-            //    self.view.frame.size.height)
-        }
+        } 
         
         self.deleteBtn.enabled = false
         
@@ -159,7 +152,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.toolbar.frame.origin.y = self.view.frame.size.height
         }
        
-        self.titleTextField!.text = self.storyContent!.story.title
+        self.titleTextField!.text = self.storyInfo!.hashtag
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -281,6 +274,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             // unarchive the story content as a ordered array of UIViews
             self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(content.data!) as NSMutableArray
         }
+        
+        let story = content.story
+        let image = UIImage(data: story.titleImage!)!
+        self.storyInfo = StoryInfo(storyID: story.storyID, authorID: story.uid, hashtag: story.title, summary: story.summary, image: image, cubeCount: self.cubes.count)
+    }
+    
+    func setStoryInfo(storyInfo: StoryInfo) {
+        self.storyInfo = storyInfo
     }
     
     func showToolbar() {
@@ -412,29 +413,99 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     @IBAction func shareStory(sender: AnyObject) {
         
+        // init aws client
+        let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(AWSRegionType.USEast1,
+            accountId: "792505883474",
+            identityPoolId: "us-east-1:8d3c3041-f0ef-41a4-bae7-23d1daffe92d",
+            unauthRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonUnauth_DefaultRole",
+            authRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonAuth_DefaultRole")
+        
+        let configuration: AWSServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
+        
+        let serviceManager = AWSServiceManager.defaultServiceManager()
+        serviceManager.setDefaultServiceConfiguration(configuration)
+        
+        // store the data
+        //let syncClient: AWSCognito = AWSCognito.defaultCognito()
+        //let dataset = syncClient.openOrCreateDataset("myDataset")
+        //dataset.setString("myValue", forKey: "myKey")
+        //dataset.synchronize()
+        
         //self.performSegueWithIdentifier("FromStoryToShare", sender: self)
         //et newStoryRef = EKClient.stories.childByAutoId()
-        let storyID = self.storyContent!.story.storyID
-        let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
-        let data = self.storyContent!.story.titleImage
         
-        if (data == nil) {
-            return
-        }
+        dispatch_async(dispatch_get_main_queue(), {
+            let storyID = self.storyContent!.story.storyID
+            let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
+            let data = self.storyContent!.story.titleImage
+            
+            if (data == nil) {
+                return
+            }
+            
+            let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
+            userStories.setValue(["hashtag": self.titleTextField!.text])
+            
+            var error: NSError?
+            let compressed = BZipCompression.compressedDataWithData(data!, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
+            
+            if (error != nil) {
+                println("StoryViewController: \(error)")
+            } else {
+                let base64String = compressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+                let chunks: [NSString] = divideString(base64String)
+                newStoryRef.setValue(["authorID": EKClient.authData!.uid, "hashtag": self.titleTextField!.text,
+                    "summary": self.storyContent!.story.summary, "titleData": chunks, "cubeCount": self.cubes.count])
+            }
+            
+            for (var i = 0; i < self.cubes.count; ++i) {
+                
+                let numStr = String(i)
+                let path = NSTemporaryDirectory().stringByAppendingPathComponent(numStr)
+                let cube: AnyObject = self.cubes[i]
+                let cubeData: NSData = UIImageJPEGRepresentation(cube as UIImage, 1.0)
+                
+                let compressedPayload = BZipCompression.compressedDataWithData(cubeData, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
+                
+                compressedPayload.writeToFile(path, atomically: true)
+                let url = NSURL(fileURLWithPath: path)
+                
+                let request = AWSS3TransferManagerUploadRequest()
+                request.bucket = "eyekon/" + EKClient.authData!.uid + "/" + storyID
+                request.key = numStr
+                request.body = url
+                
+                let transferManager = AWSS3TransferManager.defaultS3TransferManager()
+                transferManager.upload(request).continueWithBlock { (task: BFTask!) -> AnyObject! in
+                    
+                    if (task.error != nil) {
+                        println("Error in transfer \(task.error)")
+                    }
+                    
+                    return nil
+                }
+            }
+        })
         
-        let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
-        userStories.setValue(["hashtag": self.titleTextField!.text])
+//        request.uploadProgress = {(bytesSent, totalBytesSent, totalBytesExpectedToSend) -> Void in
+//            
+//            dispatch_async(dispatch_get_main_queue(), {
+//                //Update progress.
+//                println("what?")
+//            })
+//        }
         
-        var error: NSError?
-        let compressed = BZipCompression.compressedDataWithData(data!, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
-        
-        if (error != nil) {
-            println("StoryViewController: \(error)")
-        } else {
-            let base64String = compressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
-            let chunks: [NSString] = divideString(base64String)
-            newStoryRef.setValue(["author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text, "titleData": chunks])
-        }
+//        let transferManager = AWSS3TransferManager.defaultS3TransferManager()
+//        transferManager.upload(request).continueWithBlock { (task: BFTask!) -> AnyObject! in
+//            
+//            if (task.error != nil) {
+//                println("Error in transfer \(task.error)")
+//            } else {
+//                println("Successful upload!")
+//            }
+//            
+//            return nil
+//        }
         
         //let base64Cubes = compressedData.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
         //let cubedChunks: [NSString] = divideString(base64Cubes)
@@ -591,8 +662,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             let destination: AddContactViewController = segue.destinationViewController as AddContactViewController
             destination.setPost(self.post!)
         } else if (segue.identifier == "FromStoryToShare") {
-            let destination: ShareViewController = segue.destinationViewController as ShareViewController
-            destination.storyInfo = self.storyInfo
+            //let destination: ShareViewController = segue.destinationViewController as ShareViewController
+            //destination.storyInfo = self.storyInfo
         }
     }
     
@@ -684,14 +755,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         if (indexPath.section == 0) {
             let cell: StoryTitleCollectionViewCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
-            cell.textField.text = self.storyContent?.story.summary
+            
+            cell.textField.text = self.storyInfo!.summary
             cell.textField.tag = 1
             cell.textField.delegate = self
             
-            if (self.storyContent?.story.titleImage != nil) {
+            //if (self.storyContent?.story.titleImage != nil) {
                 cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-                cell.imageView.image = UIImage(data: self.storyContent!.story.titleImage!)
-            }
+                cell.imageView.image = self.storyInfo!.titleImage
+            //}
             
             return cell
         } else {

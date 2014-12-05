@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "488ED5B8FE57CACB1D343189"
+               BlueprintIdentifier = "CC57579C70A2364E47F530A5"
                BuildableName = "libPods-Eyekon-CTAssetsPickerController.a"
                BlueprintName = "Pods-Eyekon-CTAssetsPickerController"
                ReferencedContainer = "container:Pods.xcodeproj">

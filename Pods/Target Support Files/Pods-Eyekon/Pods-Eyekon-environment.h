@@ -6,11 +6,23 @@
 // project.
 
 
+// BZipCompression
+#define COCOAPODS_POD_AVAILABLE_BZipCompression
+#define COCOAPODS_VERSION_MAJOR_BZipCompression 1
+#define COCOAPODS_VERSION_MINOR_BZipCompression 0
+#define COCOAPODS_VERSION_PATCH_BZipCompression 2
+
 // CTAssetsPickerController
 #define COCOAPODS_POD_AVAILABLE_CTAssetsPickerController
 #define COCOAPODS_VERSION_MAJOR_CTAssetsPickerController 2
 #define COCOAPODS_VERSION_MINOR_CTAssetsPickerController 6
 #define COCOAPODS_VERSION_PATCH_CTAssetsPickerController 0
+
+// CocoaZ
+#define COCOAPODS_POD_AVAILABLE_CocoaZ
+#define COCOAPODS_VERSION_MAJOR_CocoaZ 1
+#define COCOAPODS_VERSION_MINOR_CocoaZ 4
+#define COCOAPODS_VERSION_PATCH_CocoaZ 0
 
 // Firebase
 #define COCOAPODS_POD_AVAILABLE_Firebase

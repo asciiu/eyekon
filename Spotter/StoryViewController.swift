@@ -425,11 +425,22 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
         userStories.setValue(["hashtag": self.titleTextField!.text])
         
-        let base64String = data!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
-        let chunks: [NSString] = divideString(base64String)
+        var error: NSError?
+        let compressed = BZipCompression.compressedDataWithData(data!, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
+        
+        if (error != nil) {
+            println("StoryViewController: \(error)")
+        } else {
+            let base64String = compressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+            let chunks: [NSString] = divideString(base64String)
+            newStoryRef.setValue(["author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text, "titleData": chunks])
+        }
+        
+        //let base64Cubes = compressedData.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
+        //let cubedChunks: [NSString] = divideString(base64Cubes)
 
-        newStoryRef.setValue(["author": EKClient.authData!.uid, "hashtag": self.titleTextField!.text])
-        newStoryRef.childByAppendingPath("titleData").setValue(chunks)
+        //newStoryRef.childByAppendingPath("titleData").setValue(chunks)
+        //newStoryRef.childByAppendingPath("cubeData").setValue(cubedChunks)
     }
     
 //    @IBAction func publish(sender: AnyObject) {

@@ -4,7 +4,17 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Pods-Eyekon-BZipCompression.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Eyekon-CTAssetsPickerController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Eyekon-CocoaZ.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -37,32 +47,42 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>09AA5AE930B89EA645A51646</key>
+		<key>5F22396B58C6E241F3F4A6B7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>2B34E9D86688E4830DF44BDF</key>
+		<key>602F3F9A74D551D595ACBEBD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3AB574B9BF70C502C9A6B9F4</key>
+		<key>784207F0DF7D9CC85B3C3317</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>488ED5B8FE57CACB1D343189</key>
+		<key>9BDC28E9171E908FCD3066C2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>835877EEFFB58A59E48DCB9F</key>
+		<key>CC57579C70A2364E47F530A5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9393D928089480A62C67AC94</key>
+		<key>D32E82FE74C8BD5C4F478BFD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E818FEA45AF64C8A00118989</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E998819DE5975A2DF0C7C729</key>
 		<dict>
 			<key>primary</key>
 			<true/>

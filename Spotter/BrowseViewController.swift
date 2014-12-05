@@ -26,11 +26,15 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
 
     @IBOutlet var collectionView: UICollectionView!
     var stories: [StoryInfo] = []
+    var firebaseRef: UInt?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
 
-        EKClient.stories.observeEventType(.Value, withBlock: { snapshot in
+    override func viewWillAppear(animated: Bool) {
+        
+        self.firebaseRef = EKClient.stories.observeEventType(.Value, withBlock: { snapshot in
             
             let stories = snapshot.children.allObjects as [FDataSnapshot]
             
@@ -39,32 +43,48 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
                 let storyID = story.name
                 let author = story.value["author"] as String
                 let hashtag = story.value["hashtag"] as String
-                let base64Image = story.value["titleData"] as? [NSString]
+                let base64Compressed = story.value["titleData"] as? [NSString]
                 
-                if (base64Image == nil) {
+                if (base64Compressed == nil) {
                     return
                 }
                 
-                var str = ""
-                for chunk in base64Image! {
-                    str += chunk
+                var compressedStr = ""
+                for chunk in base64Compressed! {
+                    compressedStr += chunk
                 }
                 
-                let data = NSData(base64EncodedString: str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-                let image = UIImage(data: data!)
+                var error: NSError?
+                let compressedData = NSData(base64EncodedString: compressedStr, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                let data = BZipCompression.decompressedDataWithData(compressedData, error:&error)
                 
-                let storyInfo = StoryInfo(id: storyID, author: author, hashtag: hashtag, image: image!)
-                self.stories.append(storyInfo)
+                if (error != nil) {
+                    println("BrowseViewController: \(error)")
+                } else {
+                    
+                    let image = UIImage(data: data)
+                    
+                    let storyInfo = StoryInfo(id: storyID, author: author, hashtag: hashtag, image: image!)
+                    let index = NSIndexPath(forItem: self.stories.count, inSection: 0)
+                    
+                    let found = self.stories.filter({ (info: StoryInfo) -> Bool in
+                        if (info.storyID == storyInfo.storyID) {
+                            return true
+                        }
+                        return false
+                    })
+                    
+                    if (found.count == 0) {
+                        self.stories.append(storyInfo)
+                        self.collectionView.insertItemsAtIndexPaths([index])
+                    }
+                }
             }
-            
-            self.collectionView.reloadData()
-        }, withCancelBlock: { error in
-            println(error.description)
         })
     }
-
-    override func viewWillAppear(animated: Bool) {
-        self.stories.removeAll(keepCapacity: false)
+    
+    override func viewWillDisappear(animated: Bool) {
+        EKClient.stories.removeObserverWithHandle(self.firebaseRef!)
     }
     
     override func didReceiveMemoryWarning() {

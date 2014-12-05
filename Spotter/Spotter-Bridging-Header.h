@@ -16,6 +16,9 @@
 #import <Firebase/Firebase.h>
 #import "RSKImageCropViewController.h"
 #import "KxMenu.h"
+#import "TDTZCompressor.h"
+#import "TDTZDecompressor.h"
+#import "BZipCompression.h"
 
 
 

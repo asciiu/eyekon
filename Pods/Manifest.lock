@@ -1,4 +1,6 @@
 PODS:
+  - BZipCompression (1.0.2)
+  - CocoaZ (1.4.0)
   - CTAssetsPickerController (2.6.0)
   - Firebase (1.2.3)
   - KxMenu (1)
@@ -6,6 +8,8 @@ PODS:
   - UICollectionViewLeftAlignedLayout (0.0.3)
 
 DEPENDENCIES:
+  - BZipCompression (~> 1.0.0)
+  - CocoaZ
   - CTAssetsPickerController (~> 2.6.0)
   - Firebase (>= 1.2.3)
   - KxMenu (~> 1)
@@ -13,10 +17,12 @@ DEPENDENCIES:
   - UICollectionViewLeftAlignedLayout
 
 SPEC CHECKSUMS:
+  BZipCompression: d4931abf79e2dc33383acd58239bea499e13ed9d
+  CocoaZ: 3032b6a98d6008a9e8ef4aea14d2f4d510b4f659
   CTAssetsPickerController: 1dadc633ca90bcd7797222199fcd7f9047b93386
   Firebase: b396753207f45235159be6703fbf059e5cf72536
   KxMenu: e281f1699a2181287de6eb1ebec2ea60a86559fa
   RSKImageCropper: a56cef96c83ce2a58e43cc3df37e3251ab22b96a
   UICollectionViewLeftAlignedLayout: 75f407a18965cce59600b0308c81ef6099be9dcd
 
-COCOAPODS: 0.34.4
+COCOAPODS: 0.35.0

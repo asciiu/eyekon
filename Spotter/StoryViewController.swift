@@ -45,6 +45,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var keyboardFrame: CGRect = CGRectZero
     
     var storyInfo: StoryInfo?
+    var downloadInfo: Bool = false
     var collectionViewFrame: CGRect = CGRectZero
     
     let imagePicker: UIImagePickerController = UIImagePickerController()
@@ -99,6 +100,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         self.imagePicker.delegate = self
         self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -116,12 +118,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             story.storyID = newStoryRef.name
             
             let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent", inManagedObjectContext: self.context!) as StoryContent
-            
+            let bucket = "eyekon/" + EKClient.authData!.uid + "/" + newStoryRef.name
+
             story.content = content
             content.story = story
             
             self.storyInfo = StoryInfo(storyID: newStoryRef.name, authorID: EKClient.authData!.uid,
-                hashtag: kStoryHashtag, summary: "Summary", image: UIImage(named: "placeholder.png")!, cubeCount: 0)
+                hashtag: kStoryHashtag, summary: "Summary", image: UIImage(named: "placeholder.png")!,
+                cubeCount: 0, s3Bucket: bucket)
             
             self.storyContent = content
             //self.showToolbar()
@@ -130,7 +134,73 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             //self.shareBtn.enabled = false
             //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
 
-        } 
+        } else if (self.downloadInfo) {
+            let storyInfo = self.storyInfo!
+            for (var j = 0; j < self.storyInfo!.cubeCount; ++j) {
+                let image = UIImage(named: "placeholder.png")
+                //let activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 50, 50))
+                //activityIndicator.startAnimating()
+                self.cubes.addObject(image!)
+            }
+            
+            for (var i = 0; i < self.storyInfo!.cubeCount; ++i) {
+                
+                let key = String(i)
+                
+                let downloadingFilePath = NSTemporaryDirectory().stringByAppendingPathComponent(key)
+                let downloadingFileURL = NSURL(fileURLWithPath: downloadingFilePath)
+                
+                let fileManager: NSFileManager = NSFileManager.defaultManager()
+                var error: NSError?
+                if (fileManager.fileExistsAtPath(downloadingFilePath)) {
+                    if (!fileManager.removeItemAtPath(downloadingFilePath, error: &error) ) {
+                        println("Could not remove temporary file \(error)")
+                    }
+                }
+                
+                // Construct the download request.
+                let downloadRequest: AWSS3TransferManagerDownloadRequest = AWSS3TransferManagerDownloadRequest()
+                
+                downloadRequest.bucket = storyInfo.s3Bucket
+                downloadRequest.key = key
+                downloadRequest.downloadingFileURL = downloadingFileURL
+                
+                let transferManager: AWSS3TransferManager = AWSS3TransferManager.defaultS3TransferManager()
+                
+                transferManager.download(downloadRequest).continueWithBlock({
+                    (task: BFTask!) -> AnyObject! in
+                    
+                    if (task.error != nil) {
+                        println("download error \(task.error)")
+                    }
+                    
+                    if (task.result != nil) {
+
+                        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                        
+                            //let downloadOutput: AWSS3TransferManagerDownloadOutput = task.result as AWSS3TransferManagerDownloadOutput
+                            var data = NSData(contentsOfFile: downloadingFilePath)!
+                            data = BZipCompression.decompressedDataWithData(data, error: &error)
+                            
+                            let image = UIImage(data: data)!
+                            let index = downloadingFilePath.lastPathComponent.toInt()!
+                            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+                           
+                            self.cubes[index] = image
+                            
+                            println("download success \(index)")
+
+                            if (self.cubes.count == self.storyInfo!.cubeCount) {
+                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                    self.collectionView.reloadData()
+                                })
+                            }
+                        })
+                    }
+                    return nil
+                })
+            }
+        }
         
         self.deleteBtn.enabled = false
         
@@ -277,11 +347,65 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         let story = content.story
         let image = UIImage(data: story.titleImage!)!
-        self.storyInfo = StoryInfo(storyID: story.storyID, authorID: story.uid, hashtag: story.title, summary: story.summary, image: image, cubeCount: self.cubes.count)
+        let bucket = "eyekon/" + EKClient.authData!.uid + "/" + story.uid
+        self.storyInfo = StoryInfo(storyID: story.storyID, authorID: story.uid,
+            hashtag: story.title, summary: story.summary, image: image,
+            cubeCount: self.cubes.count, s3Bucket: bucket)
     }
     
     func setStoryInfo(storyInfo: StoryInfo) {
         self.storyInfo = storyInfo
+        self.downloadInfo = true
+        
+//        for (var i = 0; i < 1; ++i) {
+//            
+//            let key = String(i)
+//
+//            //dispatch_async(dispatch_get_main_queue(), {
+//                let downloadingFilePath = NSTemporaryDirectory().stringByAppendingPathComponent(key)
+//                let downloadingFileURL = NSURL(fileURLWithPath: downloadingFilePath)
+//                
+//                let fileManager: NSFileManager = NSFileManager.defaultManager()
+//                var error: NSError?
+//                if (fileManager.fileExistsAtPath(downloadingFilePath)) {
+//                    if (!fileManager.removeItemAtPath(downloadingFilePath, error: &error) ) {
+//                            println("Could not remove temporary file \(error)")
+//                    }
+//                }
+//                
+//                // Construct the download request.
+//                let downloadRequest: AWSS3TransferManagerDownloadRequest = AWSS3TransferManagerDownloadRequest()
+//                
+//                downloadRequest.bucket = storyInfo.s3Bucket
+//                downloadRequest.key = key
+//                downloadRequest.downloadingFileURL = downloadingFileURL
+//                
+//                let transferManager: AWSS3TransferManager = AWSS3TransferManager.defaultS3TransferManager()
+//                
+//                transferManager.download(downloadRequest).continueWithSuccessBlock({
+//                    (task: BFTask!) -> AnyObject! in
+//                        if (task.error != nil) {
+//                            println("download error \(task.error)")
+//                        }
+//                        
+//                        if (task.result != nil) {
+//                            let downloadOutput: AWSS3TransferManagerDownloadOutput = task.result as AWSS3TransferManagerDownloadOutput
+//                            var data = NSData(contentsOfFile: downloadingFilePath)!
+//                            data = BZipCompression.decompressedDataWithData(data, error: &error)
+//                            
+//                            let image = UIImage(data: data)!
+//                            let index = downloadingFilePath.lastPathComponent.toInt()!
+//                            let indexPath = NSIndexPath(forItem: index, inSection: 0)
+//                            self.cubes.insertObject(image, atIndex: index)
+//                            
+//                            //self.collectionView.insertItemsAtIndexPaths([indexPath])
+//                            
+//                            println("download success \(index)")
+//                        }
+//                        return nil
+//                })
+//            //})
+//        }
     }
     
     func showToolbar() {
@@ -414,16 +538,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     @IBAction func shareStory(sender: AnyObject) {
         
         // init aws client
-        let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(AWSRegionType.USEast1,
-            accountId: "792505883474",
-            identityPoolId: "us-east-1:8d3c3041-f0ef-41a4-bae7-23d1daffe92d",
-            unauthRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonUnauth_DefaultRole",
-            authRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonAuth_DefaultRole")
-        
-        let configuration: AWSServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
-        
-        let serviceManager = AWSServiceManager.defaultServiceManager()
-        serviceManager.setDefaultServiceConfiguration(configuration)
+//        let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(AWSRegionType.USEast1,
+//            accountId: "792505883474",
+//            identityPoolId: "us-east-1:8d3c3041-f0ef-41a4-bae7-23d1daffe92d",
+//            unauthRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonUnauth_DefaultRole",
+//            authRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonAuth_DefaultRole")
+//        
+//        let configuration: AWSServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
+//        
+//        let serviceManager = AWSServiceManager.defaultServiceManager()
+//        serviceManager.setDefaultServiceConfiguration(configuration)
         
         // store the data
         //let syncClient: AWSCognito = AWSCognito.defaultCognito()
@@ -434,10 +558,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         //self.performSegueWithIdentifier("FromStoryToShare", sender: self)
         //et newStoryRef = EKClient.stories.childByAutoId()
         
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
             let storyID = self.storyContent!.story.storyID
             let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
             let data = self.storyContent!.story.titleImage
+            let bucket = "eyekon/" + EKClient.authData!.uid + "/" + storyID
             
             if (data == nil) {
                 return
@@ -455,7 +580,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let base64String = compressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
                 let chunks: [NSString] = divideString(base64String)
                 newStoryRef.setValue(["authorID": EKClient.authData!.uid, "hashtag": self.titleTextField!.text,
-                    "summary": self.storyContent!.story.summary, "titleData": chunks, "cubeCount": self.cubes.count])
+                    "summary": self.storyContent!.story.summary, "titleData": chunks, "cubeCount": self.cubes.count, "s3Bucket": bucket])
             }
             
             for (var i = 0; i < self.cubes.count; ++i) {
@@ -468,10 +593,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let compressedPayload = BZipCompression.compressedDataWithData(cubeData, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
                 
                 compressedPayload.writeToFile(path, atomically: true)
+                
                 let url = NSURL(fileURLWithPath: path)
                 
                 let request = AWSS3TransferManagerUploadRequest()
-                request.bucket = "eyekon/" + EKClient.authData!.uid + "/" + storyID
+                request.bucket = bucket
                 request.key = numStr
                 request.body = url
                 
@@ -783,6 +909,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 imageView.image = image
                 
                 cell.contentView.addSubview(imageView)
+            } else if (resource is UIView) {
+                cell.contentView.addSubview(resource as UIView)
             }
             
             cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
@@ -875,8 +1003,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let image = resource as UIImage
                 return self.imageFrameSize(image)
             } else {
-                println("textview")
-                return view.frame.size
+                return CGSizeMake(self.collectionView.frame.size.width - self.sideInset*2, 50)
             }
         } else {
             let size = self.collectionView.frame.size

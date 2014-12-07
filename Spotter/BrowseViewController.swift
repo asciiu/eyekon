@@ -15,15 +15,17 @@ class StoryInfo {
     var titleImage: UIImage
     var summary: String
     var cubeCount: Int
+    var s3Bucket: String
     
     init(storyID: String, authorID: String, hashtag: String,
-        summary: String, image: UIImage, cubeCount: Int) {
+        summary: String, image: UIImage, cubeCount: Int, s3Bucket: String) {
         self.storyID = storyID
         self.authorID = authorID
         self.hashtag = hashtag
         self.titleImage = image
         self.summary = summary
         self.cubeCount = cubeCount
+        self.s3Bucket = s3Bucket
     }
 }
 
@@ -52,6 +54,7 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
                 let summary = story.value["summary"] as String
                 let cubeCount = story.value["cubeCount"] as Int
                 let base64Compressed = story.value["titleData"] as? [NSString]
+                let bucket = story.value["s3Bucket"] as String
                 
                 if (base64Compressed == nil) {
                     return
@@ -73,7 +76,7 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
                     let image = UIImage(data: data)
                     
                     let storyInfo = StoryInfo(storyID: storyID, authorID: authorID,
-                        hashtag: hashtag, summary: summary, image: image!, cubeCount: cubeCount)
+                        hashtag: hashtag, summary: summary, image: image!, cubeCount: cubeCount, s3Bucket: bucket)
                     
                     let index = NSIndexPath(forItem: self.stories.count, inSection: 0)
                     

@@ -16,6 +16,17 @@ class RootViewController: UIViewController {
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLogout:", name: EKLogoutNotification, object: nil)
+        
+        let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(AWSRegionType.USEast1,
+            accountId: "792505883474",
+            identityPoolId: "us-east-1:8d3c3041-f0ef-41a4-bae7-23d1daffe92d",
+            unauthRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonUnauth_DefaultRole",
+            authRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonAuth_DefaultRole")
+        
+        let configuration: AWSServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
+        
+        let serviceManager = AWSServiceManager.defaultServiceManager()
+        serviceManager.setDefaultServiceConfiguration(configuration)
     }
     
     override func viewWillAppear(animated: Bool) {

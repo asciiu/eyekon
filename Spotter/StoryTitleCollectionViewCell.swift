@@ -11,4 +11,5 @@ import UIKit
 class StoryTitleCollectionViewCell: UICollectionViewCell, UITextViewDelegate {
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var textField: UITextField!
+    @IBOutlet var changeImageBtn: UIButton!
 }

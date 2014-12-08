@@ -485,7 +485,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rZh-9R-oLc">
-                                                    <rect key="frame" x="8" y="71" width="84" height="21"/>
+                                                    <rect key="frame" x="8" y="71.00000018165224" width="84" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
@@ -707,6 +707,7 @@
                                         </view>
                                         <size key="customSize" width="286" height="243"/>
                                         <connections>
+                                            <outlet property="changeImageBtn" destination="f0R-a7-rBW" id="ahq-wr-pne"/>
                                             <outlet property="imageView" destination="lvn-Sn-oen" id="MbY-Qi-6Tf"/>
                                             <outlet property="textField" destination="0Tp-qh-qX3" id="IYP-pJ-RK8"/>
                                         </connections>

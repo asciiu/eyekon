@@ -10,7 +10,8 @@ import UIKit
 import CoreData
 
 let kStoryHashtag = "#untitled"
-
+let kThumbnailKB = 100 * 1024
+let kImageKB = 500 * 1024
 
 class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -21,9 +22,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     let cellSpacing: CGFloat = 3.0
     let sideInset: CGFloat = 6.0
 
-    // ordered collection of UIViews
+    // ordered collection of resources
     var cubes: NSMutableArray = NSMutableArray()
-    // flag used to determine if parent view is editable
+    // story is editable
     var editable: Bool = false
         
     var storyContent: StoryContent?
@@ -44,6 +45,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var post: Dictionary<String, String>?
     var keyboardFrame: CGRect = CGRectZero
     
+    var coverImage: UIImage?
     var storyInfo: StoryInfo?
     var downloadInfo: Bool = false
     var collectionViewFrame: CGRect = CGRectZero
@@ -78,15 +80,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
-        let addImage = UIImage(named: "add.png")
-        let txtImage = UIImage(named: "txtTool.png")
-        let libImage = UIImage(named: "libTool.png")
-        let camImage = UIImage(named: "camTool.png")
-        
-        let txtBtn = AwesomeMenuItem(image: txtImage, highlightedImage: txtImage, contentImage: txtImage, highlightedContentImage: nil)
-        let camBtn = AwesomeMenuItem(image: camImage, highlightedImage: camImage, contentImage: camImage, highlightedContentImage: nil)
-        let libBtn = AwesomeMenuItem(image: libImage, highlightedImage: libImage, contentImage: libImage, highlightedContentImage: nil)
-        let addBtn = AwesomeMenuItem(image: addImage, highlightedImage: addImage, contentImage: addImage, highlightedContentImage: addImage)
+//        let addImage = UIImage(named: "add.png")
+//        let txtImage = UIImage(named: "txtTool.png")
+//        let libImage = UIImage(named: "libTool.png")
+//        let camImage = UIImage(named: "camTool.png")
+//        
+//        let txtBtn = AwesomeMenuItem(image: txtImage, highlightedImage: txtImage, contentImage: txtImage, highlightedContentImage: nil)
+//        let camBtn = AwesomeMenuItem(image: camImage, highlightedImage: camImage, contentImage: camImage, highlightedContentImage: nil)
+//        let libBtn = AwesomeMenuItem(image: libImage, highlightedImage: libImage, contentImage: libImage, highlightedContentImage: nil)
+//        let addBtn = AwesomeMenuItem(image: addImage, highlightedImage: addImage, contentImage: addImage, highlightedContentImage: addImage)
         
 //        self.mainTool = AwesomeMenu(frame: self.view.frame, startItem: addBtn, optionMenus: [txtBtn, libBtn, camBtn])
 //        self.mainTool!.delegate = self
@@ -122,18 +124,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 
             story.content = content
             content.story = story
+            self.storyContent = content
             
             self.storyInfo = StoryInfo(storyID: newStoryRef.name, authorID: EKClient.authData!.uid,
-                hashtag: kStoryHashtag, summary: "Summary", image: UIImage(named: "placeholder.png")!,
+                hashtag: kStoryHashtag, summary: "Summary", thumbnail: UIImage(named: "placeholder.png")!,
                 cubeCount: 0, s3Bucket: bucket)
             
-            self.storyContent = content
-            //self.showToolbar()
-            
-            //self.masterTool.center = self.view.center
-            //self.shareBtn.enabled = false
-            //self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.toolbar.frame.size.height, right: 0)
-
+            self.cubes.addObject(UIImage(named: "placeholder.png")!)
+           
         } else if (self.downloadInfo) {
             let storyInfo = self.storyInfo!
             for (var j = 0; j < self.storyInfo!.cubeCount; ++j) {
@@ -208,8 +206,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 
         //self.mainTool!.startPoint = CGPointMake(self.view.frame.size.width/2, 300)
         
-        // defaults as the end of the data source
-        self.currentIndexPath = NSIndexPath(forRow: self.cubes.count, inSection: 1)
+        // defaults as the end of the data source minus one to account for title resource
+        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count-1, inSection: 1)
         
         self.titleTextField!.userInteractionEnabled = self.editable
         //self.showToolbar()
@@ -324,32 +322,72 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 //        }
 //    }
     
+    func compressForUpload(original: UIImage, maxFileSize: Int) -> NSData {
+        
+        let maxCompression: CGFloat = 0.1
+        var compression: CGFloat = 0.9
+        
+        var imageData: NSData = UIImageJPEGRepresentation(original, compression);
+        
+        while (imageData.length > maxFileSize && compression > maxCompression) {
+            compression -= 0.1
+            imageData = UIImageJPEGRepresentation(original, compression)
+        }
+        
+        // Calculate new size given scale factor.
+//        let originalSize: CGSize = original.size
+//        let newSize: CGSize = CGSizeMake(originalSize.width * scale, originalSize.height * scale)
+//        
+//        // Scale the original image to match the new size.
+//        UIGraphicsBeginImageContext(newSize)
+//        original.drawInRect(CGRectMake(0, 0, newSize.width, newSize.height))
+//        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+        
+        return imageData
+    }
+    
     func addImages(images: [UIImage]) {
         
         for (var i = 0; i < images.count; ++i) {
-            //let imageView = UIImageView(image: images[i])
-            //imageView.contentMode = UIViewContentMode.ScaleAspectFill
+            var image = images[i]
+            
+            var data = UIImageJPEGRepresentation(image, 1.0)
+            if (data.length > kImageKB) {
+                data = self.compressForUpload(image, maxFileSize: kImageKB)
+                image = UIImage(data: data)!
+            }
+            
+            //let scaledImage = self.compressForUpload(images[i], scale: 0.20)
 
-            self.cubes.insertObject(images[i], atIndex: self.currentIndexPath.row)
+            //self.cubes.insertObject(image, atIndex: self.cubes.count)
+            
+            self.cubes.insertObject(image, atIndex: self.currentIndexPath.item+1)
+            
+            //let indexPath = NSIndexPath(forItem: self.cubes.count-1, inSection: 1)
             self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-            self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
+            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
         }
     }
     
     // edit selected text
     func setStoryContent(content: StoryContent) {
+        let story = content.story
+        let coverImage = UIImage(data: story.titleImage!)!
+
         self.storyContent = content
+        self.coverImage = coverImage
         
         if( content.data != nil) {
             // unarchive the story content as a ordered array of UIViews
             self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(content.data!) as NSMutableArray
         }
         
-        let story = content.story
-        let image = UIImage(data: story.titleImage!)!
+        let thumbnailData = self.compressForUpload(coverImage, maxFileSize: 100*1024)
+        let thumbnail = UIImage(data: thumbnailData)!
         let bucket = "eyekon/" + EKClient.authData!.uid + "/" + story.uid
         self.storyInfo = StoryInfo(storyID: story.storyID, authorID: story.uid,
-            hashtag: story.title, summary: story.summary, image: image,
+            hashtag: story.title, summary: story.summary, thumbnail: thumbnail,
             cubeCount: self.cubes.count, s3Bucket: bucket)
     }
     
@@ -536,59 +574,44 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     @IBAction func shareStory(sender: AnyObject) {
-        
-        // init aws client
-//        let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(AWSRegionType.USEast1,
-//            accountId: "792505883474",
-//            identityPoolId: "us-east-1:8d3c3041-f0ef-41a4-bae7-23d1daffe92d",
-//            unauthRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonUnauth_DefaultRole",
-//            authRoleArn: "arn:aws:iam::792505883474:role/Cognito_EyekonAuth_DefaultRole")
-//        
-//        let configuration: AWSServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
-//        
-//        let serviceManager = AWSServiceManager.defaultServiceManager()
-//        serviceManager.setDefaultServiceConfiguration(configuration)
-        
-        // store the data
-        //let syncClient: AWSCognito = AWSCognito.defaultCognito()
-        //let dataset = syncClient.openOrCreateDataset("myDataset")
-        //dataset.setString("myValue", forKey: "myKey")
-        //dataset.synchronize()
-        
-        //self.performSegueWithIdentifier("FromStoryToShare", sender: self)
-        //et newStoryRef = EKClient.stories.childByAutoId()
-        
+    
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
             let storyID = self.storyContent!.story.storyID
             let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
-            let data = self.storyContent!.story.titleImage
+            //let data = self.storyContent!.story.titleImage
+            //let thumbnailData = self.compressForUpload(self.storyInfo!.titleImage, maxFileSize: 100*124)
+            let thumbnailData = UIImageJPEGRepresentation(self.storyInfo!.thumbnail, 1.0)
             let bucket = "eyekon/" + EKClient.authData!.uid + "/" + storyID
             
-            if (data == nil) {
+//            if (data == nil) {
+//                return
+//            }
+            var error: NSError?
+            let thumbnailDataCompressed = BZipCompression.compressedDataWithData(thumbnailData, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
+            
+            if (error != nil) {
+                println("StoryViewController could not compress thumbnail: \(error)")
                 return
             }
             
             let userStories = EKClient.appRef.childByAppendingPath("user-stories").childByAppendingPath(EKClient.authData!.uid).childByAppendingPath(storyID)
             userStories.setValue(["hashtag": self.titleTextField!.text])
-            
-            var error: NSError?
-            let compressed = BZipCompression.compressedDataWithData(data!, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
-            
-            if (error != nil) {
-                println("StoryViewController: \(error)")
-            } else {
-                let base64String = compressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
-                let chunks: [NSString] = divideString(base64String)
-                newStoryRef.setValue(["authorID": EKClient.authData!.uid, "hashtag": self.titleTextField!.text,
-                    "summary": self.storyContent!.story.summary, "titleData": chunks, "cubeCount": self.cubes.count, "s3Bucket": bucket])
-            }
+
+            let base64String = thumbnailDataCompressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+            //let chunks: [NSString] = divideString(base64String)
+            newStoryRef.setValue(["authorID": EKClient.authData!.uid, "hashtag": self.titleTextField!.text,
+                "summary": self.storyContent!.story.summary, "thumbnailStr": base64String,
+                "cubeCount": self.cubes.count, "s3Bucket": bucket])
             
             for (var i = 0; i < self.cubes.count; ++i) {
                 
                 let numStr = String(i)
                 let path = NSTemporaryDirectory().stringByAppendingPathComponent(numStr)
                 let cube: AnyObject = self.cubes[i]
-                let cubeData: NSData = UIImageJPEGRepresentation(cube as UIImage, 1.0)
+                
+                // TODO: the cube may be straight text
+                let image = cube as UIImage
+                let cubeData: NSData = self.compressForUpload(image, maxFileSize: 600*1024)
                 
                 let compressedPayload = BZipCompression.compressedDataWithData(cubeData, blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
                 
@@ -743,13 +766,24 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
         self.imagePicker.dismissViewControllerAnimated(true, completion: nil)
+        let compressedData = self.compressForUpload(image, maxFileSize: kImageKB)
+        let newImage = UIImage(data: compressedData)!
         
         let cell: StoryTitleCollectionViewCell = self.collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0)) as StoryTitleCollectionViewCell
         cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.imageView.image = image
+        cell.imageView.image = newImage
         
-        let data: NSData = UIImageJPEGRepresentation(image, 1.0)
-        self.storyContent!.story.titleImage = data
+        // TODO add this to the front of the cubes
+        // will this work if the cover image is optional upon save?
+        //self.cubes.insertObject(newImage, atIndex: 0)
+        
+        self.cubes[0] = newImage
+        
+        //self.coverImage = newImage
+        self.storyContent!.story.titleImage = UIImageJPEGRepresentation(image, 1.0)
+
+        let data: NSData = self.compressForUpload(image, maxFileSize: 100*1024)
+        self.storyInfo!.thumbnail = UIImage(data: data)!
     }
     
     
@@ -879,6 +913,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     // MARK: - UICollectionViewDataSource
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
+        // if title section
         if (indexPath.section == 0) {
             let cell: StoryTitleCollectionViewCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
             
@@ -886,16 +921,19 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             cell.textField.tag = 1
             cell.textField.delegate = self
             
-            //if (self.storyContent?.story.titleImage != nil) {
+            // TODO there should always be a cover image
+            // the share option should be disabled until a cover image is chosen
+            // the temp solution right now is to check if cover image is nil
+            //if (self.coverImage != nil) {
                 cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-                cell.imageView.image = self.storyInfo!.titleImage
+                cell.imageView.image = (self.cubes[0] as UIImage)
             //}
             
             return cell
         } else {
             let cell: ResizeableCollectionCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
             
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
 //            view.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleTopMargin | UIViewAutoresizing.FlexibleBottomMargin
             
             if (resource is UITextView) {
@@ -926,7 +964,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         if (section == 0) {
             return 1
         } else if (section == 1){
-            return self.cubes.count
+            return self.cubes.count-1
         } else {
             return 0
         }
@@ -997,7 +1035,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
         if (indexPath.section == 1) {
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
             
             if (resource is UIImage) {
                 let image = resource as UIImage

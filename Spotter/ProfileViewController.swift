@@ -182,12 +182,15 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         
         var error: NSError?
         self.stories = self.coreContext.context.executeFetchRequest(request, error: &error) as [Story]
-                
-//        let story: Story = self.stories[0]
-//        self.stories.removeAtIndex(0)
-//        self.coreContext.context.deleteObject(story)
-//        if (!self.coreContext.context.save(&error)) {
-//                println("CollectionViewController: could not remove item from store")
+        
+        // utility loop to clear core data
+//        for (var i = 0; i < self.stories.count; ++i) {
+//            let story: Story = self.stories[i]
+//            self.stories.removeAtIndex(i)
+//            self.coreContext.context.deleteObject(story)
+//            if (!self.coreContext.context.save(&error)) {
+//                    println("CollectionViewController: could not remove item from store")
+//            }
 //        }
     }
     

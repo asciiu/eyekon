@@ -12,17 +12,17 @@ class StoryInfo {
     var storyID: String
     var authorID: String
     var hashtag: String
-    var titleImage: UIImage
+    var thumbnail: UIImage
     var summary: String
     var cubeCount: Int
     var s3Bucket: String
     
     init(storyID: String, authorID: String, hashtag: String,
-        summary: String, image: UIImage, cubeCount: Int, s3Bucket: String) {
+        summary: String, thumbnail: UIImage, cubeCount: Int, s3Bucket: String) {
         self.storyID = storyID
         self.authorID = authorID
         self.hashtag = hashtag
-        self.titleImage = image
+        self.thumbnail = thumbnail
         self.summary = summary
         self.cubeCount = cubeCount
         self.s3Bucket = s3Bucket
@@ -41,6 +41,23 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
 
     override func viewWillAppear(animated: Bool) {
+        if (!animated) {
+            self.populateStories()
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        EKClient.stories.removeObserverWithHandle(self.firebaseRef!)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+
+    func populateStories() {
+        self.stories.removeAll(keepCapacity: false)
+        self.collectionView.reloadData()
         
         self.firebaseRef = EKClient.stories.observeEventType(.Value, withBlock: { snapshot in
             
@@ -53,58 +70,46 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
                 let hashtag = story.value["hashtag"] as String
                 let summary = story.value["summary"] as String
                 let cubeCount = story.value["cubeCount"] as Int
-                let base64Compressed = story.value["titleData"] as? [NSString]
+                let base64Str = story.value["thumbnailStr"] as String
                 let bucket = story.value["s3Bucket"] as String
                 
-                if (base64Compressed == nil) {
-                    return
-                }
-                
-                var compressedStr = ""
-                for chunk in base64Compressed! {
-                    compressedStr += chunk
-                }
+//                var compressedStr = ""
+//                for chunk in base64Compressed! {
+//                    compressedStr += chunk
+//                }
                 
                 var error: NSError?
-                let compressedData = NSData(base64EncodedString: compressedStr, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                let compressedData = NSData(base64EncodedString: base64Str,
+                    options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
                 let data = BZipCompression.decompressedDataWithData(compressedData, error:&error)
                 
                 if (error != nil) {
-                    println("BrowseViewController: \(error)")
-                } else {
-                    
-                    let image = UIImage(data: data)
-                    
-                    let storyInfo = StoryInfo(storyID: storyID, authorID: authorID,
-                        hashtag: hashtag, summary: summary, image: image!, cubeCount: cubeCount, s3Bucket: bucket)
-                    
-                    let index = NSIndexPath(forItem: self.stories.count, inSection: 0)
-                    
-                    let found = self.stories.filter({ (info: StoryInfo) -> Bool in
-                        if (info.storyID == storyInfo.storyID) {
-                            return true
-                        }
-                        return false
-                    })
-                    
-                    if (found.count == 0) {
-                        self.stories.append(storyInfo)
-                        self.collectionView.insertItemsAtIndexPaths([index])
-                    }
+                    println("BrowseViewController could not inflate thumbnail: \(error)")
+                    return
                 }
+                    
+                let thumbnail = UIImage(data: data)!
+                
+                let storyInfo = StoryInfo(storyID: storyID, authorID: authorID,
+                    hashtag: hashtag, summary: summary, thumbnail: thumbnail,
+                    cubeCount: cubeCount, s3Bucket: bucket)
+                
+                let index = NSIndexPath(forItem: self.stories.count, inSection: 0)
+                
+//                let found = self.stories.filter({ (info: StoryInfo) -> Bool in
+//                    if (info.storyID == storyInfo.storyID) {
+//                        return true
+//                    }
+//                    return false
+//                })
+                
+                //if (found.count == 0) {
+                    self.stories.append(storyInfo)
+                    self.collectionView.insertItemsAtIndexPaths([index])
+                //}
             }
         })
     }
-    
-    override func viewWillDisappear(animated: Bool) {
-        EKClient.stories.removeObserverWithHandle(self.firebaseRef!)
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     
     // MARK: - Navigation
 
@@ -125,7 +130,7 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         let storyInfo = self.stories[indexPath.item]
         cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.imageView.image = storyInfo.titleImage
+        cell.imageView.image = storyInfo.thumbnail
         cell.title.text = storyInfo.hashtag
         
         return cell

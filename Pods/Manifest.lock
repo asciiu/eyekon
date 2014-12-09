@@ -133,7 +133,7 @@ PODS:
     - XMLDictionary (~> 1.4.0)
   - Bolts (1.1.3)
   - BZipCompression (1.0.2)
-  - CocoaZ (1.4.0)
+  - CSGrowingTextView (1.0.2)
   - CTAssetsPickerController (2.6.0)
   - Firebase (1.2.3)
   - GZIP (1.0.3)
@@ -152,7 +152,7 @@ DEPENDENCIES:
   - AWSCognitoSync
   - AWSiOSSDKv2
   - BZipCompression (~> 1.0.0)
-  - CocoaZ
+  - CSGrowingTextView (~> 1.0)
   - CTAssetsPickerController (~> 2.6.0)
   - Firebase (>= 1.2.3)
   - KxMenu (~> 1)
@@ -164,7 +164,7 @@ SPEC CHECKSUMS:
   AWSiOSSDKv2: 57798629e08dcb547c29a093e7d1a7e2bc5ac0ae
   Bolts: 3db0a875235e0c9042b013af13af0f00f79b102c
   BZipCompression: d4931abf79e2dc33383acd58239bea499e13ed9d
-  CocoaZ: 3032b6a98d6008a9e8ef4aea14d2f4d510b4f659
+  CSGrowingTextView: b9ab53ce3d4dd1a11700576b8f3d374de8a97448
   CTAssetsPickerController: 1dadc633ca90bcd7797222199fcd7f9047b93386
   Firebase: b396753207f45235159be6703fbf059e5cf72536
   GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1

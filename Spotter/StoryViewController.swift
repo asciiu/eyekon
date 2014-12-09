@@ -14,7 +14,7 @@ let kSummary = "Summary"
 let kThumbnailKB = 100 * 1024
 let kImageKB = 500 * 1024
 
-class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CSGrowingTextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var collectionView: UICollectionView!
@@ -46,8 +46,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var keyboardFrame: CGRect = CGRectZero
     var collectionViewFrame: CGRect = CGRectZero
     
-    //let imagePicker: UIImagePickerController = UIImagePickerController()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,9 +60,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.navigationItem.titleView = self.titleTextField!
         
         self.collectionViewFrame = self.collectionView.frame
-        
-//        self.imagePicker.delegate = self
-//        self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -157,28 +152,43 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // TODO this needs work
     @IBAction func addText(sender: AnyObject) {
+        let size = self.textSize("text")
+        
         let frameWidth = self.collectionView.frame.size.width - self.sideInset * 2
-        let textView = UITextView(frame: CGRectMake(0, 0, frameWidth, 35))
+        let rect = CGRectMake(0, 0, frameWidth, size.height)
+        //let textView = CSGrowingTextView(frame: CGRectMake(0, 0, frameWidth, size.height))
+        //textView.maximumNumberOfLines = 50
+        //textView.growDirection = CSGrowDirection.Down
+        //textView.delegate = self
+        
+        let textView = UITextView(frame: rect)
+        textView.scrollEnabled = false
         textView.font = UIFont.systemFontOfSize(16)
         textView.delegate = self
         textView.returnKeyType = UIReturnKeyType.Done
         textView.inputAccessoryView = nil
         textView.userInteractionEnabled = true
-        textView.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
-        textView.layer.borderWidth = 1.0
         
         if (self.selectedCell != nil) {
             // remove the border around the existing selection
             self.selectedCell!.layer.borderWidth = 0.0
         }
         
-        self.cubes.insertObject(textView, atIndex: self.currentIndexPath.row)
+        self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item + 1)
         self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+
+        //self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath, atScrollPosition: UICollectionViewScrollPosition., animated: true)
         
         self.deleteBtn.enabled = true
         self.selectedIndexPath = self.currentIndexPath
         self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
         textView.becomeFirstResponder()
+        
+        let cell = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!
+        cell.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+        cell.layer.borderWidth = 1.0
+        self.selectedCell = cell
+
     }
     
     @IBAction func changeCoverPhoto(sender: AnyObject) {
@@ -253,7 +263,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         for resource in self.cubes {
             if (resource is UITextView) {
-                (resource as UITextView).userInteractionEnabled = true
+                (resource as UITextView).userInteractionEnabled = false
             }
         }
         self.showToolbar(true)
@@ -289,6 +299,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             let thumbnailData = UIImageJPEGRepresentation(self.storyInfo!.thumbnail, 1.0)
             let bucket = self.storyInfo!.s3Bucket
             let uid = self.storyInfo!.authorID
+            var dataTypes: [String] = []
             
             var error: NSError?
             let thumbnailDataCompressed = BZipCompression.compressedDataWithData(thumbnailData,
@@ -299,21 +310,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 return
             }
             
-            // add a node under the user-stories 
-            // note: not sure how this is to be used yet
-            let userStories = EKClient.appRef.childByAppendingPath("user-stories")
-                .childByAppendingPath(uid)
-                .childByAppendingPath(storyID)
-            userStories.setValue(["hashtag": self.titleTextField!.text])
-            
-            // convert thumbnail compressed data to base 64 string since nsdata is not accepted by firebase
-            // send the story info to firebase
-            let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
-            let base64String = thumbnailDataCompressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
-            newStoryRef.setValue(["authorID": uid, "hashtag": self.titleTextField!.text,
-                "summary": self.storyContent!.story.summary, "thumbnailStr": base64String,
-                "cubeCount": self.cubes.count, "s3Bucket": bucket])
-            
             // send all cube data to AWS S3 bucket
             for (var i = 0; i < self.cubes.count; ++i) {
                 
@@ -321,9 +317,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let path = NSTemporaryDirectory().stringByAppendingPathComponent(numStr)
                 let cube: AnyObject = self.cubes[i]
                 
+                dataTypes.append(_stdlib_getTypeName(cube))
+                
                 // TODO: the cube may be a UITextView also
-                let image = cube as UIImage
-                let cubeData: NSData = self.compressForUpload(image, maxFileSize: 600*1024)
+                var cubeData: NSData = NSData()
+                if (cube is UIImage) {
+                    let image = cube as UIImage
+                    cubeData = self.compressForUpload(image, maxFileSize: 600*1024)
+                } else if (cube is UITextView) {
+                    cubeData = NSKeyedArchiver.archivedDataWithRootObject(cube as UITextView)
+                }
                 
                 let compressedPayload = BZipCompression.compressedDataWithData(cubeData,
                     blockSize: BZipDefaultBlockSize, workFactor: BZipDefaultWorkFactor, error: &error)
@@ -346,6 +349,21 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                     return nil
                 }
             }
+            
+            // add a node under the user-stories
+            // note: not sure how this is to be used yet
+            let userStories = EKClient.appRef.childByAppendingPath("user-stories")
+                .childByAppendingPath(uid)
+                .childByAppendingPath(storyID)
+            userStories.setValue(["hashtag": self.titleTextField!.text])
+            
+            // convert thumbnail compressed data to base 64 string since nsdata is not accepted by firebase
+            // send the story info to firebase
+            let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
+            let base64String = thumbnailDataCompressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+            newStoryRef.setValue(["authorID": uid, "hashtag": self.titleTextField!.text,
+                "summary": self.storyContent!.story.summary, "thumbnailStr": base64String,
+                "cubeCount": self.cubes.count, "s3Bucket": bucket, "dataTypes": dataTypes])
         })
     }
  
@@ -394,17 +412,18 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         // TODO you need status indicators
         let storyInfo = self.storyInfo!
-        for (var j = 0; j < self.storyInfo!.cubeCount; ++j) {
+        for (var j = 0; j < self.storyInfo!.dataTypes.count; ++j) {
             let image = UIImage(named: "placeholder.png")
             self.cubes.addObject(image!)
         }
         
-        for (var i = 0; i < self.storyInfo!.cubeCount; ++i) {
+        for (var i = 0; i < self.storyInfo!.dataTypes.count; ++i) {
             
             let key = String(i)
             
             let downloadingFilePath = NSTemporaryDirectory().stringByAppendingPathComponent(key)
             let downloadingFileURL = NSURL(fileURLWithPath: downloadingFilePath)
+            let dataType = self.storyInfo!.dataTypes[i]
             
             let fileManager: NSFileManager = NSFileManager.defaultManager()
             var error: NSError?
@@ -434,17 +453,24 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                     
                     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
                         
-                        //let downloadOutput: AWSS3TransferManagerDownloadOutput = task.result as AWSS3TransferManagerDownloadOutput
-                        var data = NSData(contentsOfFile: downloadingFilePath)!
-                        data = BZipCompression.decompressedDataWithData(data, error: &error)
-                        
-                        let image = UIImage(data: data)!
                         let index = downloadingFilePath.lastPathComponent.toInt()!
                         let indexPath = NSIndexPath(forRow: index, inSection: 0)
                         
-                        self.cubes[index] = image
+                        //let downloadOutput: AWSS3TransferManagerDownloadOutput = task.result as AWSS3TransferManagerDownloadOutput
+                        var data = NSData(contentsOfFile: downloadingFilePath)!
+                        data = BZipCompression.decompressedDataWithData(data, error: &error)
+                 
+                        if (dataType == "UIImage") {
+                            let image = UIImage(data: data)!
+                            self.cubes[index] = image
+                        } else if (dataType == "UITextView") {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                let textView = NSKeyedUnarchiver.unarchiveObjectWithData(data) as UITextView
+                                self.cubes[index] = textView
+                            })
+                        }
                         
-                        if (self.cubes.count == self.storyInfo!.cubeCount) {
+                        if (self.cubes.count == self.storyInfo!.dataTypes.count) {
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.collectionView.reloadData()
                             })
@@ -469,7 +495,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         (userInfo[UIKeyboardFrameEndUserInfoKey]! as NSValue).getValue(&keyboardEndFrame)
         
         if (up) {
+            let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(self.selectedIndexPath!)!
+            let frame = self.collectionView.convertRect(attributes.frame, toView: self.view)
+            let dy = keyboardEndFrame.origin.y - (frame.origin.y + frame.size.height)
+            var contentOffset = self.collectionView.contentOffset
+            contentOffset.y -= (dy - self.cellSpacing)
+            
             self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y, self.collectionViewFrame.size.width, self.collectionViewFrame.size.height - keyboardEndFrame.size.height)
+
+            self.collectionView.setContentOffset(contentOffset, animated: true)
+            
         } else {
             self.collectionView.frame = self.collectionViewFrame
         }
@@ -483,10 +518,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.storyContent = content
         
         if( content.data != nil) {
-             dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+             //dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
                 // unarchive the story content as a ordered array of UIViews
                 self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(content.data!) as NSMutableArray
-            })
+            //})
         }
         
         // image data greater than thumbnail size?
@@ -527,6 +562,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.collectionView.frame = CGRectMake(cvOrigin.x, cvOrigin.y,
                 cvSize.width, viewSize.height - toolbarSize.height)
         }
+    }
+    
+    func textSize(text: String) -> CGSize {
+        let frameWidth = self.collectionView.frame.width - self.sideInset * 2
+        let str = NSString(string: text)
+        let rect = str.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(16)], context: nil)
+        
+        return CGSizeMake(frameWidth, rect.size.height + 15)
     }
     
     // MARK: - UIImagePickerControllerDelegate
@@ -611,23 +654,27 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
 
     // MARK: UITextViewDelegate
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textViewDidChange(textView: UITextView) {
+        // size to fit but maintain width
+        let size = textView.frame.size
+        textView.sizeToFit()
+        textView.frame.size.width = size.width
         
+        let dHeight = textView.frame.height - size.height
+        
+        if (dHeight != 0) {
+            self.collectionView.contentOffset.y += dHeight
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+    }
+    
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+ 
         if(text == "\n") {
             textView.userInteractionEnabled = false
             textView.resignFirstResponder()
-            //self.displayEditTools(self.currentIndexPath)
-        } else {
-            let frameWidth = textView.frame.size.width
-            let cellHeight = textView.frame.size.height
-            
-            textView.sizeToFit()
-            textView.frame.size.width = frameWidth
-            
-            if (textView.frame.size.height != cellHeight) {
-                self.collectionView.collectionViewLayout.invalidateLayout()
-            }
         }
+        
         return true
     }
  
@@ -656,7 +703,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
         
         let cell: UICollectionViewCell? = self.collectionView.cellForItemAtIndexPath(indexPath)
-        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.row)
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item + 1)
         
         // add a blue border around the new selection
         if (resource is UIImage) {
@@ -749,8 +796,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         return 2
     }
     
-
-    
     // MARK: - UICollectionViewDelegateFlowLayout
     
     func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!,
@@ -786,11 +831,27 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let image = resource as UIImage
                 return self.imageFrameSize(image)
             } else {
-                return CGSizeMake(self.collectionView.frame.size.width - self.sideInset*2, 50)
+                
+                let textView = resource as UITextView
+                let frameWidth = self.collectionView.frame.width - self.sideInset * 2
+                textView.frame.size.width = frameWidth
+                //let frameHeight = textView.contentSize.height
+                //textView.frame.size.height = frameHeight
+                //var text = NSString(string: textView.text)
+                //if (text == "") {
+                //    text = "txt"
+                //}
+  
+                // assuming the only other resource type is UITextView
+                //let rect = text.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(16)], context: nil)
+                
+                //return CGSizeMake(frameWidth, rect.size.height + 10)
+                return CGSizeMake(frameWidth, textView.frame.size.height)
             }
         } else {
             let size = self.collectionView.frame.size
-            return CGSizeMake(size.width, size.height/2)
+            let viewHeight = self.view.frame.height
+            return CGSizeMake(size.width, viewHeight/2)
         }
     }
     

@@ -10,10 +10,10 @@ pod 'Firebase', '>= 1.2.3'
 pod 'RSKImageCropper'
 pod 'UICollectionViewLeftAlignedLayout'
 pod 'KxMenu', '~> 1'
-pod 'CocoaZ'
 pod 'BZipCompression', '~> 1.0.0'
 pod "AWSiOSSDKv2"
 pod 'AWSCognitoSync'
+pod 'CSGrowingTextView', '~> 1.0'
 
 end
 

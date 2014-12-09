@@ -108,17 +108,17 @@
 #define COCOAPODS_VERSION_MINOR_Bolts 1
 #define COCOAPODS_VERSION_PATCH_Bolts 3
 
+// CSGrowingTextView
+#define COCOAPODS_POD_AVAILABLE_CSGrowingTextView
+#define COCOAPODS_VERSION_MAJOR_CSGrowingTextView 1
+#define COCOAPODS_VERSION_MINOR_CSGrowingTextView 0
+#define COCOAPODS_VERSION_PATCH_CSGrowingTextView 2
+
 // CTAssetsPickerController
 #define COCOAPODS_POD_AVAILABLE_CTAssetsPickerController
 #define COCOAPODS_VERSION_MAJOR_CTAssetsPickerController 2
 #define COCOAPODS_VERSION_MINOR_CTAssetsPickerController 6
 #define COCOAPODS_VERSION_PATCH_CTAssetsPickerController 0
-
-// CocoaZ
-#define COCOAPODS_POD_AVAILABLE_CocoaZ
-#define COCOAPODS_VERSION_MAJOR_CocoaZ 1
-#define COCOAPODS_VERSION_MINOR_CocoaZ 4
-#define COCOAPODS_VERSION_PATCH_CocoaZ 0
 
 // Firebase
 #define COCOAPODS_POD_AVAILABLE_Firebase

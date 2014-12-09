@@ -14,7 +14,7 @@ let kSummary = "Summary"
 let kThumbnailKB = 100 * 1024
 let kImageKB = 500 * 1024
 
-class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CSGrowingTextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var collectionView: UICollectionView!
@@ -35,6 +35,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     let coreContext: CoreContext = CoreContext()
 
     var titleTextField: UITextField?
+    var addingText: Bool = false
     
     // index of selected cube/UIView
     var currentIndexPath: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
@@ -43,7 +44,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var titleCell: StoryTitleCollectionViewCell?
     
     // stuff used to position the view when the keyboard slides into view
-    var keyboardFrame: CGRect = CGRectZero
     var collectionViewFrame: CGRect = CGRectZero
     
     override func viewDidLoad() {
@@ -152,6 +152,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // TODO this needs work
     @IBAction func addText(sender: AnyObject) {
+        self.addingText = true
         let size = self.textSize("text")
         
         let frameWidth = self.collectionView.frame.size.width - self.sideInset * 2
@@ -163,11 +164,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         let textView = UITextView(frame: rect)
         textView.scrollEnabled = false
-        textView.font = UIFont.systemFontOfSize(16)
+        textView.font = UIFont.systemFontOfSize(20)
         textView.delegate = self
         textView.returnKeyType = UIReturnKeyType.Done
         textView.inputAccessoryView = nil
         textView.userInteractionEnabled = true
+        textView.textAlignment = NSTextAlignment.Center
         
         if (self.selectedCell != nil) {
             // remove the border around the existing selection
@@ -495,15 +497,19 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         (userInfo[UIKeyboardFrameEndUserInfoKey]! as NSValue).getValue(&keyboardEndFrame)
         
         if (up) {
-            let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(self.selectedIndexPath!)!
-            let frame = self.collectionView.convertRect(attributes.frame, toView: self.view)
-            let dy = keyboardEndFrame.origin.y - (frame.origin.y + frame.size.height)
-            var contentOffset = self.collectionView.contentOffset
-            contentOffset.y -= (dy - self.cellSpacing)
+            
+            if (self.addingText) {
+                let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(self.selectedIndexPath!)!
+                let frame = self.collectionView.convertRect(attributes.frame, toView: self.view)
+                let dy = keyboardEndFrame.origin.y - (frame.origin.y + frame.size.height)
+                var contentOffset = self.collectionView.contentOffset
+                contentOffset.y -= (dy - self.cellSpacing)
+                self.collectionView.setContentOffset(contentOffset, animated: true)
+            }
             
             self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y, self.collectionViewFrame.size.width, self.collectionViewFrame.size.height - keyboardEndFrame.size.height)
 
-            self.collectionView.setContentOffset(contentOffset, animated: true)
+            
             
         } else {
             self.collectionView.frame = self.collectionViewFrame
@@ -567,7 +573,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func textSize(text: String) -> CGSize {
         let frameWidth = self.collectionView.frame.width - self.sideInset * 2
         let str = NSString(string: text)
-        let rect = str.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(16)], context: nil)
+        let rect = str.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(20)], context: nil)
         
         return CGSizeMake(frameWidth, rect.size.height + 15)
     }
@@ -673,6 +679,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         if(text == "\n") {
             textView.userInteractionEnabled = false
             textView.resignFirstResponder()
+            self.addingText = false
         }
         
         return true
@@ -811,6 +818,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         let resource: AnyObject = self.cubes.objectAtIndex(index)
         
         if (resource is UITextView) {
+            self.addingText = true
             let textView: UITextView = (resource as UITextView)
             
             textView.inputAccessoryView = nil
@@ -835,17 +843,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 let textView = resource as UITextView
                 let frameWidth = self.collectionView.frame.width - self.sideInset * 2
                 textView.frame.size.width = frameWidth
-                //let frameHeight = textView.contentSize.height
-                //textView.frame.size.height = frameHeight
-                //var text = NSString(string: textView.text)
-                //if (text == "") {
-                //    text = "txt"
-                //}
-  
-                // assuming the only other resource type is UITextView
-                //let rect = text.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(16)], context: nil)
-                
-                //return CGSizeMake(frameWidth, rect.size.height + 10)
                 return CGSizeMake(frameWidth, textView.frame.size.height)
             }
         } else {

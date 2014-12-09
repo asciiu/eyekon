@@ -30,7 +30,7 @@ class StoryInfo {
     }
 }
 
-class BrowseViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class BrowseViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UITextFieldDelegate {
 
     @IBOutlet var collectionView: UICollectionView!
     var stories: [StoryInfo] = []
@@ -127,6 +127,12 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
 
 
+    // MARK: - UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     // MARK: - UICollectionViewDataSource
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as TitleCollectionViewCell

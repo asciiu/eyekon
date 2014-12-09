@@ -47,8 +47,6 @@
 		6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */; };
 		6E79658419E0E8C700C23AAC /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658319E0E8C700C23AAC /* Story.swift */; };
 		6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658519E0E8C800C23AAC /* StoryContent.swift */; };
-		6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658819E210C600C23AAC /* HPGrowingTextView.m */; };
-		6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E79658A19E210C600C23AAC /* HPTextViewInternal.m */; };
 		6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8AC5521A1032BE00BCA2FD /* AddContactViewController.swift */; };
 		6E903D3219F48E7300A1B6B3 /* libTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D2F19F48E7300A1B6B3 /* libTool.png */; };
 		6E903D3319F48E7300A1B6B3 /* camTool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D3019F48E7300A1B6B3 /* camTool.png */; };
@@ -145,10 +143,6 @@
 		6E79658019E0C27800C23AAC /* UIImage+NSCopying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+NSCopying.m"; sourceTree = "<group>"; };
 		6E79658319E0E8C700C23AAC /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		6E79658519E0E8C800C23AAC /* StoryContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryContent.swift; sourceTree = "<group>"; };
-		6E79658719E210C600C23AAC /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
-		6E79658819E210C600C23AAC /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
-		6E79658919E210C600C23AAC /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
-		6E79658A19E210C600C23AAC /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		6E8AC5521A1032BE00BCA2FD /* AddContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactViewController.swift; sourceTree = "<group>"; };
 		6E903D2F19F48E7300A1B6B3 /* libTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = libTool.png; sourceTree = "<group>"; };
 		6E903D3019F48E7300A1B6B3 /* camTool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camTool.png; sourceTree = "<group>"; };
@@ -256,10 +250,6 @@
 				6E1CE2CB19B428210085FF19 /* ImageCollectionViewCell.swift */,
 				6EE0135419C52ED200152F7E /* DraggableImageView.swift */,
 				6EE0135F19C82D3600152F7E /* SimpleTableViewCell.swift */,
-				6E79658719E210C600C23AAC /* HPGrowingTextView.h */,
-				6E79658819E210C600C23AAC /* HPGrowingTextView.m */,
-				6E79658919E210C600C23AAC /* HPTextViewInternal.h */,
-				6E79658A19E210C600C23AAC /* HPTextViewInternal.m */,
 				6E2423C919E359D500966445 /* SMCalloutView.h */,
 				6E2423CA19E359D500966445 /* SMCalloutView.m */,
 				6E79657F19E0C27800C23AAC /* UIImage+NSCopying.h */,
@@ -599,7 +589,6 @@
 				6E3496351A1EBBF600AC0FAB /* SharedStoriesViewController.swift in Sources */,
 				6EE963D71A2BF66700F0E1FA /* TitleCollectionViewCell.swift in Sources */,
 				6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */,
-				6E79658C19E210C600C23AAC /* HPTextViewInternal.m in Sources */,
 				6EA4C1C31A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift in Sources */,
 				6EB6AD391A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				6E97168319EF416200A30E56 /* ResizableCollectionCell.swift in Sources */,
@@ -621,7 +610,6 @@
 				6E66D9771A0207570012317D /* MITableView.swift in Sources */,
 				6EB6AD3C1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m in Sources */,
 				6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */,
-				6E79658B19E210C600C23AAC /* HPGrowingTextView.m in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
 				6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,

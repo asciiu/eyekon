@@ -66,7 +66,7 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             for story in stories {
                 
-                let storyID = story.name
+                let storyID = story.key
                 let authorID = story.value["authorID"] as String
                 let hashtag = story.value["hashtag"] as String
                 let summary = story.value["summary"] as String

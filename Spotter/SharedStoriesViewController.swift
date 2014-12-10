@@ -30,7 +30,7 @@ class SharedStoriesViewController: UIViewController, UITableViewDataSource, UITa
             let stories = data.children.allObjects as [FDataSnapshot]
             
             for story in stories {
-                let storyID = story.name
+                let storyID = story.key
                 let title = story.value["hashtag"] as NSString
                 
                 let coreStory = self.coreContext.createEntity("Story") as Story

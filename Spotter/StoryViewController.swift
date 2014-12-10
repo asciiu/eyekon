@@ -74,7 +74,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             let uid = EKClient.authData!.uid
             let newStoryRef = EKClient.stories.childByAutoId()
             // this is the reference to the S3 bucket where the story data will live
-            let bucket = "eyekon/\(uid)/\(newStoryRef.name)"
+            let bucket = "eyekon/\(uid)/\(newStoryRef.key)"
             let coverImage = UIImage(named: "placeholder.png")!
 
             // create new story and story content models
@@ -86,12 +86,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             story.uid = uid
             story.title = kStoryHashtag
             story.summary = kSummary
-            story.storyID = newStoryRef.name
+            story.storyID = newStoryRef.key
             story.content = content
             content.story = story
             
             self.storyContent = content
-            self.storyInfo = StoryInfo(storyID: newStoryRef.name, authorID: EKClient.authData!.uid,
+            self.storyInfo = StoryInfo(storyID: newStoryRef.key, authorID: EKClient.authData!.uid,
                 hashtag: kStoryHashtag, summary: "Summary", thumbnail: coverImage,
                 cubeCount: 0, s3Bucket: bucket)
             

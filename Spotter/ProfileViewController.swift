@@ -120,7 +120,7 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
             let stories = data.children.allObjects as [FDataSnapshot]
             
             for story in stories {
-                let storyID = story.name
+                let storyID = story.key
                 let title = story.value["hashtag"] as NSString
                 //println(storyID + " " + title)
             }

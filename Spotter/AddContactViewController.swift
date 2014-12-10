@@ -48,7 +48,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
             
             for user in users {
                 
-                if (user.name == EKClient.authData!.uid) {
+                if (user.key == EKClient.authData!.uid) {
                     continue
                 }
                 
@@ -57,7 +57,7 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
                 let last = user.value["last"] as String
                 let name = first + " " + last
                 
-                let userInfo = UserInfo(id: user.name, email: email, name: name)
+                let userInfo = UserInfo(id: user.key, email: email, name: name)
                 
                 let base64Image: [NSString]? = user.value["profileImage"] as? [NSString]
                 

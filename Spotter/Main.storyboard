@@ -44,30 +44,6 @@
             </objects>
             <point key="canvasLocation" x="-3319" y="94"/>
         </scene>
-        <!--Feed-->
-        <scene sceneID="f5g-3y-gzy">
-            <objects>
-                <viewController id="MoD-ax-Saj" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="0Sm-ao-YXO">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feed" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fJa-H8-kCX">
-                                <rect key="frame" x="141" y="273" width="39" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="Feed" id="qPS-Os-ZOy"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="YfF-9Z-oDZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2236" y="-735"/>
-        </scene>
         <!--Browse View Controller-->
         <scene sceneID="uW9-kf-UTv">
             <objects>
@@ -106,7 +82,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Dr2-N7-5Yb">
-                                                    <rect key="frame" x="8" y="85" width="98" height="20.999999405561109"/>
+                                                    <rect key="frame" x="8" y="85" width="98" height="20.999999405384237"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -180,7 +156,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Circles" id="16C-Xj-hem"/>
+                    <tabBarItem key="tabBarItem" systemItem="featured" id="CrX-Tu-zAG"/>
                     <connections>
                         <outlet property="tableView" destination="65M-Wq-7Ni" id="Q9x-kz-MMg"/>
                     </connections>
@@ -360,10 +336,8 @@
                         <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="MoD-ax-Saj" kind="relationship" relationship="viewControllers" id="hXi-XY-u4C"/>
-                        <segue destination="NO7-p8-hqc" kind="relationship" relationship="viewControllers" id="wou-9B-kuf"/>
-                        <segue destination="6Y9-dZ-uxh" kind="relationship" relationship="viewControllers" id="66c-BY-zPX"/>
                         <segue destination="Cum-Ml-5y8" kind="relationship" relationship="viewControllers" id="z7E-3j-gS9"/>
+                        <segue destination="6Y9-dZ-uxh" kind="relationship" relationship="viewControllers" id="66c-BY-zPX"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="voB-py-Q7d" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -488,7 +462,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rZh-9R-oLc">
-                                                    <rect key="frame" x="8" y="71.00000018165224" width="84" height="21"/>
+                                                    <rect key="frame" x="8" y="71.000000379100328" width="84" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
@@ -664,7 +638,7 @@
         <!--Story-->
         <scene sceneID="wL7-hp-1go">
             <objects>
-                <viewController hidesBottomBarWhenPushed="YES" id="uya-p5-87Y" customClass="StoryViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="StoryViewController" hidesBottomBarWhenPushed="YES" id="uya-p5-87Y" customClass="StoryViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bp4-Hk-zZP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -907,7 +881,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="Stz-xy-uLe"/>
-        <segue reference="LsA-9b-bG5"/>
-        <segue reference="7JB-Mg-Amt"/>
+        <segue reference="Owd-ui-pVm"/>
+        <segue reference="y4d-cO-mkd"/>
     </inferredMetricsTieBreakers>
 </document>

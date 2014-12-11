@@ -462,7 +462,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rZh-9R-oLc">
-                                                    <rect key="frame" x="8" y="71.000000379100328" width="84" height="21"/>
+                                                    <rect key="frame" x="8" y="71" width="84" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
@@ -491,11 +491,6 @@
                         <barButtonItem key="leftBarButtonItem" title="Add Contact" id="iyb-KG-d60">
                             <connections>
                                 <segue destination="mEh-0n-vKf" kind="push" id="Owd-ui-pVm"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="STP-iy-o0a">
-                            <connections>
-                                <action selector="addStory:" destination="QHJ-c1-pPb" id="TZK-9Y-GHW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

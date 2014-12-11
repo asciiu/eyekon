@@ -184,17 +184,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item + 1)
         self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
        
-        
-        self.collectionView.performBatchUpdates({
+        UIView.animateWithDuration(0.3, animations: {
             self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath,
                 atScrollPosition: UICollectionViewScrollPosition.Bottom, animated: false)
-            
-        }, completion: { (bool) in
-            self.deleteBtn.enabled = true
-            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
-            textView.becomeFirstResponder()
-
-            return
+            },
+            completion: { (bool) in
+                textView.becomeFirstResponder()
+                self.deleteBtn.enabled = true
+                self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
+        
         })
     }
     

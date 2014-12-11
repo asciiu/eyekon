@@ -195,10 +195,10 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     // MARK: - Actions
-    @IBAction func addStory(sender: AnyObject) {
-        self.selectedStory = nil
-        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
-    }
+//    @IBAction func addStory(sender: AnyObject) {
+//        self.selectedStory = nil
+//        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
+//    }
     
     @IBAction func logout(sender: AnyObject) {
         EKClient.logout()

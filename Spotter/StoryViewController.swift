@@ -180,20 +180,29 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         textView.textAlignment = NSTextAlignment.Center
         
         
+        self.deleteBtn.enabled = true
         self.selectedIndexPath = self.currentIndexPath
         self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item + 1)
         self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-       
-        UIView.animateWithDuration(0.3, animations: {
-            self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath,
-                atScrollPosition: UICollectionViewScrollPosition.Bottom, animated: false)
-            },
-            completion: { (bool) in
-                textView.becomeFirstResponder()
-                self.deleteBtn.enabled = true
-                self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
         
-        })
+        // if the cell beyond the view bounds this will return nil
+        let cell = self.collectionView.cellForItemAtIndexPath(self.currentIndexPath)
+    
+        if (cell != nil) {
+            textView.becomeFirstResponder()
+            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
+            
+        } else {
+            
+            UIView.animateWithDuration(0.3, animations: {
+                self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath,
+                    atScrollPosition: UICollectionViewScrollPosition.Bottom, animated: false)
+                },
+                completion: { (bool) in
+                    textView.becomeFirstResponder()
+                    self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
+            })
+        }
     }
     
     @IBAction func changeCoverPhoto(sender: AnyObject) {

@@ -36,9 +36,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 
     var titleTextField: UITextField?
     var addingText: Bool = false
+    var addingImage: Bool = false
+    var keyboardIsVisible: Bool = false
     
     // index of selected cube/UIView
-    var currentIndexPath: NSIndexPath = NSIndexPath(forRow: 0, inSection: 0)
+    var currentIndexPath: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
     var selectedIndexPath: NSIndexPath?
     var selectedCell: UICollectionViewCell?
     var titleCell: StoryTitleCollectionViewCell?
@@ -130,8 +132,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        if (!self.addingImage) {
+            // if this controller is dissappearing because we are not adding an image remove the notification listeners
+            NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+            NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -141,10 +146,13 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // MARK: - Actions
     @IBAction func addPhotoFromCamera(sender: AnyObject) {
+        self.addingImage = true
         self.performSegueWithIdentifier("FromStoryToCapture", sender: self)
     }
     
     @IBAction func addPhotoFromLibrary(sender: AnyObject) {
+        self.addingImage = true
+
         let picker: CTAssetsPickerController = CTAssetsPickerController()
         picker.delegate = self
         self.presentViewController(picker, animated: true, completion: nil)
@@ -171,29 +179,28 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         textView.userInteractionEnabled = true
         textView.textAlignment = NSTextAlignment.Center
         
-        if (self.selectedCell != nil) {
-            // remove the border around the existing selection
-            self.selectedCell!.layer.borderWidth = 0.0
-        }
         
+        self.selectedIndexPath = self.currentIndexPath
         self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item + 1)
         self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-
-        //self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath, atScrollPosition: UICollectionViewScrollPosition., animated: true)
+       
         
-        self.deleteBtn.enabled = true
-        self.selectedIndexPath = self.currentIndexPath
-        self.currentIndexPath = NSIndexPath(forRow: self.currentIndexPath.row+1, inSection: self.currentIndexPath.section)
-        textView.becomeFirstResponder()
-        
-        let cell = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!
-        cell.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
-        cell.layer.borderWidth = 1.0
-        self.selectedCell = cell
+        self.collectionView.performBatchUpdates({
+            self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath,
+                atScrollPosition: UICollectionViewScrollPosition.Bottom, animated: false)
+            
+        }, completion: { (bool) in
+            self.deleteBtn.enabled = true
+            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
+            textView.becomeFirstResponder()
 
+            return
+        })
     }
     
     @IBAction func changeCoverPhoto(sender: AnyObject) {
+        self.addingImage = true
+
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagePicker.delegate = self
@@ -203,23 +210,24 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     @IBAction func deleteSelected(sender: AnyObject) {
         // there must be a selected item before the user can delete
-        if (self.selectedIndexPath == nil) {
+        if (self.selectedIndexPath == nil || self.selectedCell == nil) {
             return
         }
         
-        // need to remove view from the selected cell otherwise reusable cells will still
-        // contain this view
-        let contentView = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!.contentView
-        for view in contentView.subviews {
-            view.removeFromSuperview()
-        }
         
         self.cubes.removeObjectAtIndex(self.selectedIndexPath!.item+1)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndexPath!])
         
+        // need to remove view from the selected cell otherwise reusable cells will still
+        // contain this view
+//        let contentView = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!.contentView
+//        for view in contentView.subviews {
+//            view.removeFromSuperview()
+//        }
+        
         // move current index path to previous index item
-        if (self.currentIndexPath.row > 0) {
-            self.currentIndexPath.row.advancedBy(-1)
+        if (self.currentIndexPath.item > 0) {
+            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item-1, inSection: self.currentIndexPath.section)
         }
         
         // remove border from the selected cell
@@ -389,6 +397,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.cubes.insertObject(image, atIndex: self.currentIndexPath.item+1)
             
             self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+            self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath, atScrollPosition: UICollectionViewScrollPosition.Top, animated: true)
             self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
         }
     }
@@ -456,7 +465,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
                         
                         let index = downloadingFilePath.lastPathComponent.toInt()!
-                        let indexPath = NSIndexPath(forRow: index, inSection: 0)
+                        let indexPath = NSIndexPath(forItem: index, inSection: 0)
                         
                         //let downloadOutput: AWSS3TransferManagerDownloadOutput = task.result as AWSS3TransferManagerDownloadOutput
                         var data = NSData(contentsOfFile: downloadingFilePath)!
@@ -498,6 +507,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         if (up) {
             
+            // if adding text in a cube resource
             if (self.addingText) {
                 let attributes = self.collectionView.layoutAttributesForItemAtIndexPath(self.selectedIndexPath!)!
                 let frame = self.collectionView.convertRect(attributes.frame, toView: self.view)
@@ -507,12 +517,14 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 self.collectionView.setContentOffset(contentOffset, animated: true)
             }
             
-            self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y, self.collectionViewFrame.size.width, self.collectionViewFrame.size.height - keyboardEndFrame.size.height)
-
-            
-            
+            // set the view frame so we can restore its size when the keyboard dissapears
+            self.collectionViewFrame = self.collectionView.frame
+            self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y,
+                self.collectionViewFrame.size.width, self.view.frame.size.height - keyboardEndFrame.size.height)
+            self.keyboardIsVisible = true
         } else {
             self.collectionView.frame = self.collectionViewFrame
+            self.keyboardIsVisible = false
         }
         
     }
@@ -573,7 +585,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func textSize(text: String) -> CGSize {
         let frameWidth = self.collectionView.frame.width - self.sideInset * 2
         let str = NSString(string: text)
-        let rect = str.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(20)], context: nil)
+        let rect = str.boundingRectWithSize(CGSizeMake(frameWidth, CGFloat.max), options: NSStringDrawingOptions.UsesDeviceMetrics,
+            attributes: [NSFontAttributeName : UIFont.systemFontOfSize(20)], context: nil)
         
         return CGSizeMake(frameWidth, rect.size.height + 15)
     }
@@ -595,6 +608,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         self.addImages(images)
         picker.dismissViewControllerAnimated(true, completion: nil)
+        self.addingImage = false
     }
     
     // invoked after selecting a cover image
@@ -615,6 +629,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
 
         let thumbData: NSData = self.compressForUpload(image, maxFileSize: kThumbnailKB)
         self.storyInfo!.thumbnail = UIImage(data: thumbData)!
+        self.addingImage = false
     }
     
     // MARK: - Navigation
@@ -725,6 +740,32 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.selectedCell = cell
         self.currentIndexPath = indexPath
         self.selectedIndexPath = indexPath
+    }
+    
+    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        
+        if (indexPath.section == 0) {
+            return
+        }
+        
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
+        if (resource is UITextView && self.addingText && self.selectedIndexPath == indexPath) {
+            if (self.selectedCell != nil) {
+                // remove the border around the existing selection
+                self.selectedCell!.layer.borderWidth = 0.0
+            }
+
+            cell.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
+            cell.layer.borderWidth = 1.0
+            self.selectedCell = cell
+            
+            // not sure why this is needed a second time after a text
+            // view is added but when the text view is beyond the bounds
+            // the keyboard will not show
+//            if (!self.keyboardIsVisible) {
+//                (resource as UITextView).becomeFirstResponder()
+//            }
+        }
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {

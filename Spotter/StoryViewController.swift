@@ -224,13 +224,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.cubes.removeObjectAtIndex(self.selectedIndexPath!.item+1)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndexPath!])
         
-        // need to remove view from the selected cell otherwise reusable cells will still
-        // contain this view
-//        let contentView = self.collectionView.cellForItemAtIndexPath(self.selectedIndexPath!)!.contentView
-//        for view in contentView.subviews {
-//            view.removeFromSuperview()
-//        }
-        
         // move current index path to previous index item
         if (self.currentIndexPath.item > 0) {
             self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item-1, inSection: self.currentIndexPath.section)
@@ -426,9 +419,38 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     func downloadStoryFromS3() {
+        let storyInfo = self.storyInfo!
+        if (storyInfo.authorID != EKClient.authData!.uid) {
+            EKClient.usersURL.childByAppendingPath(storyInfo.authorID).observeSingleEventOfType(.Value,
+                withBlock: { (data: FDataSnapshot!) -> Void in
+                    if (data.value === NSNull()) {
+                        return
+                    }
+                    
+                    let first = data.value["first"] as NSString
+                    let last  = data.value["last"] as NSString
+                    let base64Image: NSString? = data.value["profileImage"] as? NSString
+                    var image = UIImage(named: "contact-default.png")
+                    
+                    if (base64Image != nil) {
+                        
+                        let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                        image = UIImage(data: data!)
+                    }
+                    
+                    let titleHeight = self.navigationItem.titleView!.frame.size.height
+                    let titleWidth = self.navigationItem.titleView!.frame.size.width
+                    let button = UIButton(frame: CGRectMake(0, 0, titleHeight * 1.5, titleHeight * 1.5))
+                    button.layer.cornerRadius = titleHeight * 1.5 / 2
+                    button.clipsToBounds = true
+                    button.setImage(image, forState: UIControlState.Normal)
+                    button.center = CGPointMake(titleWidth - titleHeight/2, titleHeight/2)
+                    self.navigationItem.titleView?.clipsToBounds = false
+                    self.navigationItem.titleView?.addSubview(button)
+            })
+        }
         
         // TODO you need status indicators
-        let storyInfo = self.storyInfo!
         for (var j = 0; j < self.storyInfo!.dataTypes.count; ++j) {
             let image = UIImage(named: "placeholder.png")
             self.cubes.addObject(image!)

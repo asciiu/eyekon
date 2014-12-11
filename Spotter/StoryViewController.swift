@@ -11,8 +11,7 @@ import CoreData
 
 let kStoryHashtag = "#untitled"
 let kSummary = "Summary"
-let kThumbnailKB = 100 * 1024
-let kImageKB = 500 * 1024
+
 
 class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -765,14 +764,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             cell.layer.borderColor = UIColor(red: 0.64, green: 0.76, blue: 0.96, alpha: 1).CGColor
             cell.layer.borderWidth = 1.0
             self.selectedCell = cell
-            
-            // not sure why this is needed a second time after a text
-            // view is added but when the text view is beyond the bounds
-            // the keyboard will not show
-//            if (!self.keyboardIsVisible) {
-//                (resource as UITextView).becomeFirstResponder()
-//            }
         }
+    }
+    
+    func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return self.editable
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {

@@ -71,3 +71,22 @@ class FBClient: NSObject {
 }
 
 let EKClient = FBClient()
+
+
+let kThumbnailKB = 70 * 1024
+let kImageKB = 300 * 1024
+
+func compressForUpload(original: UIImage, maxFileSize: Int) -> NSData {
+    
+    let maxCompression: CGFloat = 0.1
+    var compression: CGFloat = 0.9
+    
+    var imageData: NSData = UIImageJPEGRepresentation(original, compression);
+    
+    while (imageData.length > maxFileSize && compression > maxCompression) {
+        compression -= 0.1
+        imageData = UIImageJPEGRepresentation(original, compression)
+    }
+    
+    return imageData
+}

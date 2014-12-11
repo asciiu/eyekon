@@ -64,15 +64,11 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
                 user.last  = data.value["last"] as NSString
                 self.usernameLabel.text = user.first + " " + user.last
                 
-                let base64Image: [NSString]? = data.value["profileImage"] as? [NSString]
+                let base64Image: NSString? = data.value["profileImage"] as? NSString
                 
                 if (base64Image != nil) {
-                    var str = ""
-                    for chunk in base64Image! {
-                        str += chunk
-                    }
                     
-                    let data = NSData(base64EncodedString: str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
+                    let data = NSData(base64EncodedString: base64Image!, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
                    
                     user.profileImage = data
                     
@@ -125,41 +121,6 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
                 //println(storyID + " " + title)
             }
         })
-        
-//        EKClient.userPostsRef?.observeEventType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
-//            
-//            if (data.value === NSNull()) {
-//                return
-//            }
-//            
-//            let hashtag: NSString = data.value["hashtag"] as NSString
-//            let base64: NSString = data.value["packet"] as NSString
-//            
-//            let data = NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-//            
-//            let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: self.context!) as Story
-//            story.title = hashtag
-//            story.summary = "Summary"
-//            
-//            let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent", inManagedObjectContext: self.context!) as StoryContent
-//            
-//            story.content = content
-//            content.story = story
-//            content.data = data
-//
-//            //var error: NSError?
-//            //if( content.managedObjectContext!.save(&error)) {
-//            //    println("could not save story: \(error?.localizedDescription)")
-//            //} else {
-//                self.stories.append(story)
-//                self.tableView.reloadData()
-//            //}
-//            
-//            //self.cubes = NSKeyedUnarchiver.unarchiveObjectWithData(data!) as NSMutableArray
-//            
-//            //println(self.cubes.count)
-//            //self.tableView.reloadData()
-//        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -194,12 +155,6 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
 //        }
     }
     
-    // MARK: - Actions
-//    @IBAction func addStory(sender: AnyObject) {
-//        self.selectedStory = nil
-//        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
-//    }
-    
     @IBAction func logout(sender: AnyObject) {
         EKClient.logout()
         NSNotificationCenter.defaultCenter().postNotificationName(EKLogoutNotification, object: self)
@@ -228,7 +183,8 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         //self.profileImageButton.imageView!.image = croppedImage
         
         // convert profile image into a base64 string 
-        let data: NSData = UIImageJPEGRepresentation(croppedImage, 1.0)
+        let data: NSData = compressForUpload(croppedImage, kThumbnailKB)
+        //let data: NSData = UIImageJPEGRepresentation(croppedImage, 1.0)
         self.user!.profileImage = data
         
         var error: NSError?
@@ -238,11 +194,11 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         
         let base64String = data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed)
         
-        let chunks: [NSString] = divideString(base64String)
+        //let chunks: [NSString] = divideString(base64String)
         
         // send the profile image to the server
         let serverRef = EKClient.userHomeURL?.childByAppendingPath("profileImage")
-        serverRef?.setValue(chunks)
+        serverRef?.setValue(base64String)
     }
     
     func imageCropViewControllerDidCancelCrop(controller: RSKImageCropViewController!) {

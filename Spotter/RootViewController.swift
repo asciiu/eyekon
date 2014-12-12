@@ -31,19 +31,11 @@ class RootViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        if (EKClient.authData != nil) {
-            
-            self.performSegueWithIdentifier("FromRootToTab", sender: self)
-            
-//            self.navigationController?.navigationBarHidden = false
-//            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//            let controller = storyboard.instantiateViewControllerWithIdentifier("TabView") as UIViewController
-//            
-//            self.navigationController?.modalPresentationCapturesStatusBarAppearance = true
-//            self.navigationController?.pushViewController(controller, animated: false)
-        } else {
+//        if (EKClient.authData != nil) {
+//            self.performSegueWithIdentifier("FromRootToTab", sender: self)
+//        } else {
             self.navigationController?.navigationBarHidden = true
-        }
+       // }
     }
     
     override func didReceiveMemoryWarning() {
@@ -52,6 +44,8 @@ class RootViewController: UIViewController {
     }
 
     func handleLogout(notification: NSNotification) {
+        // pop any controllers off the stack that are still there from 
+        // a login or signup
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     /*
@@ -63,5 +57,8 @@ class RootViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    @IBAction func unwindToRoot(unwindSegue: UIStoryboardSegue) {
+    }
 
 }

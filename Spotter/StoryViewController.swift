@@ -60,10 +60,19 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
-        self.collectionViewFrame = self.collectionView.frame
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        // remove preexiting observer to avoid dups
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        
+        // add myself as an observer of the keyboard showing and hiding
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:",
+            name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:",
+            name: UIKeyboardWillHideNotification, object: nil)
         
         // if there is no story create a new one
         if (self.storyInfo == nil) {
@@ -103,12 +112,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.downloadStoryFromS3()
         }
         
-        // add myself as an observer of the keyboard showing and hiding
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:",
-            name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:",
-            name: UIKeyboardWillHideNotification, object: nil)
-
+       
         // by default the deleteBtn should be disabled until a user 
         // selects a resource in edit mode
         self.deleteBtn.enabled = false
@@ -305,7 +309,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
             let storyID = self.storyInfo!.storyID
-            let thumbnailData = UIImageJPEGRepresentation(self.storyInfo!.thumbnail, 1.0)
+            //let thumbnailData = UIImageJPEGRepresentation(self.storyInfo!.thumbnail, 1.0)
+            let thumbnailData = compressForUpload(self.storyInfo!.thumbnail, kThumbnailKB)
             let bucket = self.storyInfo!.s3Bucket
             let uid = self.storyInfo!.authorID
             var dataTypes: [String] = []
@@ -332,7 +337,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 var cubeData: NSData = NSData()
                 if (cube is UIImage) {
                     let image = cube as UIImage
-                    cubeData = self.compressForUpload(image, maxFileSize: 600*1024)
+                    //cubeData = UIImageJPEGRepresentation(image, 1.0)
+                    cubeData = compressForUpload(image, kImageKB)
                 } else if (cube is UITextView) {
                     cubeData = NSKeyedArchiver.archivedDataWithRootObject(cube as UITextView)
                 }
@@ -371,7 +377,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             let newStoryRef = EKClient.stories.childByAppendingPath(storyID)
             let base64String = thumbnailDataCompressed.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
             newStoryRef.setValue(["authorID": uid, "hashtag": self.titleTextField!.text,
-                "summary": self.storyContent!.story.summary, "thumbnailStr": base64String,
+                "summary": self.storyInfo!.summary, "thumbnailStr": base64String,
                 "cubeCount": self.cubes.count, "s3Bucket": bucket, "dataTypes": dataTypes])
         })
     }
@@ -382,41 +388,66 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     // add images to this story
     func addImages(images: [UIImage]) {
         
+        //var indices: [Int] = []
         for (var i = 0; i < images.count; ++i) {
-            var image = images[i]
-            
-            // compress the image if the data size is greater than our 
-            // max image KB size
-            var data = UIImageJPEGRepresentation(image, 1.0)
-            if (data.length > kImageKB) {
-                data = self.compressForUpload(image, maxFileSize: kImageKB)
-                image = UIImage(data: data)!
-            }
-            
-            self.cubes.insertObject(image, atIndex: self.currentIndexPath.item+1)
-            
+            var image = UIImage(named: "placeholder.png")!
+            image = images[i]
+            let indexPath = NSIndexPath(forItem: self.currentIndexPath.item+1,
+                inSection: self.currentIndexPath.section)
+        
+            self.cubes.insertObject(image, atIndex: indexPath.item)
             self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-            self.collectionView.scrollToItemAtIndexPath(self.currentIndexPath, atScrollPosition: UICollectionViewScrollPosition.Top, animated: true)
-            self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1, inSection: self.currentIndexPath.section)
+            self.currentIndexPath = indexPath
+            
+            //indices.append(indexPath.item)
         }
+        
+        let indexPath = NSIndexPath(forItem: self.currentIndexPath.item-1, inSection: self.currentIndexPath.section)
+        self.collectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: UICollectionViewScrollPosition.Bottom, animated: true)
+        
+//        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+//            
+//            for (var j = 0; j < images.count; ++j) {
+//                var image = images[j]
+//                
+//                // compress the image if the data size is greater than our 
+//                // max image KB size
+//                var data = UIImageJPEGRepresentation(image, 1.0)
+//                println(data.length)
+//                if (data.length > kImageKB) {
+//                    data = compressForUpload(image, kImageKB)
+//                    image = UIImage(data: data)!
+//                }
+//                println(data.length)
+//                
+//                let index = indices[j]
+//                let indexPath = NSIndexPath(forItem: index-1, inSection: self.currentIndexPath.section)
+//                self.cubes[index] = image
+//                
+//                dispatch_async(dispatch_get_main_queue(), {
+//                    // run on main thread in cases where the
+//                    self.collectionView.reloadItemsAtIndexPaths([indexPath])
+//                })
+//            }
+//        })
     }
 
     // compress an image down to a max file size
     // TODO needs to be more accurate
-    func compressForUpload(original: UIImage, maxFileSize: Int) -> NSData {
-        
-        let maxCompression: CGFloat = 0.1
-        var compression: CGFloat = 0.9
-        
-        var imageData: NSData = UIImageJPEGRepresentation(original, compression);
-        
-        while (imageData.length > maxFileSize && compression > maxCompression) {
-            compression -= 0.1
-            imageData = UIImageJPEGRepresentation(original, compression)
-        }
-        
-        return imageData
-    }
+//    func compressForUpload(original: UIImage, maxFileSize: Int) -> NSData {
+//        
+//        let maxCompression: CGFloat = 0.1
+//        var compression: CGFloat = 0.9
+//        
+//        var imageData: NSData = UIImageJPEGRepresentation(original, compression);
+//        
+//        while (imageData.length > maxFileSize && compression > maxCompression) {
+//            compression -= 0.1
+//            imageData = UIImageJPEGRepresentation(original, compression)
+//        }
+//        
+//        return imageData
+//    }
     
     func downloadStoryFromS3() {
         let storyInfo = self.storyInfo!
@@ -546,7 +577,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             }
             
             // set the view frame so we can restore its size when the keyboard dissapears
-            self.collectionViewFrame = self.collectionView.frame
             self.collectionView.frame = CGRectMake(self.collectionViewFrame.origin.x, self.collectionViewFrame.origin.y,
                 self.collectionViewFrame.size.width, self.view.frame.size.height - keyboardEndFrame.size.height)
             self.keyboardIsVisible = true
@@ -571,15 +601,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
         
         // image data greater than thumbnail size?
-        var thumbnail = coverImage
-        if ( story.titleImage!.length > kThumbnailKB ) {
-            let thumbnailData = self.compressForUpload(coverImage, maxFileSize: kThumbnailKB)
-            thumbnail = UIImage(data: thumbnailData)!
-        }
+//        var thumbnail = coverImage
+//        if ( story.titleImage!.length > kThumbnailKB ) {
+//            let thumbnailData = compressForUpload(coverImage, kThumbnailKB)
+//            thumbnail = UIImage(data: thumbnailData)!
+//        }
         
         let bucket = "eyekon/\(story.uid)/\(story.storyID)"
         self.storyInfo = StoryInfo(storyID: story.storyID, authorID: story.uid,
-            hashtag: story.title, summary: story.summary, thumbnail: thumbnail,
+            hashtag: story.title, summary: story.summary, thumbnail: coverImage,
             cubeCount: self.cubes.count, s3Bucket: bucket)
     }
     
@@ -602,11 +632,15 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 }, completion: { (value: Bool) in
                     self.collectionView.frame = CGRectMake(cvOrigin.x, cvOrigin.y,
                         cvSize.width, viewSize.height - toolbarSize.height)
+                    self.collectionViewFrame = self.collectionView.frame
+
             })
         } else {
             self.toolbar.frame.origin.y = self.view.frame.size.height - self.toolbar.frame.size.height
             self.collectionView.frame = CGRectMake(cvOrigin.x, cvOrigin.y,
                 cvSize.width, viewSize.height - toolbarSize.height)
+            self.collectionViewFrame = self.collectionView.frame
+
         }
     }
     
@@ -643,20 +677,24 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
         picker.dismissViewControllerAnimated(true, completion: nil)
         
-        let compressedData = self.compressForUpload(image, maxFileSize: kImageKB)
-        let newImage = UIImage(data: compressedData)!
+//        var data = UIImageJPEGRepresentation(image, 1.0)
+//        if (data.length > kImageKB) {
+//            data = compressForUpload(image, kImageKB)
+//        }
+//        let newImage = UIImage(data: data)!
         
         let cell: StoryTitleCollectionViewCell = self.collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: 0, inSection: 0)) as StoryTitleCollectionViewCell
         cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.imageView.image = newImage
+        cell.imageView.image = image
         
-        self.cubes[0] = newImage
+        self.cubes[0] = image
         
         //self.coverImage = newImage
-        self.storyContent!.story.titleImage = compressedData
+        // TODO need to compress when saving as core data
+        self.storyContent!.story.titleImage = UIImageJPEGRepresentation(image, 1.0)
 
-        let thumbData: NSData = self.compressForUpload(image, maxFileSize: kThumbnailKB)
-        self.storyInfo!.thumbnail = UIImage(data: thumbData)!
+        //let thumbData: NSData = compressForUpload(image, kThumbnailKB)
+        self.storyInfo!.thumbnail = image
         self.addingImage = false
     }
     

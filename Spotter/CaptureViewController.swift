@@ -134,9 +134,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         // handle image processing in background so we do not block the main thread
         dispatch_async(self.backgroundQueue, {
             // fix rotation of image
-            let image = scaleAndRotateImage(capturedImage)
+            //let image = scaleAndRotateImage(capturedImage)
             
-            self.capturedImages.append(image)
+            self.capturedImages.append(capturedImage)
             
             // update the view on the main thread
             dispatch_async(dispatch_get_main_queue(), {

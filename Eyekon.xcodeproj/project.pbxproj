@@ -56,6 +56,7 @@
 		6E903D4919F4AFF100A1B6B3 /* add.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D4819F4AFF100A1B6B3 /* add.png */; };
 		6E903D4C19F5C17900A1B6B3 /* SPUserResizableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E903D4B19F5C17900A1B6B3 /* SPUserResizableView.m */; };
 		6E97168319EF416200A30E56 /* ResizableCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E97168219EF416200A30E56 /* ResizableCollectionCell.swift */; };
+		6E9954E61A3D5AB40097253E /* RadialButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9954E51A3D5AB40097253E /* RadialButton.swift */; };
 		6EA4C1C31A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA4C1C21A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift */; };
 		6EB6AD391A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB6AD381A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m */; };
 		6EB6AD3C1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB6AD3B1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m */; };
@@ -155,6 +156,7 @@
 		6E903D4A19F5C17900A1B6B3 /* SPUserResizableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPUserResizableView.h; path = AwesomeMenu/SPUserResizableView.h; sourceTree = "<group>"; };
 		6E903D4B19F5C17900A1B6B3 /* SPUserResizableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SPUserResizableView.m; path = AwesomeMenu/SPUserResizableView.m; sourceTree = "<group>"; };
 		6E97168219EF416200A30E56 /* ResizableCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "\U0010ResizableCollectionCell.swift"; sourceTree = "<group>"; };
+		6E9954E51A3D5AB40097253E /* RadialButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadialButton.swift; sourceTree = "<group>"; };
 		6EA4C1C21A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		6EB6AD371A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6EB6AD381A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				6E1128801A2C4BE800BB1F84 /* TopAlignTripletFlowLayout.swift */,
 				6E1128821A2C5B2100BB1F84 /* TripletFlowLayout.swift */,
 				6EEFB9DE1A2FE3AD003E9781 /* DynamicFlowLayout.swift */,
+				6E9954E51A3D5AB40097253E /* RadialButton.swift */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -611,6 +614,7 @@
 				6EB6AD3C1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m in Sources */,
 				6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
+				6E9954E61A3D5AB40097253E /* RadialButton.swift in Sources */,
 				6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */,

@@ -18,6 +18,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     @IBOutlet var toolbar: UIToolbar!
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var deleteBtn: UIButton!
+    @IBOutlet var toolsBtn: UIButton!
     
     let cellSpacing: CGFloat = 3.0
     let sideInset: CGFloat = 6.0
@@ -112,7 +113,6 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             self.downloadStoryFromS3()
         }
         
-       
         // by default the deleteBtn should be disabled until a user 
         // selects a resource in edit mode
         self.deleteBtn.enabled = false
@@ -483,6 +483,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         // TODO you need status indicators
         for (var j = 0; j < self.storyInfo!.dataTypes.count; ++j) {
+            //let view = UIActivityIndicatorView(style: UIActivityIndicatorStyle.WhiteLarge)
+            
             let image = UIImage(named: "placeholder.png")
             self.cubes.addObject(image!)
         }
@@ -616,6 +618,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func setStoryInfo(storyInfo: StoryInfo) {
         self.storyInfo = storyInfo
         self.downloadInfo = true
+        self.toolsBtn.enabled = false
+        
+        // TODO what tools should be available for a story that comes from the browser
     }
     
     func showToolbar(animated: Bool) {
@@ -734,6 +739,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         if (textField.tag == 1) {
             self.storyContent!.story.summary = textField.text
+            self.storyInfo!.summary = textField.text
+        } else {
+            self.storyContent!.story.title = textField.text
+            self.storyInfo!.hashtag = textField.text
         }
         
         textField.resignFirstResponder()
@@ -879,6 +888,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             } else if (resource is UIImage) {
                 let image = resource as UIImage
                 let size = self.imageFrameSize(image)
+                
                 let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
                 imageView.image = image
                 

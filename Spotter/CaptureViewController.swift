@@ -36,6 +36,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var cameraView: UIView!
+    @IBOutlet var captureBtn: UIButton!
     
     var captureManager: CaptureSessionManager = CaptureSessionManager()
     var capturedImages: [UIImage] = [UIImage]()
@@ -63,6 +64,10 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
         self.captureManager.addVideoInput()
         self.captureManager.addVideoPreviewLayer(self.cameraView)
         self.captureManager.addStillImageOutput()
+        
+        self.captureBtn.layer.cornerRadius = self.captureBtn.frame.size.height/2
+        self.captureBtn.backgroundColor = UIColor.whiteColor()
+        self.captureBtn.alpha = 0.7
     }
     
     override func viewWillAppear(animated: Bool) {

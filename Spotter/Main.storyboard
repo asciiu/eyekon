@@ -79,7 +79,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Dr2-N7-5Yb">
-                                                    <rect key="frame" x="8" y="85" width="98" height="20.999999405356551"/>
+                                                    <rect key="frame" x="8" y="85" width="98" height="20.999999405356093"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -461,7 +461,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rZh-9R-oLc">
-                                                    <rect key="frame" x="8" y="71.00000018165224" width="84" height="21"/>
+                                                    <rect key="frame" x="8" y="71.000000379100328" width="84" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
@@ -620,6 +620,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cameraView" destination="P1Y-BW-yG7" id="4bV-Ij-zWx"/>
+                        <outlet property="captureBtn" destination="6zX-21-LcO" id="xUf-3B-pwn"/>
                         <outlet property="collectionView" destination="WlQ-oV-DvZ" id="xML-1v-2vk"/>
                         <segue destination="SiY-lW-Nsg" kind="push" identifier="FromCaptureToPreview" id="Frq-Uo-veK"/>
                     </connections>
@@ -778,6 +779,7 @@
                         <outlet property="collectionView" destination="FtJ-5O-DFC" id="AXJ-lp-Hmg"/>
                         <outlet property="deleteBtn" destination="IYr-jV-LAA" id="g8H-hW-Htu"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
+                        <outlet property="toolsBtn" destination="6YI-eT-ryH" id="ReM-kx-cDp"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>
                         <segue destination="mEh-0n-vKf" kind="push" identifier="FromStoryToCircle" id="7JB-Mg-Amt"/>
                         <segue destination="7hl-er-YBB" kind="unwind" identifier="FromStoryToProfile" unwindAction="unwindToCollection:" id="kMz-I3-RdV"/>
@@ -874,8 +876,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="y4d-cO-mkd"/>
         <segue reference="SXj-GQ-VVK"/>
-        <segue reference="Owd-ui-pVm"/>
+        <segue reference="y4d-cO-mkd"/>
+        <segue reference="7JB-Mg-Amt"/>
     </inferredMetricsTieBreakers>
 </document>

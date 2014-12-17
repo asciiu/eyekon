@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		12C0433D30F4836BF0576F20 /* libPods-Eyekon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0073A8926997F9F5080FF1BF /* libPods-Eyekon.a */; };
+		6E077ACC1A40371A007A9E49 /* movie.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E077ACB1A40371A007A9E49 /* movie.png */; };
+		6E077ACE1A403720007A9E49 /* gallery.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E077ACD1A403720007A9E49 /* gallery.png */; };
+		6E077AD01A403729007A9E49 /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E077ACF1A403729007A9E49 /* camera.png */; };
 		6E1128811A2C4BE800BB1F84 /* TopAlignTripletFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1128801A2C4BE800BB1F84 /* TopAlignTripletFlowLayout.swift */; };
 		6E1128831A2C5B2100BB1F84 /* TripletFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1128821A2C5B2100BB1F84 /* TripletFlowLayout.swift */; };
 		6E1128851A2E9F3800BB1F84 /* BrowseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1128841A2E9F3800BB1F84 /* BrowseViewController.swift */; };
@@ -56,7 +59,9 @@
 		6E903D4919F4AFF100A1B6B3 /* add.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E903D4819F4AFF100A1B6B3 /* add.png */; };
 		6E903D4C19F5C17900A1B6B3 /* SPUserResizableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E903D4B19F5C17900A1B6B3 /* SPUserResizableView.m */; };
 		6E97168319EF416200A30E56 /* ResizableCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E97168219EF416200A30E56 /* ResizableCollectionCell.swift */; };
-		6E9954E61A3D5AB40097253E /* RadialButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9954E51A3D5AB40097253E /* RadialButton.swift */; };
+		6E9954EB1A3D66D10097253E /* CircleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9954E81A3D66D10097253E /* CircleHelpers.swift */; };
+		6E9954EC1A3D66D10097253E /* RadialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9954E91A3D66D10097253E /* RadialMenu.swift */; };
+		6E9954ED1A3D66D10097253E /* RadialSubMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9954EA1A3D66D10097253E /* RadialSubMenu.swift */; };
 		6EA4C1C31A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA4C1C21A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift */; };
 		6EB6AD391A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB6AD381A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m */; };
 		6EB6AD3C1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB6AD3B1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m */; };
@@ -100,6 +105,9 @@
 		0073A8926997F9F5080FF1BF /* libPods-Eyekon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Eyekon.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		29CCD8ED5B8BA3B27AEDDFB7 /* Pods-Eyekon.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Eyekon.release.xcconfig"; path = "Pods/Target Support Files/Pods-Eyekon/Pods-Eyekon.release.xcconfig"; sourceTree = "<group>"; };
 		2EAB2FB15D4789421CF4F253 /* Pods-Eyekon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Eyekon.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Eyekon/Pods-Eyekon.debug.xcconfig"; sourceTree = "<group>"; };
+		6E077ACB1A40371A007A9E49 /* movie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = movie.png; sourceTree = "<group>"; };
+		6E077ACD1A403720007A9E49 /* gallery.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gallery.png; sourceTree = "<group>"; };
+		6E077ACF1A403729007A9E49 /* camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera.png; sourceTree = "<group>"; };
 		6E1128801A2C4BE800BB1F84 /* TopAlignTripletFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopAlignTripletFlowLayout.swift; sourceTree = "<group>"; };
 		6E1128821A2C5B2100BB1F84 /* TripletFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TripletFlowLayout.swift; sourceTree = "<group>"; };
 		6E1128841A2E9F3800BB1F84 /* BrowseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseViewController.swift; sourceTree = "<group>"; };
@@ -156,7 +164,9 @@
 		6E903D4A19F5C17900A1B6B3 /* SPUserResizableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPUserResizableView.h; path = AwesomeMenu/SPUserResizableView.h; sourceTree = "<group>"; };
 		6E903D4B19F5C17900A1B6B3 /* SPUserResizableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SPUserResizableView.m; path = AwesomeMenu/SPUserResizableView.m; sourceTree = "<group>"; };
 		6E97168219EF416200A30E56 /* ResizableCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "\U0010ResizableCollectionCell.swift"; sourceTree = "<group>"; };
-		6E9954E51A3D5AB40097253E /* RadialButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadialButton.swift; sourceTree = "<group>"; };
+		6E9954E81A3D66D10097253E /* CircleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleHelpers.swift; sourceTree = "<group>"; };
+		6E9954E91A3D66D10097253E /* RadialMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadialMenu.swift; sourceTree = "<group>"; };
+		6E9954EA1A3D66D10097253E /* RadialSubMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadialSubMenu.swift; sourceTree = "<group>"; };
 		6EA4C1C21A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		6EB6AD371A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		6EB6AD381A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
@@ -264,7 +274,7 @@
 				6E1128801A2C4BE800BB1F84 /* TopAlignTripletFlowLayout.swift */,
 				6E1128821A2C5B2100BB1F84 /* TripletFlowLayout.swift */,
 				6EEFB9DE1A2FE3AD003E9781 /* DynamicFlowLayout.swift */,
-				6E9954E51A3D5AB40097253E /* RadialButton.swift */,
+				6E9954E71A3D66D10097253E /* RadialMenu */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -272,6 +282,9 @@
 		6E1CE2DE19B525730085FF19 /* photos */ = {
 			isa = PBXGroup;
 			children = (
+				6E077ACF1A403729007A9E49 /* camera.png */,
+				6E077ACD1A403720007A9E49 /* gallery.png */,
+				6E077ACB1A40371A007A9E49 /* movie.png */,
 				6EE963D41A2BE10100F0E1FA /* placeholder.png */,
 				6EDAB7301A1494A40016A97B /* contact-default.png */,
 				6E903D2F19F48E7300A1B6B3 /* libTool.png */,
@@ -325,6 +338,16 @@
 				6E903D3B19F49B1B00A1B6B3 /* AwesomeMenuItem.m */,
 			);
 			path = AwesomeMenu;
+			sourceTree = "<group>";
+		};
+		6E9954E71A3D66D10097253E /* RadialMenu */ = {
+			isa = PBXGroup;
+			children = (
+				6E9954E81A3D66D10097253E /* CircleHelpers.swift */,
+				6E9954E91A3D66D10097253E /* RadialMenu.swift */,
+				6E9954EA1A3D66D10097253E /* RadialSubMenu.swift */,
+			);
+			path = RadialMenu;
 			sourceTree = "<group>";
 		};
 		6EC03D7519A66669006CB2E2 = {
@@ -514,12 +537,15 @@
 				6E1CE2F919B525A00085FF19 /* 7.jpg in Resources */,
 				6E903D3419F48E7300A1B6B3 /* txtTool.png in Resources */,
 				6EE963D51A2BE10100F0E1FA /* placeholder.png in Resources */,
+				6E077ACE1A403720007A9E49 /* gallery.png in Resources */,
+				6E077ACC1A40371A007A9E49 /* movie.png in Resources */,
 				6E1CE2F619B525A00085FF19 /* 4.jpg in Resources */,
 				6E1CE30119B525A00085FF19 /* 15.jpg in Resources */,
 				6E1CE2FF19B525A00085FF19 /* 13.jpg in Resources */,
 				6E1CE2F419B525A00085FF19 /* 2.jpg in Resources */,
 				6E1CE30519B525A00085FF19 /* 19.jpg in Resources */,
 				6E1CE2F719B525A00085FF19 /* 5.jpg in Resources */,
+				6E077AD01A403729007A9E49 /* camera.png in Resources */,
 				6E1CE30419B525A00085FF19 /* 18.jpg in Resources */,
 				6E1CE2FE19B525A00085FF19 /* 12.jpg in Resources */,
 				6E1CE2F819B525A00085FF19 /* 6.jpg in Resources */,
@@ -590,9 +616,12 @@
 				6EEA62091A0EE445008E6EE2 /* RootViewController.swift in Sources */,
 				6EDF035B1A1B41A7003D3721 /* ShareViewController.swift in Sources */,
 				6E3496351A1EBBF600AC0FAB /* SharedStoriesViewController.swift in Sources */,
+				6E9954ED1A3D66D10097253E /* RadialSubMenu.swift in Sources */,
 				6EE963D71A2BF66700F0E1FA /* TitleCollectionViewCell.swift in Sources */,
+				6E9954EB1A3D66D10097253E /* CircleHelpers.swift in Sources */,
 				6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */,
 				6EA4C1C31A2415C6002CEA3D /* StoryTitleCollectionViewCell.swift in Sources */,
+				6E9954EC1A3D66D10097253E /* RadialMenu.swift in Sources */,
 				6EB6AD391A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				6E97168319EF416200A30E56 /* ResizableCollectionCell.swift in Sources */,
 				6E79658619E0E8C800C23AAC /* StoryContent.swift in Sources */,
@@ -614,7 +643,6 @@
 				6EB6AD3C1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m in Sources */,
 				6EDF03551A18CEB8003D3721 /* ContactTableViewCell.swift in Sources */,
 				6EC03D8419A66669006CB2E2 /* AppDelegate.swift in Sources */,
-				6E9954E61A3D5AB40097253E /* RadialButton.swift in Sources */,
 				6E640A431A0F174B00058721 /* SignUpViewController.swift in Sources */,
 				6E1CE2DD19B516E80085FF19 /* RACollectionViewTripletLayout.m in Sources */,
 				6E79658219E0C27800C23AAC /* UIImage+NSCopying.m in Sources */,

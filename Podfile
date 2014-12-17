@@ -13,6 +13,7 @@ pod 'KxMenu', '~> 1'
 pod 'BZipCompression', '~> 1.0.0'
 pod "AWSiOSSDKv2"
 pod 'AWSCognitoSync'
+pod 'pop'
 
 end
 

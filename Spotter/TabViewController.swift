@@ -19,25 +19,22 @@ class PushNoAnimationSegue: UIStoryboardSegue {
     }
 }
 
-class TabViewController: UITabBarController, UITabBarDelegate {
-
-    var captureController: UINavigationController?
+class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewControllerDelegate {
+    
+    let highlightColor = UIColor(red:0.0, green:122.0/255.0, blue:1.0, alpha:1.0)
+    let subMenuRadius:CGFloat = 25
+    let menuRadius:CGFloat = 125
+    var radialMenu: RadialMenu = RadialMenu(menus: [])
+    var captureButton: UIButton = UIButton()
+    var navController: UINavigationController?
+    var storyController: StoryViewController?
+    var pickerController: CTAssetsPickerController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let toolbarFrame = self.tabBar.frame
-        let width = toolbarFrame.size.height - 3
-        let captureButton = UIButton(frame: CGRectMake(0, 0, width, width))
-        captureButton.backgroundColor = UIColor.whiteColor()
-        captureButton.layer.cornerRadius = width / 2
-        captureButton.alpha = 0.7
-        captureButton.center = CGPointMake(self.tabBar.center.x, self.tabBar.frame.size.height/2)
-        
-        captureButton.addTarget(self, action: "newCapture:", forControlEvents: UIControlEvents.TouchUpInside)
-        //self.view.addSubview(captureButton)
-        
-        self.tabBar.addSubview(captureButton)
+        self.createCaptureButton()
+       
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -60,26 +57,191 @@ class TabViewController: UITabBarController, UITabBarDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+   
+    func createCaptureButton() {
+        let toolbarFrame = self.tabBar.frame
+        let width = toolbarFrame.size.height - 3
+        let frame = CGRectMake(0, 0, width, width)
+        
+        let captureButton = UIButton(frame: frame)
+        captureButton.setImage(UIImage(named: "add.png"), forState: UIControlState.Normal)
+        
+        captureButton.layer.cornerRadius = width / 2
+        captureButton.alpha = 0.7
+        captureButton.center = CGPointMake(self.tabBar.center.x, self.tabBar.frame.size.height/2)
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: "pressedButton:")
+        longPress.minimumPressDuration = 0.15
+        captureButton.addGestureRecognizer(longPress)
+        self.captureButton = captureButton
+        
+        self.radialMenu = RadialMenu(menus: [createSubMenu("camera.png"),
+            createSubMenu("movie.png"),
+            createSubMenu("gallery.png")], radius: menuRadius)
+        self.radialMenu.openDelayStep = 0.00
+        self.radialMenu.closeDelayStep = 0.00
+        self.radialMenu.minAngle = 220
+        self.radialMenu.maxAngle = 320
+        self.radialMenu.alpha = 0.75
+
+        self.radialMenu.onOpening = {
+            // FIXME: Add transitions
+            //self.microphoneButtonImageView.alpha = 0.0
+            //self.stopButton.alpha = 1.0
+        }
+
+        self.radialMenu.onClosing = {
+            // FIXME: Add transitions
+            //self.microphoneButtonImageView.alpha = 1.0
+            //self.stopButton.alpha = 0.0
+        }
+
+        radialMenu.onHighlight = { subMenu in
+            subMenu.backgroundColor = self.highlightColor
+        }
+
+        radialMenu.onUnhighlight = { subMenu in
+            subMenu.backgroundColor = UIColor.redColor()
+        }
+
+        radialMenu.onClose = {
+            for subMenu in self.radialMenu.subMenus {
+                if (subMenu.backgroundColor != UIColor.redColor()) {
+                    switch subMenu.tag {
+                    case 0:
+                        self.newCapture(0)
+                        //println("camera")
+                        break
+                    case 1:
+                        println("movie")
+                        break
+                    case 2:
+                        self.newCapture(2)
+                        println("photos")
+                        break
+                    default:
+                        println("unrecognized")
+                    }
+                }
+                subMenu.backgroundColor = UIColor.redColor()
+            }
+        }
+        
+        radialMenu.userInteractionEnabled = false
+        radialMenu.center = CGPointMake(self.tabBar.center.x, self.tabBar.frame.size.height/2)
+        self.tabBar.addSubview(self.radialMenu)
+        self.tabBar.addSubview(captureButton)
+    }
     
-    func newCapture(sender: AnyObject) {
+    func createSubMenu(icon: String) -> RadialSubMenu {
+        let img = UIImageView(image: UIImage(named: icon)!)
+        let subMenu = RadialSubMenu(imageView: img)
+        subMenu.frame = CGRect(x: 0.0, y: 0.0, width: self.subMenuRadius*2, height: self.subMenuRadius*2)
+        subMenu.layer.cornerRadius = self.subMenuRadius
+        subMenu.backgroundColor = UIColor.redColor()
+        img.center = subMenu.center
+        
+        return subMenu
+    }
+    
+    func pressedButton(gesture:UIGestureRecognizer) {
+        switch(gesture.state) {
+        case .Began:
+            radialMenu.openAtPosition(self.captureButton.center)
+            break
+        case .Changed:
+            radialMenu.moveAtPosition(gesture.locationInView(self.tabBar))
+            break
+        case .Ended:
+            radialMenu.close()
+            break
+        default:
+            break
+        }
+    }
+
+    func doneWithLibrary(sender: AnyObject) {
+        
+        let assets: [AnyObject] = self.pickerController!.selectedAssets
+        let images: [UIImage] = assets.map({ (var asset) -> UIImage in
+            let a = asset as ALAsset
+            
+            let representation = a.defaultRepresentation()
+            let cgImage = representation.fullResolutionImage().takeUnretainedValue()
+            let orientation = UIImageOrientation(rawValue: representation.orientation().rawValue)!
+            
+            return UIImage(CGImage: cgImage, scale: 1.0, orientation: orientation)!
+        })
+        
+        self.storyController!.createNewStory(images)
+        self.navController!.popToViewController(self.storyController!, animated: true)
+        self.pickerController = nil
+
+        //self.addImages(images)
+        //picker.dismissViewControllerAnimated(true, completion: nil)
+        //self.addingImage = false
+    }
+    
+    func captureViewControllerDidFinish(capturedImages: [UIImage]) {
+        self.storyController!.createNewStory(capturedImages)
+        self.navController!.popToViewController(self.storyController!, animated: true)
+    }
+    
+    func newCapture(type: Int) {
+        
+        let navigationController = UINavigationController()
+        navigationController.navigationBar.barStyle = UIBarStyle.Black
+        navigationController.navigationBar.translucent = true
+        navigationController.navigationBar.tintColor = UIColor.whiteColor()
+        
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let storyViewController = storyBoard.instantiateViewControllerWithIdentifier("StoryViewController") as StoryViewController
-        
-        let navController = UINavigationController()
-        navController.navigationBar.barStyle = UIBarStyle.Black
-        navController.navigationBar.translucent = true
-        navController.navigationBar.tintColor = UIColor.whiteColor()
-        navController.pushViewController(storyViewController, animated: false)
+        navigationController.pushViewController(storyViewController, animated: false)
         
         storyViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel,
             target: self, action: "cancelCapture:")
-
-        self.presentViewController(navController, animated: true, completion: nil)
-        self.captureController = navController
+        
+        switch (type) {
+        case 0:
+            println("ho")
+            let captureViewController = storyBoard.instantiateViewControllerWithIdentifier("CaptureViewController") as CaptureViewController
+            navigationController.pushViewController(captureViewController, animated: false)
+            
+            captureViewController.delegate = self
+            captureViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel,
+                target: self, action: "cancelCapture:")
+            break
+        case 1:
+            break
+        case 2:
+            let pickerController: CTAssetsPickerController = CTAssetsPickerController()
+            navigationController.pushViewController(pickerController, animated: false)
+            pickerController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel,
+                target: self, action: "cancelCapture:")
+            pickerController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done,
+                target: self, action: "doneWithLibrary:")
+            self.pickerController = pickerController
+        
+            
+            //picker.delegate = self
+            //self.presentViewController(picker, animated: true, completion: nil)
+            
+            //storyViewController.addPhotoFromLibrary(self)
+            break
+        default:
+            println("Unrecognized capture type")
+        }
+        
+        
+        self.presentViewController(navigationController, animated: true, completion: nil)
+        self.navController = navigationController
+        self.storyController = storyViewController
     }
     
     func cancelCapture(sender: AnyObject) {
-        self.captureController?.dismissViewControllerAnimated(true, completion: nil)
-        self.captureController = nil
+        self.storyController!.dismissViewControllerAnimated(true, completion: nil)
+        self.navController!.dismissViewControllerAnimated(true, completion: nil)
+        self.storyController = nil
+        self.navController = nil
     }
 }

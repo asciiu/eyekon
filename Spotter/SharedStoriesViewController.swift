@@ -72,7 +72,7 @@ class SharedStoriesViewController: UIViewController, UITableViewDataSource, UITa
         
         let story: Story = self.sharedStories[indexPath.row]
         
-        cell.textLabel.text = story.title
+        cell.textLabel!.text = story.title
         
         return cell
     }

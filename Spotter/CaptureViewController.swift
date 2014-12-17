@@ -32,6 +32,11 @@ class CameraFocusSquare: UIView {
     }
 }
 
+@objc protocol CaptureViewControllerDelegate {
+    optional func captureViewControllerDidFinish(capturedImages: [UIImage])
+    optional func captureViewControllerDidCancel()
+}
+
 class CaptureViewController: UIViewController, RACollectionViewDelegateReorderableTripletLayout, RACollectionViewReorderableTripletLayoutDataSource, CaptureSessionManagerDelegate, CapturePreviewControllerDelegate {
     
     @IBOutlet var collectionView: UICollectionView!
@@ -46,6 +51,7 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
     let backgroundQueue: dispatch_queue_t = dispatch_queue_create("ImageProcessor", nil)
     
     var storyController: StoryViewController?
+    var delegate: CaptureViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +119,9 @@ class CaptureViewController: UIViewController, RACollectionViewDelegateReorderab
 //            let image = self.capturedImages[i]
 //            self.storyController!.addImageView(image)
 //        }
-        self.storyController!.addImages(self.capturedImages)
+        
+        self.delegate?.captureViewControllerDidFinish?(self.capturedImages)
+        self.storyController?.addImages(self.capturedImages)
         self.capturedImages.removeAll(keepCapacity: false)
         
         // go back to the view that we came from

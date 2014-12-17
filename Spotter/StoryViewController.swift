@@ -63,6 +63,43 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
     }
     
+    func createNewStory(images: [UIImage]) {
+        // create a new story
+        self.cubes.removeAllObjects()
+        self.editable = true
+        
+        // create a new child id for this story
+        let uid = EKClient.authData!.uid
+        let newStoryRef = EKClient.stories.childByAutoId()
+        // this is the reference to the S3 bucket where the story data will live
+        let bucket = "eyekon/\(uid)/\(newStoryRef.key)"
+        let coverImage = UIImage(named: "placeholder.png")!
+        
+        // create new story and story content models
+        let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story",
+            inManagedObjectContext: self.coreContext.context) as Story
+        let content = NSEntityDescription.insertNewObjectForEntityForName("StoryContent",
+            inManagedObjectContext: self.coreContext.context) as StoryContent
+        
+        story.uid = uid
+        story.title = kStoryHashtag
+        story.summary = kSummary
+        story.storyID = newStoryRef.key
+        story.content = content
+        content.story = story
+        
+        self.storyContent = content
+        self.storyInfo = StoryInfo(storyID: newStoryRef.key, authorID: EKClient.authData!.uid,
+            hashtag: kStoryHashtag, summary: "Summary", thumbnail: coverImage,
+            cubeCount: 0, s3Bucket: bucket)
+        
+        // default image for title image
+        self.cubes.addObject(coverImage)
+        for image in images {
+            self.cubes.addObject(image)
+        }
+    }
+    
     override func viewWillAppear(animated: Bool) {
         
         // remove preexiting observer to avoid dups
@@ -387,6 +424,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // add images to this story
     func addImages(images: [UIImage]) {
+        
+        if (images.count == 0) {
+            return
+        }
         
         //var indices: [Int] = []
         for (var i = 0; i < images.count; ++i) {

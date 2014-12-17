@@ -168,8 +168,8 @@ class AddContactViewController: UIViewController, UITableViewDataSource, UITable
         } else {
             cell.profileImageView.image = UIImage(named: "contact-default.png")
         }
-        cell.imageView.layer.cornerRadius = cell.imageView.layer.frame.size.width/2
-        cell.imageView.clipsToBounds = true
+        cell.imageView!.layer.cornerRadius = cell.imageView!.layer.frame.size.width/2
+        cell.imageView!.clipsToBounds = true
         
         return cell
     }

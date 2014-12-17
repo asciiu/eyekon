@@ -20,6 +20,7 @@
 #import "Cognito.h"
 #import "AWSService.h"
 #import "AWSS3Model.h"
+#import "POP.h"
 
 
 

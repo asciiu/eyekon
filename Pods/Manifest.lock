@@ -158,6 +158,7 @@ PODS:
   - Mantle (1.4.1):
     - Mantle/extobjc (= 1.4.1)
   - Mantle/extobjc (1.4.1)
+  - pop (1.0.7)
   - Reachability (3.1.1)
   - RSKImageCropper (0.4.0)
   - TMCache (1.2.2)
@@ -172,6 +173,7 @@ DEPENDENCIES:
   - CTAssetsPickerController (~> 2.6.0)
   - Firebase (>= 1.2.3)
   - KxMenu (~> 1)
+  - pop
   - RSKImageCropper
   - UICollectionViewLeftAlignedLayout
 
@@ -186,6 +188,7 @@ SPEC CHECKSUMS:
   GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1
   KxMenu: e281f1699a2181287de6eb1ebec2ea60a86559fa
   Mantle: 1ca9c0fa84d3d3fc98524e7229f30489b6dd44e5
+  pop: 2f14a1ea61339767af9e66741b418c831b3844df
   Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
   RSKImageCropper: d8bb948b8b618720479227805197106b90e14a16
   TMCache: e2c9225de7a107b529d1d04baa58eb5eab3051f3

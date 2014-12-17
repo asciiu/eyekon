@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
+class ProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, StoryViewControllerDelegate, RSKImageCropViewControllerDelegate {
 
     var stories: [Story] = [Story]()
     var selectedStory: Story?
@@ -99,15 +99,9 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         super.viewWillAppear(animated)
         self.loadManagedCollection()
         self.collectionView.reloadData()
-        //self.tableView.reloadData()
         
-        //self.usernameLabel.text = EKClient.username
-        
-        self.navigationItem.rightBarButtonItem?.title = "Logout"
-        
-//        let postURL = url + "/users/" + EKClient.authData!.uid + "/posts"
-//        let ref = Firebase(url: postURL)
-//
+        //self.navigationItem.rightBarButtonItem?.title = "Logout"
+
         let userStories = EKClient.userStories.childByAppendingPath(EKClient.authData?.uid)
         userStories.observeEventType(FEventType.Value, withBlock: { (data: FDataSnapshot!) -> Void in
             if (data.value === NSNull()) {
@@ -216,6 +210,10 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
 //        self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
 //    }
     
+    func storyViewControllerDidSave() {
+        self.navigationController!.popToViewController(self, animated: true)
+    }
+    
     // MARK: - UICollectionViewDataSource
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -289,6 +287,7 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
                 destination!.setStoryContent(self.selectedStory!.content)
                 //destination!.upperRightButton.title = "Edit"
                 destination!.editable = false
+                destination!.delegate = self
             } else {
                 destination!.storyContent = nil
                 //destination!.upperRightButton.title = "Save"

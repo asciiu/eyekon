@@ -19,7 +19,7 @@ class PushNoAnimationSegue: UIStoryboardSegue {
     }
 }
 
-class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewControllerDelegate {
+class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewControllerDelegate, StoryViewControllerDelegate {
     
     let highlightColor = UIColor(red:0.0, green:122.0/255.0, blue:1.0, alpha:1.0)
     let subMenuRadius:CGFloat = 25
@@ -182,6 +182,16 @@ class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewContro
         //self.addingImage = false
     }
     
+    func storyViewControllerDidSave() {
+        self.storyController!.dismissViewControllerAnimated(true, completion: nil)
+        self.navController!.dismissViewControllerAnimated(true, completion: nil)
+        self.storyController = nil
+        self.navController = nil
+        
+        self.selectedIndex = 1
+        self.selectedViewController!.viewWillAppear(true)
+    }
+    
     func captureViewControllerDidFinish(capturedImages: [UIImage]) {
         self.storyController!.createNewStory(capturedImages)
         self.navController!.popToViewController(self.storyController!, animated: true)
@@ -196,6 +206,7 @@ class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewContro
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let storyViewController = storyBoard.instantiateViewControllerWithIdentifier("StoryViewController") as StoryViewController
+        storyViewController.delegate = self
         navigationController.pushViewController(storyViewController, animated: false)
         
         storyViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel,
@@ -231,7 +242,6 @@ class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewContro
         default:
             println("Unrecognized capture type")
         }
-        
         
         self.presentViewController(navigationController, animated: true, completion: nil)
         self.navController = navigationController

@@ -13,6 +13,10 @@ let kStoryHashtag = "#untitled"
 let kSummary = "Summary"
 
 
+@objc protocol StoryViewControllerDelegate {
+    optional func storyViewControllerDidSave()
+}
+
 class StoryViewController: UIViewController, LXReorderableCollectionViewDataSource, LXReorderableCollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate, UITextViewDelegate, CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet var toolbar: UIToolbar!
@@ -47,6 +51,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // stuff used to position the view when the keyboard slides into view
     var collectionViewFrame: CGRect = CGRectZero
+    var delegate: StoryViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -340,6 +345,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         if( !self.storyContent!.managedObjectContext!.save(&error)) {
             println("StoryViewController could not save story: \(error?.localizedDescription)")
         }
+        
+        self.delegate?.storyViewControllerDidSave?()
     }
     
     @IBAction func shareStory(sender: AnyObject) {
@@ -632,8 +639,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     func setStoryContent(content: StoryContent) {
         let story = content.story
-        let coverImage = UIImage(data: story.titleImage!)!
-
+        
+        var coverImage = UIImage(named: "placeholder.png")!
+        if (story.titleImage != nil) {
+            coverImage = UIImage(data: story.titleImage!)!
+        }
+        
         self.storyContent = content
         
         if( content.data != nil) {

@@ -68,6 +68,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
+        self.collectionView.addSubview(self.summaryTextField)
+        self.summaryTextField.center = CGPointMake(self.collectionView.frame.width/2, 30)
     }
     
     func createNewStory(images: [UIImage]) {
@@ -173,6 +175,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         // defaults as the end of the data source minus one to account for title resource
         self.currentIndexPath = NSIndexPath(forItem: self.cubes.count, inSection: 0)
         
+        self.summaryTextField.text = self.storyInfo!.summary
         self.summaryTextField.userInteractionEnabled = self.editable
         self.titleTextField!.userInteractionEnabled = self.editable
         self.titleTextField!.text = self.storyInfo!.hashtag
@@ -937,63 +940,31 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     // MARK: - UICollectionViewDataSource
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        // if title section
-//        if (indexPath.section == 0) {
-//            let cell: StoryTitleCollectionViewCell = self.collectionView
-//                .dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
-//            
-//            cell.textField.text = self.storyInfo!.summary
-//            cell.textField.tag = 1
-//            cell.textField.delegate = self
-//            
-//            // assign title cell
-//            if (self.titleCell == nil) {
-//                self.titleCell = cell
-//            }
-//            
-//            // if not in edit mode the title cell should not be editable
-//            if (!self.editable) {
-//                self.titleCell!.textField.userInteractionEnabled = false
-//                self.titleCell!.changeImageBtn.hidden = true
-//            }
-//        
-//            // cell image will always come from the first cube
-//            cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-//            cell.imageView.image = (self.cubes[0] as UIImage)
-//            
-//            return cell
-//        } else {
-            let cell: ResizeableCollectionCell = self.collectionView
-                .dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
-            
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
-            
-            if (resource is UITextView) {
-                let textView = resource as UITextView
-                textView.delegate = self
-                cell.contentView.addSubview(textView)
-            } else if (resource is UIImage) {
-                let image = resource as UIImage
-                let size = self.imageFrameSize(image)
-                
-                let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
-                imageView.image = image
-                
-                cell.contentView.addSubview(imageView)
-            } else if (resource is UIView) {
-                cell.contentView.addSubview(resource as UIView)
-            }
-            
-            cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
-            cell.contentView.autoresizesSubviews = false
-            cell.enableResize(false)
+        let cell: ResizeableCollectionCell = self.collectionView
+            .dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
         
-        if (indexPath.item == 0) {
-            cell.contentView.addSubview(self.summaryTextField)
-            self.summaryTextField.text = self.storyInfo!.summary
-            self.summaryTextField.center = CGPointMake(cell.frame.size.width/2, 30)
-        }
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
+        
+        if (resource is UITextView) {
+            let textView = resource as UITextView
+            textView.delegate = self
+            cell.contentView.addSubview(textView)
+        } else if (resource is UIImage) {
+            let image = resource as UIImage
+            let size = self.imageFrameSize(image)
             
+            let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
+            imageView.image = image
+            
+            cell.contentView.addSubview(imageView)
+        } else if (resource is UIView) {
+            cell.contentView.addSubview(resource as UIView)
+        }
+        
+        cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
+        cell.contentView.autoresizesSubviews = false
+        cell.enableResize(false)
+        
         return cell
     }
     

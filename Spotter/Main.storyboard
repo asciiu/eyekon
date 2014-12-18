@@ -19,7 +19,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="dFi-Uo-xNH" kind="push" id="qz1-hx-zwK"/>
+                                    <segue destination="dFi-Uo-xNH" kind="push" identifier="FromRootToSignUp" id="qz1-hx-zwK"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="qeV-7m-Rbz">
@@ -29,7 +29,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Jqd-PI-6HC" kind="push" id="4vt-K2-tYb"/>
+                                    <segue destination="Jqd-PI-6HC" kind="push" identifier="FromRootToLogin" id="4vt-K2-tYb"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -124,44 +124,6 @@
             </objects>
             <point key="canvasLocation" x="-1704" y="-35"/>
         </scene>
-        <!--Circles-->
-        <scene sceneID="DCq-wP-ZXt">
-            <objects>
-                <viewController title="Circles" id="NO7-p8-hqc" customClass="SharedStoriesViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="WDo-1q-srw">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="65M-Wq-7Ni">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CollectionCell" id="Kzx-7N-rQQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kzx-7N-rQQ" id="i5S-NA-uKt">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="NO7-p8-hqc" id="yCN-9I-Y5J"/>
-                                    <outlet property="delegate" destination="NO7-p8-hqc" id="mNd-px-zSY"/>
-                                </connections>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" systemItem="featured" id="CrX-Tu-zAG"/>
-                    <connections>
-                        <outlet property="tableView" destination="65M-Wq-7Ni" id="Q9x-kz-MMg"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rGp-9i-ikn" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2236" y="647"/>
-        </scene>
         <!--Add Contact-->
         <scene sceneID="PWL-aK-xPJ">
             <objects>
@@ -222,62 +184,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hcB-7z-ANS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1998" y="2115"/>
-        </scene>
-        <!--Share View Controller-->
-        <scene sceneID="WNE-So-ugv">
-            <objects>
-                <viewController id="CtV-CF-Mjx" customClass="ShareViewController" customModule="Eyekon" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Cls-Nk-ge5">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="N3n-HM-wiW">
-                                <rect key="frame" x="16" y="0.0" width="288" height="568"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="60" id="fns-Hk-Fhf" customClass="ContactTableViewCell" customModule="Eyekon" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fns-Hk-Fhf" id="Nsa-3W-tJg">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="contact-default.png" id="Vcd-Tq-qad">
-                                                    <rect key="frame" x="0.0" y="5" width="50" height="50"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BxU-5N-nWf">
-                                                    <rect key="frame" x="58" y="19" width="222" height="22"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="profileImageView" destination="Vcd-Tq-qad" id="4dF-8l-dsP"/>
-                                            <outlet property="username" destination="BxU-5N-nWf" id="oJX-lO-VYG"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="CtV-CF-Mjx" id="Jeh-Bb-cby"/>
-                                    <outlet property="delegate" destination="CtV-CF-Mjx" id="p5J-wD-ZT7"/>
-                                </connections>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="XyD-Bq-XKJ"/>
-                    <connections>
-                        <outlet property="tableView" destination="N3n-HM-wiW" id="uut-Ak-JdJ"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bZe-1K-Nbg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1598" y="2115"/>
+            <point key="canvasLocation" x="-1968" y="1500"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="MDk-0F-nEN">
@@ -317,7 +224,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hur-Cx-8n5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2839" y="-666"/>
+            <point key="canvasLocation" x="-2884" y="-650"/>
         </scene>
         <!--Tab View Controller-->
         <scene sceneID="Jae-gg-vHK">
@@ -335,7 +242,7 @@
                     <connections>
                         <segue destination="Cum-Ml-5y8" kind="relationship" relationship="viewControllers" id="z7E-3j-gS9"/>
                         <segue destination="6Y9-dZ-uxh" kind="relationship" relationship="viewControllers" id="66c-BY-zPX"/>
-                        <segue destination="kJY-Qg-HIT" kind="unwind" unwindAction="unwindToRoot:" id="Fir-Ti-nqE"/>
+                        <segue destination="kJY-Qg-HIT" kind="unwind" identifier="UnwindToRoot" unwindAction="unwindToRoot:" id="Fir-Ti-nqE"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="voB-py-Q7d" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -489,7 +396,7 @@
                     <navigationItem key="navigationItem" title="Profile" id="vSA-Oa-JTh">
                         <barButtonItem key="leftBarButtonItem" title="Add Contact" id="iyb-KG-d60">
                             <connections>
-                                <segue destination="mEh-0n-vKf" kind="push" id="Owd-ui-pVm"/>
+                                <segue destination="mEh-0n-vKf" kind="push" identifier="FromProfileToAddContact" id="Owd-ui-pVm"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -502,7 +409,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mcc-BR-sLR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1998" y="1365"/>
+            <point key="canvasLocation" x="-1968" y="812"/>
         </scene>
         <!--Capture Preview Controller-->
         <scene sceneID="N8l-OS-Pu6">
@@ -542,7 +449,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lk-fp-3xW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-645" y="585"/>
+            <point key="canvasLocation" x="-692" y="812"/>
         </scene>
         <!--Capture-->
         <scene sceneID="BcV-bH-nnr">
@@ -628,7 +535,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hbr-9y-piO" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="pjG-vN-5Fb" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-1141" y="868"/>
+            <point key="canvasLocation" x="-1111" y="812"/>
         </scene>
         <!--Story-->
         <scene sceneID="wL7-hp-1go">
@@ -644,46 +551,6 @@
                                 <color key="backgroundColor" red="0.99023797769999999" green="0.99385388210000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewLayout key="collectionViewLayout" id="kJD-OH-Vub" customClass="LXReorderableCollectionViewFlowLayout"/>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TitleCell" id="Ah7-F8-eKv" customClass="StoryTitleCollectionViewCell" customModule="Eyekon" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="286" height="243"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="placeholder.png" id="lvn-Sn-oen">
-                                                    <rect key="frame" x="0.0" y="0.0" width="286" height="243"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                </imageView>
-                                                <textField opaque="NO" clipsSubviews="YES" alpha="0.80000000000000004" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Summary" textAlignment="center" minimumFontSize="17" id="0Tp-qh-qX3">
-                                                    <rect key="frame" x="8" y="8" width="270" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="34"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
-                                                </textField>
-                                                <button opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="f0R-a7-rBW">
-                                                    <rect key="frame" x="71" y="191" width="144" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <state key="normal" title="Change Cover Photo"/>
-                                                    <connections>
-                                                        <action selector="changeCoverPhoto:" destination="uya-p5-87Y" eventType="touchUpInside" id="Ptx-Ab-F5c"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                        <size key="customSize" width="286" height="243"/>
-                                        <connections>
-                                            <outlet property="changeImageBtn" destination="f0R-a7-rBW" id="ahq-wr-pne"/>
-                                            <outlet property="imageView" destination="lvn-Sn-oen" id="MbY-Qi-6Tf"/>
-                                            <outlet property="textField" destination="0Tp-qh-qX3" id="IYP-pJ-RK8"/>
-                                        </connections>
-                                    </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StoryCell" id="PCr-0h-CB4" customClass="ResizeableCollectionCell" customModule="Eyekon" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -756,12 +623,22 @@
                                 </items>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </toolbar>
+                            <textField opaque="NO" clipsSubviews="YES" alpha="0.69999999999999996" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Summary" textAlignment="center" minimumFontSize="17" id="j0a-mE-Fho">
+                                <rect key="frame" x="16" y="99" width="288" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
+                                <connections>
+                                    <outlet property="delegate" destination="uya-p5-87Y" id="O6e-QS-Rb9"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Story" id="QrM-5l-46K">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="cRH-8O-eR4">
+                        <barButtonItem key="rightBarButtonItem" id="cRH-8O-eR4">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6YI-eT-ryH">
                                 <rect key="frame" x="-23" y="-15" width="71" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -778,17 +655,17 @@
                     <connections>
                         <outlet property="collectionView" destination="FtJ-5O-DFC" id="AXJ-lp-Hmg"/>
                         <outlet property="deleteBtn" destination="IYr-jV-LAA" id="g8H-hW-Htu"/>
+                        <outlet property="summaryTextField" destination="j0a-mE-Fho" id="4q6-jw-Nf2"/>
                         <outlet property="toolbar" destination="53a-Fm-bFs" id="jOV-cw-c0G"/>
                         <outlet property="toolsBtn" destination="6YI-eT-ryH" id="ReM-kx-cDp"/>
                         <segue destination="tH4-5w-EKm" kind="push" identifier="FromStoryToCapture" id="D24-GR-7jr"/>
-                        <segue destination="mEh-0n-vKf" kind="push" identifier="FromStoryToCircle" id="7JB-Mg-Amt"/>
                         <segue destination="7hl-er-YBB" kind="unwind" identifier="FromStoryToProfile" unwindAction="unwindToCollection:" id="kMz-I3-RdV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrC-9R-kS9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="7hl-er-YBB" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-1598" y="1365"/>
+            <point key="canvasLocation" x="-1530" y="812"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nPn-oT-Wfq">
@@ -837,7 +714,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0zj-jj-B9Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2436" y="1365"/>
+            <point key="canvasLocation" x="-2392" y="812"/>
         </scene>
         <!--Browse-->
         <scene sceneID="UVt-SG-iSB">
@@ -858,7 +735,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hy5-Sc-5wA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2236" y="-35"/>
+            <point key="canvasLocation" x="-2392" y="-35"/>
         </scene>
     </scenes>
     <resources>
@@ -866,7 +743,6 @@
         <image name="contact-default.png" width="100" height="100"/>
         <image name="libTool.png" width="32" height="32"/>
         <image name="pencil.png" width="1068" height="1067"/>
-        <image name="placeholder.png" width="450" height="450"/>
         <image name="trash.png" width="256" height="256"/>
         <image name="txtTool.png" width="32" height="32"/>
     </resources>
@@ -877,7 +753,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="SXj-GQ-VVK"/>
-        <segue reference="y4d-cO-mkd"/>
-        <segue reference="7JB-Mg-Amt"/>
+        <segue reference="LsA-9b-bG5"/>
     </inferredMetricsTieBreakers>
 </document>

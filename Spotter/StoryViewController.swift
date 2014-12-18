@@ -23,6 +23,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var deleteBtn: UIButton!
     @IBOutlet var toolsBtn: UIButton!
+    @IBOutlet var summaryTextField: UITextField!
     
     let cellSpacing: CGFloat = 3.0
     let sideInset: CGFloat = 6.0
@@ -42,6 +43,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     var addingText: Bool = false
     var addingImage: Bool = false
     var keyboardIsVisible: Bool = false
+    var placeHolderTitleImage: Bool = true
     
     // index of selected cube/UIView
     var currentIndexPath: NSIndexPath = NSIndexPath(forItem: 0, inSection: 0)
@@ -78,7 +80,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         let newStoryRef = EKClient.stories.childByAutoId()
         // this is the reference to the S3 bucket where the story data will live
         let bucket = "eyekon/\(uid)/\(newStoryRef.key)"
-        let coverImage = UIImage(named: "placeholder.png")!
+        var coverImage = UIImage(named: "placeholder.png")!
+        
+        if (images.count > 0) {
+            self.placeHolderTitleImage = false
+            coverImage = images[0]
+        } else {
+            // if there was no images added the 
+            // title image should default to a place holder
+            self.cubes.addObject(coverImage)
+        }
         
         // create new story and story content models
         let story: Story = NSEntityDescription.insertNewObjectForEntityForName("Story",
@@ -99,7 +110,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             cubeCount: 0, s3Bucket: bucket)
         
         // default image for title image
-        self.cubes.addObject(coverImage)
+        //self.cubes.addObject(coverImage)
         for image in images {
             self.cubes.addObject(image)
         }
@@ -160,8 +171,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.deleteBtn.enabled = false
         
         // defaults as the end of the data source minus one to account for title resource
-        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count-1, inSection: 1)
+        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count, inSection: 0)
         
+        self.summaryTextField.userInteractionEnabled = self.editable
         self.titleTextField!.userInteractionEnabled = self.editable
         self.titleTextField!.text = self.storyInfo!.hashtag
 
@@ -227,7 +239,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         self.deleteBtn.enabled = true
         self.selectedIndexPath = self.currentIndexPath
-        self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item + 1)
+        self.cubes.insertObject(textView, atIndex: self.currentIndexPath.item)
         self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
         
         // if the cell beyond the view bounds this will return nil
@@ -267,7 +279,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
         
         
-        self.cubes.removeObjectAtIndex(self.selectedIndexPath!.item+1)
+        self.cubes.removeObjectAtIndex(self.selectedIndexPath!.item)
         self.collectionView.deleteItemsAtIndexPaths([self.selectedIndexPath!])
         
         // move current index path to previous index item
@@ -312,9 +324,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.editable = true
         self.collectionView.userInteractionEnabled = true
         self.titleTextField!.userInteractionEnabled = true
+        self.summaryTextField.userInteractionEnabled = true
         
-        self.titleCell!.textField.userInteractionEnabled = true
-        self.titleCell!.changeImageBtn.hidden = false
+        //self.titleCell!.textField.userInteractionEnabled = true
+        //self.titleCell!.changeImageBtn.hidden = false
         
         for resource in self.cubes {
             if (resource is UITextView) {
@@ -338,8 +351,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     @IBAction func saveStory(sender: AnyObject) {
         let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
+        let titleImage = self.cubes[0] as UIImage
+        
         self.storyContent!.data = data
         self.storyContent!.story.title = self.titleTextField!.text
+        self.storyContent!.story.titleImage = UIImageJPEGRepresentation(titleImage, 1.0)
         
         var error: NSError?
         if( !self.storyContent!.managedObjectContext!.save(&error)) {
@@ -435,19 +451,21 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         if (images.count == 0) {
             return
         }
-        
-        //var indices: [Int] = []
-        for (var i = 0; i < images.count; ++i) {
-            var image = UIImage(named: "placeholder.png")!
-            image = images[i]
-            let indexPath = NSIndexPath(forItem: self.currentIndexPath.item+1,
-                inSection: self.currentIndexPath.section)
-        
-            self.cubes.insertObject(image, atIndex: indexPath.item)
-            self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-            self.currentIndexPath = indexPath
+    
+        for image in images {
+//            let indexPath = NSIndexPath(forItem: self.currentIndexPath.item,
+//                inSection: self.currentIndexPath.section)
             
-            //indices.append(indexPath.item)
+            if (self.placeHolderTitleImage) {
+                self.placeHolderTitleImage = false
+                self.cubes[0] = image
+                self.collectionView.reloadItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
+            } else {
+                self.cubes.insertObject(image, atIndex: self.currentIndexPath.item)
+                self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
+                self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1,
+                    inSection: self.currentIndexPath.section)
+            }
         }
         
         let indexPath = NSIndexPath(forItem: self.currentIndexPath.item-1, inSection: self.currentIndexPath.section)
@@ -842,7 +860,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         // do not select if not editable, already selected, or indexPath is title section
-        if (!self.editable || self.selectedIndexPath === indexPath || indexPath.section == 0) {
+        if (!self.editable || self.selectedIndexPath === indexPath || indexPath.item == 0) {
             return
         }
         
@@ -852,7 +870,7 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
         
         let cell: UICollectionViewCell? = self.collectionView.cellForItemAtIndexPath(indexPath)
-        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item + 1)
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
         
         // add a blue border around the new selection
         if (resource is UIImage) {
@@ -871,11 +889,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
-        if (indexPath.section == 0) {
+        if (indexPath.item == 0) {
             return
         }
         
-        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
         if (resource is UITextView && self.addingText && self.selectedIndexPath == indexPath) {
             if (self.selectedCell != nil) {
                 // remove the border around the existing selection
@@ -888,50 +906,67 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         }
     }
     
+    func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, canMoveToIndexPath toIndexPath: NSIndexPath!) -> Bool {
+        
+        if (toIndexPath.item == 0) {
+            if (self.cubes[fromIndexPath.item] is UIImage) {
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        return true
+    }
+    
     func collectionView(collectionView: UICollectionView!, canMoveItemAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        if (indexPath.item == 0) {
+            return false
+        }
+        
         return self.editable
     }
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
-        let resource: AnyObject = self.cubes.objectAtIndex(fromIndexPath.item+1)
+        let resource: AnyObject = self.cubes.objectAtIndex(fromIndexPath.item)
         self.cubes.removeObject(resource)
-        self.cubes.insertObject(resource, atIndex: toIndexPath.item+1)
+        self.cubes.insertObject(resource, atIndex: toIndexPath.item)
     }
     
     // MARK: - UICollectionViewDataSource
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         // if title section
-        if (indexPath.section == 0) {
-            let cell: StoryTitleCollectionViewCell = self.collectionView
-                .dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
-            
-            cell.textField.text = self.storyInfo!.summary
-            cell.textField.tag = 1
-            cell.textField.delegate = self
-            
-            // assign title cell
-            if (self.titleCell == nil) {
-                self.titleCell = cell
-            }
-            
-            // if not in edit mode the title cell should not be editable
-            if (!self.editable) {
-                self.titleCell!.textField.userInteractionEnabled = false
-                self.titleCell!.changeImageBtn.hidden = true
-            }
-        
-            // cell image will always come from the first cube
-            cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.imageView.image = (self.cubes[0] as UIImage)
-            
-            return cell
-        } else {
+//        if (indexPath.section == 0) {
+//            let cell: StoryTitleCollectionViewCell = self.collectionView
+//                .dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as StoryTitleCollectionViewCell
+//            
+//            cell.textField.text = self.storyInfo!.summary
+//            cell.textField.tag = 1
+//            cell.textField.delegate = self
+//            
+//            // assign title cell
+//            if (self.titleCell == nil) {
+//                self.titleCell = cell
+//            }
+//            
+//            // if not in edit mode the title cell should not be editable
+//            if (!self.editable) {
+//                self.titleCell!.textField.userInteractionEnabled = false
+//                self.titleCell!.changeImageBtn.hidden = true
+//            }
+//        
+//            // cell image will always come from the first cube
+//            cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+//            cell.imageView.image = (self.cubes[0] as UIImage)
+//            
+//            return cell
+//        } else {
             let cell: ResizeableCollectionCell = self.collectionView
                 .dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
             
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
             
             if (resource is UITextView) {
                 let textView = resource as UITextView
@@ -952,21 +987,22 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
             cell.contentView.autoresizesSubviews = false
             cell.enableResize(false)
-            
-            return cell
+        
+        if (indexPath.item == 0) {
+            cell.contentView.addSubview(self.summaryTextField)
+            self.summaryTextField.text = self.storyInfo!.summary
+            self.summaryTextField.center = CGPointMake(cell.frame.size.width/2, 30)
         }
+            
+        return cell
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if (section == 0) {
-            return 1
-        } else {
-            return self.cubes.count-1
-        }
+        return self.cubes.count
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 2
+        return 1
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
@@ -974,13 +1010,13 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!,
         doubleTapIndexPath indexPath: NSIndexPath!) {
             
-        if (!self.editable || indexPath.section == 0) {
+        if (!self.editable || indexPath.item == 0) {
             return
         }
         
         self.selectedIndexPath = indexPath
         
-        let index = indexPath.item + 1
+        let index = indexPath.item
         let resource: AnyObject = self.cubes.objectAtIndex(index)
         
         if (resource is UITextView) {
@@ -998,8 +1034,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
-        if (indexPath.section == 1) {
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item+1)
+        //if (indexPath.section == 1) {
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
             
             if (resource is UIImage) {
                 let image = resource as UIImage
@@ -1011,20 +1047,20 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 textView.frame.size.width = frameWidth
                 return CGSizeMake(frameWidth, textView.frame.size.height)
             }
-        } else {
-            let size = self.collectionView.frame.size
-            let viewHeight = self.view.frame.height
-            return CGSizeMake(size.width, viewHeight/2)
-        }
+//        } else {
+//            let size = self.collectionView.frame.size
+//            let viewHeight = self.view.frame.height
+//            return CGSizeMake(size.width, viewHeight/2)
+//        }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         
-        if (section == 1) {
-            return UIEdgeInsets(top: self.sideInset, left: self.sideInset, bottom: 0, right: self.sideInset)
-        }
+//        if (section == 1) {
+            return UIEdgeInsets(top: 0, left: self.sideInset, bottom: 0, right: self.sideInset)
+//        }
         
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        //return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }

@@ -110,14 +110,12 @@ class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewContro
                     switch subMenu.tag {
                     case 0:
                         self.newCapture(0)
-                        //println("camera")
                         break
                     case 1:
                         println("movie")
                         break
                     case 2:
                         self.newCapture(2)
-                        println("photos")
                         break
                     default:
                         println("unrecognized")
@@ -214,7 +212,6 @@ class TabViewController: UITabBarController, UITabBarDelegate, CaptureViewContro
         
         switch (type) {
         case 0:
-            println("ho")
             let captureViewController = storyBoard.instantiateViewControllerWithIdentifier("CaptureViewController") as CaptureViewController
             navigationController.pushViewController(captureViewController, animated: false)
             

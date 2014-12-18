@@ -184,3 +184,9 @@ class ResizeableCollectionCell: UICollectionViewCell  {
         self.cornerHandle!.enabled = enable
     }
 }
+
+class LocationCollectionCell: UICollectionViewCell {
+    
+    @IBOutlet var imageViewRight: UIImageView!
+    @IBOutlet var imageViewLeft: UIImageView!
+}

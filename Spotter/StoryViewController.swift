@@ -24,6 +24,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     @IBOutlet var deleteBtn: UIButton!
     @IBOutlet var toolsBtn: UIButton!
     @IBOutlet var summaryTextField: UITextField!
+//    @IBOutlet var arrowIndicatorLeft: UIImageView!
+//    @IBOutlet var arrowIndicatorRight: UIImageView!
     
     let cellSpacing: CGFloat = 3.0
     let sideInset: CGFloat = 6.0
@@ -68,6 +70,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.titleTextField!.textAlignment = NSTextAlignment.Center
         self.navigationItem.titleView = self.titleTextField!
         
+//        self.arrowIndicatorRight.transform = CGAffineTransformMakeScale(-1, 1)
+//        self.collectionView.addSubview(self.arrowIndicatorLeft)
+//        self.collectionView.addSubview(self.arrowIndicatorRight)
         self.collectionView.addSubview(self.summaryTextField)
         self.summaryTextField.center = CGPointMake(self.collectionView.frame.width/2, 30)
     }
@@ -116,6 +121,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         for image in images {
             self.cubes.addObject(image)
         }
+        
+        // this is the filler object used to keep track of the 
+        // location pointer when inserting new items
+        self.cubes.addObject(NSNull())
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -172,13 +181,16 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         // selects a resource in edit mode
         self.deleteBtn.enabled = false
         
-        // defaults as the end of the data source minus one to account for title resource
-        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count, inSection: 0)
+        // defaults as the end of the data source this is where NSNull object should start
+        // out at
+        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count-1, inSection: 0)
         
         self.summaryTextField.text = self.storyInfo!.summary
         self.summaryTextField.userInteractionEnabled = self.editable
         self.titleTextField!.userInteractionEnabled = self.editable
         self.titleTextField!.text = self.storyInfo!.hashtag
+//        self.arrowIndicatorLeft.hidden = !self.editable
+//        self.arrowIndicatorRight.hidden = !self.editable
 
         if (self.editable) {
             // show toolbar
@@ -328,6 +340,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         self.collectionView.userInteractionEnabled = true
         self.titleTextField!.userInteractionEnabled = true
         self.summaryTextField.userInteractionEnabled = true
+//        self.arrowIndicatorLeft.hidden = false
+//        self.arrowIndicatorRight.hidden = false
         
         //self.titleCell!.textField.userInteractionEnabled = true
         //self.titleCell!.changeImageBtn.hidden = false
@@ -337,6 +351,12 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 (resource as UITextView).userInteractionEnabled = false
             }
         }
+        
+        // add the marker object in the data source
+        self.cubes.addObject(NSNull())
+        // update currentIndexPath
+        self.currentIndexPath = NSIndexPath(forItem: self.cubes.count-1, inSection: 0)
+        
         self.showToolbar(true)
     }
     
@@ -353,6 +373,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     }
     
     @IBAction func saveStory(sender: AnyObject) {
+        
+        // remove NSNullObject
+        self.cubes.removeObject(NSNull())
         let data: NSData = NSKeyedArchiver.archivedDataWithRootObject(self.cubes)
         let titleImage = self.cubes[0] as UIImage
         
@@ -386,6 +409,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 println("StoryViewController could not compress thumbnail: \(error)")
                 return
             }
+            
+            // remove NSNULL object
+            self.cubes.removeObject(NSNull())
             
             // send all cube data to AWS S3 bucket
             for (var i = 0; i < self.cubes.count; ++i) {
@@ -464,10 +490,11 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
                 self.cubes[0] = image
                 self.collectionView.reloadItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
             } else {
-                self.cubes.insertObject(image, atIndex: self.currentIndexPath.item)
-                self.collectionView.insertItemsAtIndexPaths([self.currentIndexPath])
-                self.currentIndexPath = NSIndexPath(forItem: self.currentIndexPath.item+1,
-                    inSection: self.currentIndexPath.section)
+                let indexPath = self.currentIndexPath
+                self.cubes.insertObject(image, atIndex: indexPath.item)
+                self.collectionView.insertItemsAtIndexPaths([indexPath])
+                self.currentIndexPath = NSIndexPath(forItem: indexPath.item+1,inSection: indexPath.section)
+
             }
         }
         
@@ -863,7 +890,9 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         // do not select if not editable, already selected, or indexPath is title section
-        if (!self.editable || self.selectedIndexPath === indexPath || indexPath.item == 0) {
+        // also can't select the marker cell
+        if (!self.editable || self.selectedIndexPath === indexPath ||
+            indexPath.item == 0 || self.currentIndexPath == indexPath) {
             return
         }
         
@@ -886,13 +915,13 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
         
         self.deleteBtn.enabled = true
         self.selectedCell = cell
-        self.currentIndexPath = indexPath
+        //self.currentIndexPath = indexPath
         self.selectedIndexPath = indexPath
     }
     
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
-        if (indexPath.item == 0) {
+        if (indexPath == self.currentIndexPath) {
             return
         }
         
@@ -917,6 +946,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
             } else {
                 return false
             }
+        } else if (toIndexPath == self.currentIndexPath) {
+            return false
         }
         
         return true
@@ -932,6 +963,10 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     func collectionView(collectionView: UICollectionView!, itemAtIndexPath fromIndexPath: NSIndexPath!, willMoveToIndexPath toIndexPath: NSIndexPath!) {
         
+        if (fromIndexPath == self.currentIndexPath) {
+            self.currentIndexPath = toIndexPath
+        }
+        
         let resource: AnyObject = self.cubes.objectAtIndex(fromIndexPath.item)
         self.cubes.removeObject(resource)
         self.cubes.insertObject(resource, atIndex: toIndexPath.item)
@@ -939,33 +974,40 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     
     // MARK: - UICollectionViewDataSource
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
-        let cell: ResizeableCollectionCell = self.collectionView
-            .dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
-        
-        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
-        
-        if (resource is UITextView) {
-            let textView = resource as UITextView
-            textView.delegate = self
-            cell.contentView.addSubview(textView)
-        } else if (resource is UIImage) {
-            let image = resource as UIImage
-            let size = self.imageFrameSize(image)
             
-            let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
-            imageView.image = image
+            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
+        
+            if (resource is NSNull) {
+                // marker object found return the location cell
+                let markerCell = self.collectionView.dequeueReusableCellWithReuseIdentifier("LocationCell", forIndexPath: indexPath) as LocationCollectionCell
+                markerCell.imageViewRight.transform = CGAffineTransformMakeScale(-1, 1)
+                return markerCell
+            }
             
-            cell.contentView.addSubview(imageView)
-        } else if (resource is UIView) {
-            cell.contentView.addSubview(resource as UIView)
-        }
-        
-        cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
-        cell.contentView.autoresizesSubviews = false
-        cell.enableResize(false)
-        
-        return cell
+            let cell: ResizeableCollectionCell = self.collectionView
+                .dequeueReusableCellWithReuseIdentifier("StoryCell", forIndexPath: indexPath) as ResizeableCollectionCell
+            
+            if (resource is UITextView) {
+                let textView = resource as UITextView
+                textView.delegate = self
+                cell.contentView.addSubview(textView)
+            } else if (resource is UIImage) {
+                let image = resource as UIImage
+                let size = self.imageFrameSize(image)
+                
+                let imageView = UIImageView(frame: CGRectMake(0, 0, size.width, size.height))
+                imageView.image = image
+                
+                cell.contentView.addSubview(imageView)
+            } else if (resource is UIView) {
+                cell.contentView.addSubview(resource as UIView)
+            }
+            
+            cell.maxWidth = self.collectionView.frame.size.width - self.sideInset * 2
+            cell.contentView.autoresizesSubviews = false
+            cell.enableResize(false)
+            
+            return cell
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -981,7 +1023,8 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView!, layout collectionViewLayout: UICollectionViewLayout!,
         doubleTapIndexPath indexPath: NSIndexPath!) {
             
-        if (!self.editable || indexPath.item == 0) {
+        // cannot double tap the first cell, if not editable, or the marker cell
+        if (!self.editable || indexPath.item == 0 || indexPath == self.currentIndexPath) {
             return
         }
         
@@ -1005,24 +1048,22 @@ class StoryViewController: UIViewController, LXReorderableCollectionViewDataSour
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         
-        //if (indexPath.section == 1) {
-            let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
+
+        let frameWidth = self.collectionView.frame.width - self.sideInset * 2
+        let resource: AnyObject = self.cubes.objectAtIndex(indexPath.item)
+        
+        if (resource is NSNull) {
+            // this is the marker cell
+            return CGSizeMake(frameWidth, 5)
+        } else if (resource is UIImage) {
+            let image = resource as UIImage
+            return self.imageFrameSize(image)
+        } else {
             
-            if (resource is UIImage) {
-                let image = resource as UIImage
-                return self.imageFrameSize(image)
-            } else {
-                
-                let textView = resource as UITextView
-                let frameWidth = self.collectionView.frame.width - self.sideInset * 2
-                textView.frame.size.width = frameWidth
-                return CGSizeMake(frameWidth, textView.frame.size.height)
-            }
-//        } else {
-//            let size = self.collectionView.frame.size
-//            let viewHeight = self.view.frame.height
-//            return CGSizeMake(size.width, viewHeight/2)
-//        }
+            let textView = resource as UITextView
+            textView.frame.size.width = frameWidth
+            return CGSizeMake(frameWidth, textView.frame.size.height)
+        }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,

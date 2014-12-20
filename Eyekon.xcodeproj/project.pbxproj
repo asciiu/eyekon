@@ -90,6 +90,7 @@
 		6EEFB9E31A317793003E9781 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EEFB9E21A317793003E9781 /* libz.dylib */; };
 		6EEFB9E51A3177A2003E9781 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EEFB9E41A3177A2003E9781 /* libsqlite3.dylib */; };
 		6EFFFC491A42EF1100328341 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFFFC481A42EF1100328341 /* arrow.png */; };
+		6EFFFC4B1A4435F200328341 /* CollectionViewWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFFFC4A1A4435F200328341 /* CollectionViewWaterfallLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -202,6 +203,7 @@
 		6EEFB9E21A317793003E9781 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		6EEFB9E41A3177A2003E9781 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6EFFFC481A42EF1100328341 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
+		6EFFFC4A1A4435F200328341 /* CollectionViewWaterfallLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewWaterfallLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,6 +252,7 @@
 		6E1CE2D119B511E40085FF19 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				6EFFFC4A1A4435F200328341 /* CollectionViewWaterfallLayout.swift */,
 				6EB6AD3A1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.h */,
 				6EB6AD3B1A22730D0099DBA3 /* YBTopAlignedCollectionViewFlowLayout.m */,
 				6EB6AD371A21A2D00099DBA3 /* LXReorderableCollectionViewFlowLayout.h */,
@@ -621,6 +624,7 @@
 				6EDF035B1A1B41A7003D3721 /* ShareViewController.swift in Sources */,
 				6E3496351A1EBBF600AC0FAB /* SharedStoriesViewController.swift in Sources */,
 				6E9954ED1A3D66D10097253E /* RadialSubMenu.swift in Sources */,
+				6EFFFC4B1A4435F200328341 /* CollectionViewWaterfallLayout.swift in Sources */,
 				6EE963D71A2BF66700F0E1FA /* TitleCollectionViewCell.swift in Sources */,
 				6E9954EB1A3D66D10097253E /* CircleHelpers.swift in Sources */,
 				6E8AC5531A1032BE00BCA2FD /* AddContactViewController.swift in Sources */,

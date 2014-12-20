@@ -30,15 +30,22 @@ class StoryInfo {
     }
 }
 
-class BrowseViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UITextFieldDelegate {
+class BrowseViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UITextFieldDelegate, CollectionViewWaterfallLayoutDelegate {
 
     @IBOutlet var collectionView: UICollectionView!
     var stories: [StoryInfo] = []
     var selectedStoryInfo: StoryInfo?
     var firebaseRef: UInt?
+    
+    let cellSpacing: Float = 3.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let layout = self.collectionView.collectionViewLayout as CollectionViewWaterfallLayout
+        layout.minimumColumnSpacing = self.cellSpacing
+        layout.minimumInteritemSpacing = self.cellSpacing
+        layout.sectionInset = UIEdgeInsets(top: 0, left: CGFloat(self.cellSpacing), bottom: 0, right: CGFloat(self.cellSpacing))
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -153,5 +160,11 @@ class BrowseViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         self.selectedStoryInfo = self.stories[indexPath.item]
         self.performSegueWithIdentifier("FromBrowseToStory", sender: self)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        let storyInfo = self.stories[indexPath.item]
+        return storyInfo.thumbnail.size
     }
 }

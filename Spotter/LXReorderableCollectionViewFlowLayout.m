@@ -369,6 +369,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             imageView.alpha = 0.0f;
             
+            [imageView setClipsToBounds:false];
             [self.currentView addSubview:imageView];
             [self.currentView addSubview:highlightedImageView];
             [self.collectionView addSubview:self.currentView];

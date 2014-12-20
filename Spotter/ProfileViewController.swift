@@ -9,7 +9,12 @@
 import UIKit
 import CoreData
 
-class ProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, StoryViewControllerDelegate, RSKImageCropViewControllerDelegate {
+class ProfileCollectionCell: UICollectionViewCell  {
+    @IBOutlet var profileBtn: UIButton!
+    @IBOutlet var usernameLabel: UILabel!
+}
+
+class ProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, StoryViewControllerDelegate, RSKImageCropViewControllerDelegate, CollectionViewWaterfallLayoutDelegate {
 
     var stories: [Story] = [Story]()
     var selectedStory: Story?
@@ -17,9 +22,12 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
     var user: User?
     
     @IBOutlet var collectionView: UICollectionView!
+    var username: String = ""
+    var profileImage: UIImage = UIImage()
+    
     //@IBOutlet var tableView: UITableView!
-    @IBOutlet var usernameLabel: UILabel!
-    @IBOutlet var profileImageButton: UIButton!
+    //@IBOutlet var usernameLabel: UILabel!
+    //@IBOutlet var profileImageButton: UIButton!
     
     let imagePicker: UIImagePickerController = UIImagePickerController()
 
@@ -28,16 +36,16 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
 
        // self.tableView.allowsMultipleSelectionDuringEditing = false
         
-        self.profileImageButton.layer.cornerRadius = self.profileImageButton.layer.frame.size.width/2
-        self.profileImageButton.clipsToBounds = true
-        self.profileImageButton.layer.borderWidth = 1.0
-        self.profileImageButton.layer.borderColor = UIColor.grayColor().CGColor
+        //self.profileImageButton.layer.cornerRadius = self.profileImageButton.layer.frame.size.width/2
+        //self.profileImageButton.clipsToBounds = true
+        //self.profileImageButton.layer.borderWidth = 1.0
+        //self.profileImageButton.layer.borderColor = UIColor.grayColor().CGColor
         //self.profileImageButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
         
         self.imagePicker.delegate = self
         self.imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        self.usernameLabel.text = ""
-        
+        //self.usernameLabel.text = ""
+
         let entityDesc: NSEntityDescription? = NSEntityDescription.entityForName("User", inManagedObjectContext: self.coreContext.context)
         
         // create a fetch request with the entity description
@@ -51,6 +59,13 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         var error: NSError?
         let users = self.coreContext.context.executeFetchRequest(request, error: &error) as [User]
         
+        let layout = self.collectionView.collectionViewLayout as CollectionViewWaterfallLayout
+        layout.minimumColumnSpacing = 3
+        layout.minimumInteritemSpacing = 3
+        
+        let height = self.tabBarController!.view.frame.size.height
+        //self.collectionView.frame.size.height -= height
+        
         if (users.count == 0) {
             EKClient.userHomeURL?.observeSingleEventOfType(FEventType.Value, withBlock: { (data:FDataSnapshot!) -> Void in
                 if (data.value === NSNull()) {
@@ -62,7 +77,8 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
                 user.uid = EKClient.authData!.uid
                 user.first = data.value["first"] as NSString
                 user.last  = data.value["last"] as NSString
-                self.usernameLabel.text = user.first + " " + user.last
+                //self.usernameLabel.text = user.first + " " + user.last
+                self.username = user.first + " " + user.last
                 
                 let base64Image: NSString? = data.value["profileImage"] as? NSString
                 
@@ -72,8 +88,9 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
                    
                     user.profileImage = data
                     
-                    let image = UIImage(data: data!)
-                    self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+                    let image = UIImage(data: data!)!
+                    self.profileImage = image
+                    //self.profileImageButton.setImage(image, forState: UIControlState.Normal)
                 }
                 
                 var error: NSError?
@@ -85,11 +102,13 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
             })
         } else {
             let user = users[0]
-            self.usernameLabel.text = user.first + " " + user.last
+            //self.usernameLabel.text = user.first + " " + user.last
+            self.username = user.first + " " + user.last
             
             if (user.profileImage != nil) {
-                let image = UIImage(data: user.profileImage!)
-                self.profileImageButton.setImage(image, forState: UIControlState.Normal)
+                let image = UIImage(data: user.profileImage!)!
+                self.profileImage = image
+                //self.profileImageButton.setImage(image, forState: UIControlState.Normal)
             }
             self.user = user
         }
@@ -173,7 +192,8 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
     // Crop image has been canceled.
     func imageCropViewController(controller: RSKImageCropViewController!, didCropImage croppedImage: UIImage!) {
         self.imagePicker.dismissViewControllerAnimated(true, completion: nil)
-        self.profileImageButton.setImage(croppedImage, forState: UIControlState.Normal)
+        self.profileImage = croppedImage
+        //self.profileImageButton.setImage(croppedImage, forState: UIControlState.Normal)
         //self.profileImageButton.imageView!.image = croppedImage
         
         // convert profile image into a base64 string 
@@ -215,12 +235,34 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     // MARK: - UICollectionViewDataSource
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 2
+    }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if (section == 0) {
+            return 1
+        }
+        
         return self.stories.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        if (indexPath.section == 0) {
+            let profileCell = collectionView.dequeueReusableCellWithReuseIdentifier("ProfileCell", forIndexPath: indexPath) as ProfileCollectionCell
+            
+            let profileImageBtn = profileCell.profileBtn
+            profileImageBtn.layer.cornerRadius = profileImageBtn.layer.frame.size.width/2
+            profileImageBtn.clipsToBounds = true
+            profileImageBtn.layer.borderWidth = 1.0
+            profileImageBtn.layer.borderColor = UIColor.grayColor().CGColor
+            
+            profileCell.usernameLabel.text = self.username
+          
+            return profileCell
+        }
+        
         let cell: TitleCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("TitleCell", forIndexPath: indexPath) as TitleCollectionViewCell
      
         let story = self.stories[indexPath.row]
@@ -246,36 +288,24 @@ class ProfileViewController: UIViewController, UICollectionViewDataSource, UICol
         self.performSegueWithIdentifier("FromCollectionToStory", sender: self)
     }
     
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-//        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("TitleCell", forIndexPath: indexPath) as UITableViewCell
-//        
-//        let story: Story = self.stories[indexPath.row]
-//        
-//        cell.textLabel.text = story.title
-//        
-//        return cell
-//    }
-//    
-//    func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
-//        
-//        let story: Story = self.stories[indexPath.row]
-//        
-//        self.stories.removeAtIndex(indexPath.row)
-//        self.coreContext.context.deleteObject(story)
-//        
-//        var error: NSError?
-//        if (!self.coreContext.context.save(&error)) {
-//                println("CollectionViewController: could not remove item from store")
-//        }
-//        
-//        self.collectionView.reloadData()
-//        //self.tableView.reloadData()
-//    }
-//    
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return self.stories.count
-//    }
-//    
+    func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        if (indexPath.section == 0) {
+            let width = self.collectionView.frame.width
+            let height = self.collectionView.frame.height / 3
+            return CGSizeMake(width, height)
+        }
+        
+        let story = self.stories[indexPath.item]
+        
+        var image = UIImage(named: "placeholder.png")!
+        if (story.titleImage != nil) {
+            image = UIImage(data: story.titleImage!)!
+        }
+        
+        return image.size
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

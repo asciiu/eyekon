@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "480C2FEDCEE1450FE2010455"
+               BlueprintIdentifier = "F9F183FAA46A26869E90D923"
                BuildableName = "libPods-Eyekon.a"
                BlueprintName = "Pods-Eyekon"
                ReferencedContainer = "container:Pods.xcodeproj">
